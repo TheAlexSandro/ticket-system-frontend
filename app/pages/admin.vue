@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import '../css/admin.css';
 import { onMounted, ref } from 'vue';
-import { signOut, verify, cameraStatus, cameraPermissions, clearCookie } from '../server/api';
+import { signOut, verify, cameraStatus, cameraPermissions, clearCookie } from '../server/Api';
 import { computed } from 'vue';
 import Swal from 'sweetalert2';
 import { useHead } from 'nuxt/app';

@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import '../css/signin.css'
 import { computed, ref } from 'vue';
-import { getUsername, signIn } from '../server/api';
+import { getUsername, signIn } from '../server/Api';
 import { useHead } from 'nuxt/app';
 
 useHead({
