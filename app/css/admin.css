@@ -1,0 +1,133 @@
+.admin {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: -10px;
+}
+
+.admin .content {
+    max-width: 400px;
+}
+
+.admin .content .head {
+    font-size: 27px;
+}
+
+.admin .content .description {
+    font-size: 14px;
+}
+
+.admin .content .options {
+    margin-top: 20px;
+}
+
+.admin .content .options .title {
+    font-size: 18px;
+}
+
+.admin .content .card {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #ececec;
+    margin-bottom: 25px;
+}
+
+.admin  .content .card .container {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin .content .card .container .item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: all 0.5s ease-in-out;
+    border-radius: 10px;
+}
+
+.admin .content .card .container .item i {
+    margin-right: 8px;
+    font-size: 20px;
+    display: inline-block;
+}
+
+.admin .content .card .container .item:hover {
+    background-color: white;
+    transition: all 0.5s ease-in-out;
+}
+
+.admin .content .submenu .back {
+    padding: 10px 12px;
+    background-color: #ececec;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.admin .content .submenu .title,
+.admin .content .submenu .subtitle {
+    display: flex;
+    align-items: center;
+}
+
+.admin .content .submenu .desc {
+    margin-bottom: 15px;
+}
+
+.admin .content .submenu .title span {
+    font-size: 23px;
+}
+
+.admin .content .submenu .title i {
+    margin-right: 7px;
+    font-size: 30px;
+}
+
+.admin .content .submenu .subtitle span {
+    font-size: 18px;
+}
+
+.admin .content .submenu .subtitle i {
+    margin-right: 7px;
+    font-size: 20px;
+}
+
+.admin .content .submenu p {
+    font-size: 14px;
+}
+
+.admin .content .submenu hr {
+    margin: 25px auto;
+    width: 50%;
+}
+
+.admin .content .submenu .card .container .item span {
+    align-self: flex-start;
+    margin: 0;
+    margin-left: auto;
+}
+
+.admin .content .submenu .card .container .item span i {
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.admin .content .submenu .hint {
+    margin-top: -20px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.admin .content .submenu .menu-section {
+    margin-bottom: 50px;
+}
+
+@media (max-width: 600px) {
+    .admin {
+        margin-top: 25%;
+        padding: 0 20px;
+    }
+}

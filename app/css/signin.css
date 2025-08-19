@@ -1,0 +1,264 @@
+.signin {
+    display: flex;
+    flex-direction: column;
+    margin-left: -50px;
+    max-height: 100vh;
+}
+
+.signin .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+}
+
+.signin .container .left img {
+    width: 100px;
+    height: auto;
+}
+
+.signin .container .form .input-group {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.signin .container .form .show-password {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.signin .container .form .show-password input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--green-strong);
+}
+
+
+.signin .container .form .input-group input {
+    max-width: 100%;
+    height: 50px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1.2px solid gray;
+    border-radius: 5px;
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.signin .container .form .input-group label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
+    font-size: 16px;
+    pointer-events: none;
+    transition: 0.3s ease all;
+    background: white;
+    padding: 0 5px;
+}
+
+.signin .container .form .input-group input:focus~label,
+.signin .container .form .input-group input:valid~label {
+    top: -0.2px;
+    left: 8px;
+    font-size: 12px;
+    color: var(--green-strong);
+}
+
+.signin .container .form .input-group input:focus {
+    border-color: var(--green-strong);
+}
+
+.signin .container .left .head {
+    display: block;
+    font-size: 35px;
+}
+
+.signin .container .form {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.signin .container .form .help {
+    margin-top: 3px;
+    font-size: 15px;
+}
+
+.signin .container .form input {
+    height: 50px;
+    width: 400px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+.signin .container .form input::placeholder {
+    text-align: left;
+}
+
+.signin .container .form .error {
+    color: red;
+    font-size: 12px;
+}
+
+.signin .container .form button {
+    display: inline-block;
+    margin-top: 30px;
+    background-color: #4f9bfe;
+    box-shadow:
+        0 6px 18px rgba(0, 120, 255, 0.12),
+        0 0 calc(var(--glow-size)) rgba(43, 159, 255, var(--glow-alpha));
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    transform-origin: center;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.5s ease-in-out;
+    outline: none;
+    border: none;
+    max-width: 50%;
+}
+
+.signin .container .form button:hover {
+    animation: scaleHover 0.5s ease-in-out forwards;
+    transition: all 0.5s ease-in-out;
+    background-color: var(--green-strong);
+}
+
+.signin .container .form button:focus {
+    outline: none;
+}
+
+.signin .container .form .inline-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20%;
+}
+
+.signin .container .form .inline-button button {
+    min-width: 40%;
+}
+
+.signin .container .form .welcoming {
+    margin-bottom: 30px;
+}
+
+.signin .container .form .welcoming span {
+    font-size: 20px;
+}
+
+.signin .container .form .welcoming p {
+    font-size: 15px;
+}
+
+@keyframes scaleHover {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .signin {
+        margin-top: 30%;
+        padding: 0 20px;
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .signin .container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .signin .container .left img {
+        width: 100px;
+        height: auto;
+    }
+
+    .signin .container .left .head {
+        font-size: 26px;
+    }
+
+    .signin .container .form {
+        margin-top: 30px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .signin .container .form .input-group input {
+        width: 100%;
+        border-style: solid;
+    }
+
+    .signin .container .form button {
+        min-width: 100%;
+    }
+
+    .signin .container .form .inline-button {
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .signin .container .form .inline-button button {
+        min-width: 40%;
+    }
+
+    .signin .container .form .welcoming,
+    .signin .container .form {
+        text-align: left;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1300px) {
+    .signin {
+        margin-top: 15%;
+        margin-left: 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .signin .container {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .signin .container .left .head {
+        font-size: 26px;
+    }
+
+    .signin .container .form {
+        margin-top: 40px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .signin .container .form .input-group input {
+        width: 100%;
+    }
+}

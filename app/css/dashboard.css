@@ -1,0 +1,233 @@
+.dashboard {
+    margin-top: -7%;
+    padding: 0 30%;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard h1 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 40px;
+}
+
+.dashboard p {
+    margin-bottom: 20px;
+}
+
+.dashboard .banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -30px;
+}
+
+.dashboard img {
+    width: 90%;
+    height: auto;
+}
+
+.dashboard .btn.no-hover:hover {
+    transform: none !important;
+}
+
+.dashboard .button .btn {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: var(--green-strong);
+    box-shadow:
+        0 6px 18px rgba(0, 120, 255, 0.12),
+        0 0 calc(var(--glow-size)) rgba(43, 159, 255, var(--glow-alpha));
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    transform-origin: center;
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.5s ease-in-out;
+}
+
+.dashboard .button .btn:hover {
+    animation: scaleHover 0.5s ease-in-out forwards;
+    transition: all 0.5s ease-in-out;
+    background-color: var(--green-strong);
+}
+
+.dashboard .button .btn:focus {
+    outline: none;
+}
+
+@keyframes scaleHover {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.dashboard .button .btn i {
+    margin-right: 7px;
+}
+
+.dashboard .button-navigation {
+    padding: 0 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dashboard .button-navigation .inline-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.dashboard .button-navigation .inline-button .button {
+    min-width: 45%;
+}
+
+.dashboard .button-navigation .button .btn {
+    width: 100%;
+    text-align: center;
+}
+
+.dashboard .button-navigation .button {
+    display: flex;
+}
+
+.dashboard .button-navigation .others {
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
+
+.dashboard .button-navigation .others .container .expand {
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
+
+.dashboard .button-navigation .others .container .expand:focus {
+    outline: none;
+}
+
+.dashboard .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.dashboard .content .video-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
+
+.dashboard .content video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.dashboard .content .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 60%;
+    background: red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 20px;
+}
+
+.dashboard .video-wrapper .overlay h1 {
+    font-size: 15px;
+}
+
+.dashboard .video-wrapper .overlay p {
+    margin-top: -20px;
+    font-size: 14px;
+}
+
+.dashboard .video-wrapper .overlay .icon {
+    padding: 10px;
+}
+
+.dashboard .video-wrapper .overlay i {
+    display: block;
+    font-size: 50px;
+}
+
+.dashboard .panel {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 20px;
+    color: rgba(255, 0, 0, 0.76);
+}
+
+.dashboard .panel i {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.dashboard .panel p {
+    font-weight: 600;
+    margin: 0;
+}
+
+@media (min-width: 300px) and (max-width: 400px) {
+    .dashboard .button-navigation .inline-button {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard {
+        margin-top: 20%;
+        padding: 0 30px;
+    }
+
+    .dashboard .banner {
+        margin-bottom: -10px;
+    }
+
+    .dashboard .content video {
+        width: 100%;
+    }
+
+    .dashboard .button-navigation {
+        padding: 0;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1300px) {
+    .dashboard {
+        padding: 0 20%;
+    }
+}

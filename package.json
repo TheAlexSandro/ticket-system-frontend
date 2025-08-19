@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^3.3.2",
+    "@zxing/browser": "^0.1.5",
+    "axios": "^1.11.0",
+    "html5-qrcode": "^2.3.8",
+    "lru-cache": "^11.1.0",
+    "nuxt": "^4.0.3",
+    "nuxt-toast": "^1.1.4",
+    "remixicon": "^4.6.0",
+    "socket.io-client": "^4.8.1",
+    "sweetalert2": "^11.22.4",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6"
+  }
+}

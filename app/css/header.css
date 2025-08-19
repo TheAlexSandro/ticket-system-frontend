@@ -1,0 +1,115 @@
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items: center;
+    background: white;
+    z-index: 1000;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 20px 40px;
+}
+
+.header .logo {
+    cursor: pointer;
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
+}
+
+.header .user i {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+}
+
+.header p {
+    font-size: 20px;
+}
+
+.bounce-wrap {
+    display: inline-block;
+    animation: bounce 2s ease-in-out infinite;
+    -webkit-animation: bounce 2s ease-in-out infinite;
+    transform-origin: bottom center;
+    will-change: transform;
+}
+
+.header img {
+    width: 32px;
+    height: auto;
+    animation: flipY360 2s ease-in-out infinite;
+    -webkit-animation: flipY360 2s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+@-webkit-keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+@keyframes flipY360 {
+    0% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(180deg);
+    }
+
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+@-webkit-keyframes flipY360 {
+    0% {
+        -webkit-transform: rotateY(0deg);
+    }
+
+    50% {
+        -webkit-transform: rotateY(180deg);
+    }
+
+    100% {
+        -webkit-transform: rotateY(360deg);
+    }
+}
+
+@media (min-width: 300px) and (max-width: 400px) {
+    .dashboard .button-navigation .inline-button {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 15px 20px;
+    }
+    .header p {
+        font-size: 15px;
+    }
+}
