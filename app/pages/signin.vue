@@ -105,6 +105,7 @@ const inputError = (type: InputError, value: string) => {
         passwordError.value = value as "empty" | "invalid";
     }
     clicked.value = false;
+    isDisabled.value = false;
 }
 
 const putBack = (type: InputError, withClicked: boolean) => {
@@ -116,7 +117,7 @@ const putBack = (type: InputError, withClicked: boolean) => {
     } else {
         passwordError.value = false;
     }
-    if (withClicked) { clicked.value = false; }
+    if (withClicked) { clicked.value = false; isDisabled.value = false; }
 }
 
 const back = () => {
@@ -136,8 +137,7 @@ const signin = () => {
     if (!usernameValue.value || usernameValue.value == "") return inputError("username", "empty");
     if (usernameValue.value.toLocaleLowerCase() == lastUsername.value.toLocaleLowerCase()) {
         next.value = true;
-        clicked.value = false;
-        isDisabled.value = false;
+        putBack("username", true);
     } else {
         getUsername(String(usernameValue.value), (error, result) => {
             //@ts-ignore
@@ -146,8 +146,6 @@ const signin = () => {
 
             putBack("username", true);
             lastUsername.value = usernameValue.value;
-            isDisabled.value = false;
-            clicked.value = false;
             next.value = true;
         })
     }
