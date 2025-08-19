@@ -10,8 +10,8 @@
             <div class="form">
                 <template v-if="!next">
                     <div class="input-group">
-                        <input type="text" id="username" :disabled="isDisabled" required v-model="usernameValue" :ref="usernameValue"
-                            @keyup.enter="signin()">
+                        <input type="text" id="username" :disabled="isDisabled" required v-model="usernameValue"
+                            :ref="usernameValue" @keyup.enter="signin()">
                         <label id="username-label" for="username">Username Anda</label>
                     </div>
                     <span class="error" v-if="usernameError"><i class="ri-error-warning-line"></i> {{
@@ -54,10 +54,10 @@ import { getUsername, signIn } from '../server/Api';
 import { useHead } from 'nuxt/app';
 
 useHead({
-  title: "Sign In - PBL",
-  link: [
-    { rel: 'icon', type: 'image/png', href: '/image.png' }
-  ]
+    title: "Sign In - PBL",
+    link: [
+        { rel: 'icon', type: 'image/png', href: '/image.png' }
+    ]
 })
 
 //@ts-ignore
@@ -78,7 +78,7 @@ const isDisabled = ref(false);
 
 const showPassword = ref(false);
 
-const buttonText = computed(() => 
+const buttonText = computed(() =>
     clicked.value ? "Loading..." : "Lanjut"
 );
 
@@ -131,28 +131,32 @@ const back = () => {
 const signin = () => {
     if (clicked.value) return;
     clicked.value = true;
+    isDisabled.value = true;
     putBack("username", false);
     if (!usernameValue.value || usernameValue.value == "") return inputError("username", "empty");
     if (usernameValue.value.toLocaleLowerCase() == lastUsername.value.toLocaleLowerCase()) {
         next.value = true;
         clicked.value = false;
+        isDisabled.value = false;
     } else {
         getUsername(String(usernameValue.value), (error, result) => {
-        //@ts-ignore
-        if (!result!['ok'] && result!['error_code'] == 'UNKNOWN_ERROR') return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
+            //@ts-ignore
+            if (!result!['ok'] && result!['error_code'] == 'UNKNOWN_ERROR') return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
 
-        putBack("username", true);
-        lastUsername.value = usernameValue.value;
-        next.value = true;
-        clicked.value = false;
-    })
+            putBack("username", true);
+            lastUsername.value = usernameValue.value;
+            isDisabled.value = false;
+            clicked.value = false;
+            next.value = true;
+        })
     }
 }
 
 const verify = () => {
     if (clicked.value) return;
     clicked.value = true;
+    isDisabled.value = true;
     putBack("password", false);
     if (!passwordValue.value || passwordValue.value == "") return inputError("password", "empty");
     signIn(String(usernameValue.value), String(passwordValue.value), (error, result) => {
