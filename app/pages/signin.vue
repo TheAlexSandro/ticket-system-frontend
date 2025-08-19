@@ -108,8 +108,8 @@ const inputError = (type: InputError, value: string) => {
 }
 
 const putBack = (type: InputError, withClicked: boolean) => {
-    document.getElementById(type)!.style.borderColor = '#007bff';
-    document.getElementById(`${type}-label`)!.style.color = '#007bff';
+    document.getElementById(type)!.style.borderColor = '#2b818b';
+    document.getElementById(`${type}-label`)!.style.color = '#2b818b';
 
     if (type == "username") {
         usernameError.value = false;
