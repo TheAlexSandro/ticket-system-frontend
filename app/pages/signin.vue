@@ -162,8 +162,6 @@ const verify = () => {
         if (!result!['ok'] && ['USER_NOT_FOUND', 'UNKNOWN_ERROR'].includes(result!['error_code'])) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
         if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
 
-        putBack("password", true);
-        clicked.value = false;
         window.location.href = "/admin";
     })
 }
