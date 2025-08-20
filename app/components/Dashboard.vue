@@ -139,9 +139,8 @@ onMounted(() => {
                 isCameraStopped.value = true;
                 showWarning.value = true;
                 isFromWebsocket.value = true;
-            } else {
-                window.location.reload();
             }
+            window.location.reload();
         }
     })
 
@@ -149,6 +148,7 @@ onMounted(() => {
         if (data['status'] == null) return;
         if (!permitted.value) {
             if (data['status']) {
+                stopCamera("stops");
                 isDisabled.value = true;
                 window.location.reload();
             }
