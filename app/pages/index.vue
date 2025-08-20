@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import Dashboard from '../components/Dashboard.vue';
+import Dashboard from '../components/index/Dashboard.vue';
 import { useHead } from 'nuxt/app';
 
 useHead({

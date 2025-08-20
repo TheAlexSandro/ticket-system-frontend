@@ -215,6 +215,8 @@ const stopCamera = (type: StopCamera) => {
 }
 
 const startCamera = async (video_id: string) => {
+    //@ts-ignore
+    if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {
             isDisabled.value = true;
@@ -222,9 +224,6 @@ const startCamera = async (video_id: string) => {
             cameraErrType.value = "no_camera";
             return;
         }
-
-        //@ts-ignore
-        if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
         overflow("visible");
         try {
