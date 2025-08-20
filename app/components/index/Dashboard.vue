@@ -83,8 +83,8 @@ import { BrowserMultiFormatReader } from "@zxing/browser";
 import "~/css/dashboard.css";
 import "~/css/custom.css";
 import Camera from "./Camera.vue";
-import { useSocket } from '../composables/useSocket';
-import { getInfo, verify } from "../server/Api";
+import { useSocket } from '../../composables/useSocket';
+import { getInfo, verify } from "../../server/Api";
 import Swal from "sweetalert2";
 
 type OverflowState = "hidden" | "visible";
