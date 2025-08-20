@@ -149,6 +149,7 @@ onMounted(() => {
         if (data['status'] == null) return;
         if (!permitted.value) {
             if (data['status']) {
+                isDisabled.value = true;
                 window.location.reload();
             }
         }
