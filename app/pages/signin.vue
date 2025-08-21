@@ -16,7 +16,7 @@
                     </div>
                     <span class="error" v-if="usernameError"><i class="ri-error-warning-line"></i> {{
                         usernameErrorMessage }}</span>
-                    <span class="help" @click="inpo()">Tidak tahu?</span>
+                    <span class="help" @click="inpo()"><a href='#'>Tidak tahu?</a></span>
 
                     <button @click="signin()">{{ buttonText }}</button>
                 </template>
@@ -52,6 +52,8 @@ import '../css/signin.css'
 import { computed, ref } from 'vue';
 import { getUsername, signIn } from '../server/Api';
 import { useHead } from 'nuxt/app';
+import Swal from 'sweetalert2';
+import { useRuntimeConfig } from 'nuxt/app';
 
 useHead({
     title: "Sign In - PBL",
@@ -78,6 +80,11 @@ const isDisabled = ref(false);
 
 const showPassword = ref(false);
 
+const getEmail = () => {
+    const configs = useRuntimeConfig();
+    return String(configs.public["EMAIL"]);
+}
+
 const buttonText = computed(() =>
     clicked.value ? "Loading..." : "Lanjut"
 );
@@ -91,8 +98,11 @@ const passwordErrorMessage = computed(() =>
 );
 
 const inpo = () => {
-    //@ts-ignore
-    return toast.info({ message: 'Hubungi administrator.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    return Swal.fire({
+        icon: "info",
+        title: "Hubungi Administrator",
+        html: `Jika Anda tidak tahu informasi login, silahkan hubungi administrator melalui <a href='mailto:${getEmail()}'>${getEmail()}</a>`
+    })
 }
 
 const inputError = (type: InputError, value: string) => {

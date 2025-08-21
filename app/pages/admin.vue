@@ -1,4 +1,8 @@
 <template>
+  <template v-if="isLoading">
+    <LoadingScreen />
+  </template>
+
   <section class="admin" v-if="adminPanel">
     <div class="content">
       <template v-if="optionsView">
@@ -90,6 +94,7 @@ import { signOut, verify, cameraStatus, cameraPermissions, clearCookie } from '.
 import { computed } from 'vue';
 import Swal from 'sweetalert2';
 import { useHead } from 'nuxt/app';
+import LoadingScreen from '../components/LoadingScreen.vue';
 
 useHead({
   title: "Admin - PBL",
@@ -105,18 +110,22 @@ const adminObject = ref({});
 const routeNow = ref("");
 const camHint = ref(true);
 const clicked = ref(false);
+const isLoading = ref(true);
 
 const camPermissions = ref<"all" | "admin">();
 const cameraStatuses = ref<boolean>();
 
 onMounted(() => {
   verify((error, result) => {
+    //@ts-ignore
+    if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     if (!result!['ok']) return window.location.href = '/signin';
-    adminPanel.value = true;
     adminObject.value = result as object;
     cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
     camPermissions.value = result!["result"]["camera_permissions"];
     camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+    adminPanel.value = true;
+    isLoading.value = false;
   })
 })
 

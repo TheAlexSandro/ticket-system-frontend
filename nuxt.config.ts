@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     public: {
       BACKEND_URL: process.env["BACKEND_URL"],
       API_TOKEN: process.env["API_TOKEN"],
+      EMAIL: process.env["EMAIL"]
     },
-  },
+  }
 });

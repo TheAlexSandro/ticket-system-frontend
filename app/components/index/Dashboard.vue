@@ -50,16 +50,25 @@
                     <div class="others">
                         <div class="container">
                             <div class="expand" @click="toggleOther()">Pengaturan Lain <i :class="othersIcon"></i></div>
-                            <div v-if="others" class="inline-button">
-                                <div class="button">
-                                    <div class="btn" @click="mirror('camera', 'X')"><i class="ri-layout-grid-fill"></i>
-                                        MirrorX</div>
+                            <template v-if="others">
+                                <div class="inline-button">
+                                    <div class="button">
+                                        <div class="btn" @click="mirror('camera', 'X')"><i
+                                                class="ri-layout-grid-fill"></i>
+                                            MirrorX</div>
+                                    </div>
+                                    <div class="button">
+                                        <div class="btn" @click="mirror('camera', 'Y')"><i
+                                                class="ri-layout-grid-fill"></i>
+                                            MirrorY</div>
+                                    </div>
                                 </div>
                                 <div class="button">
-                                    <div class="btn" @click="mirror('camera', 'Y')"><i class="ri-layout-grid-fill"></i>
-                                        MirrorY</div>
+                                    <div class="btn" @click="changeFlash()"><i :class="getFlashStateIcon"></i>
+                                        {{ getFlashStateText }}
+                                    </div>
                                 </div>
-                            </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -96,7 +105,7 @@ const toast = useToast() as any;
 //
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
-const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone">();
+const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone" | "no_flash">();
 const facingMode = ref("environment");
 const currentStream = ref<MediaStream | null>(null);
 const isCameraStopped = ref(false);
@@ -113,6 +122,9 @@ const camStatus = ref(true);
 const permitted = ref(false);
 const camPermission = ref<"all" | "admin">();
 const popupShown = ref(false);
+const ok = ref(false);
+const flash = ref(false);
+const streams = ref<MediaStreamTrack | null>(null);
 
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
@@ -121,12 +133,15 @@ let codeReader: BrowserMultiFormatReader | null = null;
 
 onMounted(() => {
     verify((error, result) => {
+        if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
         if (error || !result!['ok']) return;
         permitted.value = true;
+        ok.value = true;
     })
 
     getInfo((error, result) => {
         if (error || !result!['ok']) return;
+        ok.value = true;
         camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
         camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
     })
@@ -216,6 +231,8 @@ const stopCamera = (type: StopCamera) => {
 
 const startCamera = async (video_id: string) => {
     //@ts-ignore
+    if (!ok.value) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    //@ts-ignore
     if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {
@@ -242,6 +259,7 @@ const startCamera = async (video_id: string) => {
             currentStream.value = stream;
             isLoading.value = false;
             showWarning.value = false;
+            streams.value = stream.getVideoTracks()[0];
             await nextTick();
             const video = document.getElementById(video_id) as HTMLVideoElement;
             if (video) {
@@ -299,6 +317,29 @@ const startQRScanning = (video: HTMLVideoElement) => {
     })
 }
 
+const changeFlash = async () => {
+    //@ts-ignore
+    if (streams && streams.value?.getCapabilities().torch) {
+        try {
+            const status = flash.value ? false : true;
+            flash.value = status;
+            //@ts-ignore
+            await streams.value.applyConstraints({ advanced: [{ torch: status }] });
+        } catch (err) {
+            stopCamera('stops');
+            overflow("visible");
+            isDisabled.value = true;
+            cameraErrType.value = "error";
+        }
+
+    } else {
+        stopCamera('stops');
+        overflow("visible");
+        isDisabled.value = true;
+        cameraErrType.value = "no_flash";
+    }
+}
+
 const switchCamera = async () => {
     if (!navigator?.mediaDevices?.enumerateDevices()) {
         isDisabled.value = true;
@@ -329,6 +370,14 @@ const switchCamera = async () => {
         }
     }
 }
+
+const getFlashStateText = computed(() =>
+    !flash.value ? "Aktfikan Flash" : "Matikan Flash"
+)
+
+const getFlashStateIcon = computed(() =>
+    !flash.value ? "ri-lightbulb-flash-line" : "ri-lightbulb-flash-fill"
+)
 
 const getCameraState = () => {
     return {
