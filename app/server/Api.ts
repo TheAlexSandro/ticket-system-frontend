@@ -11,7 +11,7 @@ const useApi = () => {
   apis.defaults.baseURL = String(configs.public["BACKEND_URL"]);
   apis.interceptors.request.use(
     (config) => {
-      const token = configs.public["API_TOKEN"];
+      const token = configs["API_TOKEN"];
       config.headers["Authorization"] = `Bearer ${token}`;
       return config;
     },

@@ -35,9 +35,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    API_TOKEN: process.env["API_TOKEN"],
     public: {
       BACKEND_URL: process.env["BACKEND_URL"],
-      API_TOKEN: process.env["API_TOKEN"],
       EMAIL: process.env["EMAIL"]
     },
   }
