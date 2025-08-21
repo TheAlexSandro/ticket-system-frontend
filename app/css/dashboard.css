@@ -16,6 +16,7 @@
 }
 
 .dashboard .banner {
+    margin-top: -15%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,7 +209,7 @@
 
 @media (max-width: 600px) {
     .dashboard {
-        margin-top: 20%;
+        margin-top: 25%;
         padding: 0 30px;
     }
 
@@ -227,6 +228,7 @@
 
 @media (min-width: 601px) and (max-width: 1300px) {
     .dashboard {
+        margin-top: 17%;
         padding: 0 20%;
     }
 }
