@@ -16,6 +16,13 @@ export default defineNuxtConfig({
           href: "https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css",
         },
       ],
+      script: [
+        {
+          defer: true,
+          src: "https://cloud.umami.is/script.js",
+          "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e"
+        }
+      ],
     },
   },
   modules: ["@nuxt/ui", "nuxt-toast"],
