@@ -1,34 +1,17 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { useRuntimeConfig } from "nuxt/app";
 
-const apis = axios.create({
-  baseURL: "",
-});
+const api = axios.create();
 
-const useApi = () => {
-  const configs = useRuntimeConfig();
-
-  apis.defaults.baseURL = String(configs.public.backendUrl);
-  apis.interceptors.request.use(
-    (config) => {
-      const token = configs.apiToken;
-      config.headers["Authorization"] = `Bearer ${token}`;
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-
-  return { api: apis };
-};
+api.interceptors.request.use((config) => {
+  config.baseURL = "/api/proxy"
+  return config
+})
 
 type Callback<T> = (error: string | null, result: T) => void;
 
 export const getAdminDashboardInfo = (
   callback: Callback<null | AxiosResponse>
 ) => {
-  const { api } = useApi();
   api
     .post(`/admin/getInfo`)
     .then((result: AxiosResponse) => {
@@ -43,7 +26,6 @@ export const getUsername = (
   username: string,
   callback: Callback<null | AxiosResponse>
 ) => {
-  const { api } = useApi();
   api
     .post(`/auth/getUsername?username=${username}`)
     .then((result: AxiosResponse) => {
@@ -59,7 +41,6 @@ export const signIn = (
   password: string,
   callback: Callback<null | AxiosResponse>
 ) => {
-  const { api } = useApi();
   api
     .post(
       `/auth/signin?username=${username}&password=${password}`,
@@ -75,7 +56,6 @@ export const signIn = (
 };
 
 export const signOut = (callback?: Callback<null | AxiosResponse>) => {
-  const { api } = useApi();
   api
     .post(`/auth/signOut`, {}, { withCredentials: true })
     .then((result: AxiosResponse) => {
@@ -87,7 +67,6 @@ export const signOut = (callback?: Callback<null | AxiosResponse>) => {
 };
 
 export const verify = (callback: Callback<null | AxiosResponse>) => {
-  const { api } = useApi();
   api
     .post(`/auth/verify`, {}, { withCredentials: true })
     .then((result: AxiosResponse) => {
@@ -99,7 +78,6 @@ export const verify = (callback: Callback<null | AxiosResponse>) => {
 };
 
 export const clearCookie = (callback?: Callback<null | AxiosResponse>) => {
-  const { api } = useApi();
   api
     .post(`/auth/clearCookie`, {}, { withCredentials: true })
     .then((result: AxiosResponse) => {
@@ -114,7 +92,6 @@ export const cameraStatus = (
   status: string,
   callback: Callback<null | AxiosResponse>
 ) => {
-  const { api } = useApi();
   api
     .post(`/admin/cameraStatus?status=${status}`)
     .then((result: AxiosResponse) => {
@@ -129,7 +106,6 @@ export const cameraPermissions = (
   role: string,
   callback: Callback<null | AxiosResponse>
 ) => {
-  const { api } = useApi();
   api
     .post(`/admin/cameraPermissions?role=${role}`)
     .then((result: AxiosResponse) => {
@@ -141,7 +117,6 @@ export const cameraPermissions = (
 };
 
 export const getInfo = (callback: Callback<null | AxiosResponse>) => {
-  const { api } = useApi();
   api
     .post(`/admin/getInfo`)
     .then((result: AxiosResponse) => {
