@@ -82,7 +82,7 @@ const showPassword = ref(false);
 
 const getEmail = () => {
     const configs = useRuntimeConfig();
-    return String(configs.public["EMAIL"]);
+    return String(configs.public.email);
 }
 
 const buttonText = computed(() =>
@@ -151,6 +151,7 @@ const signin = () => {
     } else {
         getUsername(String(usernameValue.value), (error, result) => {
             //@ts-ignore
+            if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
             if (!result!['ok'] && result!['error_code'] == 'UNKNOWN_ERROR') return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
             if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
 
@@ -169,6 +170,7 @@ const verify = () => {
     if (!passwordValue.value || passwordValue.value == "") return inputError("password", "empty");
     signIn(String(usernameValue.value), String(passwordValue.value), (error, result) => {
         //@ts-ignore
+        if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
         if (!result!['ok'] && ['USER_NOT_FOUND', 'UNKNOWN_ERROR'].includes(result!['error_code'])) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
         if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
 

@@ -8,10 +8,10 @@ const apis = axios.create({
 const useApi = () => {
   const configs = useRuntimeConfig();
 
-  apis.defaults.baseURL = String(configs.public["BACKEND_URL"]);
+  apis.defaults.baseURL = String(configs.public.backendUrl);
   apis.interceptors.request.use(
     (config) => {
-      const token = configs["API_TOKEN"];
+      const token = configs.apiToken;
       config.headers["Authorization"] = `Bearer ${token}`;
       return config;
     },

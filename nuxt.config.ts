@@ -11,7 +11,11 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
-        { name: "description", content: "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet." }
+        {
+          name: "description",
+          content:
+            "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet.",
+        },
       ],
       link: [
         {
@@ -23,8 +27,8 @@ export default defineNuxtConfig({
         {
           defer: true,
           src: "https://cloud.umami.is/script.js",
-          "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e"
-        }
+          "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e",
+        },
       ],
     },
   },
@@ -35,10 +39,10 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    API_TOKEN: process.env["API_TOKEN"],
+    apiToken: process.env.API_TOKEN,
     public: {
-      BACKEND_URL: process.env["BACKEND_URL"],
-      EMAIL: process.env["EMAIL"]
+      backendUrl: process.env.BACKEND_URL,
+      email: process.env.EMAIL,
     },
-  }
+  },
 });

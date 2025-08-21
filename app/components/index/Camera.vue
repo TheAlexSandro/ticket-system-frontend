@@ -24,7 +24,7 @@ const props = defineProps({
 
 const getEmail = () => {
     const configs = useRuntimeConfig();
-    return String(configs.public["EMAIL"]);
+    return String(configs.public.email);
 }
 
 const icon = computed(() =>
