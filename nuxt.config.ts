@@ -10,7 +10,14 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      meta: [
+        { name: "description", content: "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet." }
+      ],
       link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon.ico" },
         {
           rel: "stylesheet",
           href: "https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css",
