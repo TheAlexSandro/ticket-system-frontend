@@ -37,12 +37,15 @@ export default defineNuxtConfig({
     prerender: {
       autoSubfolderIndex: false,
     },
+    experimental: {
+      openAPI: false,
+    },
   },
   runtimeConfig: {
-    apiToken: process.env.API_TOKEN,
     public: {
-      backendUrl: process.env.BACKEND_URL,
-      email: process.env.EMAIL,
+      API_TOKEN: process.env.API_TOKEN,
+      BACKEND_URL: process.env.BACKEND_URL,
+      EMAIL: process.env.EMAIL,
     },
   },
 });

@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import '../css/signin.css'
 import { computed, ref } from 'vue';
-import { getUsername, signIn } from '../server/Api';
+import { getUsername, signIn, refreshToken } from '../server/Api';
 import { useHead } from 'nuxt/app';
 import Swal from 'sweetalert2';
 import { useRuntimeConfig } from 'nuxt/app';
@@ -82,7 +82,7 @@ const showPassword = ref(false);
 
 const getEmail = () => {
     const configs = useRuntimeConfig();
-    return String(configs.public.email);
+    return String(configs.public.EMAIL);
 }
 
 const buttonText = computed(() =>
@@ -149,16 +149,19 @@ const signin = () => {
         next.value = true;
         putBack("username", true);
     } else {
-        getUsername(String(usernameValue.value), (error, result) => {
-            //@ts-ignore
-            if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            if (!result!['ok'] && result!['error_code'] == 'UNKNOWN_ERROR') return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
+        refreshToken((error, token_result) => {
+            if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            getUsername(token_result!["result"]["P_token"], String(usernameValue.value), (error, result) => {
+                //@ts-ignore
+                if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
+                if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-            putBack("username", true);
-            lastUsername.value = usernameValue.value;
-            next.value = true;
-        })
+                putBack("username", true);
+                lastUsername.value = usernameValue.value;
+                next.value = true;
+            })
+        });
     }
 }
 
@@ -168,14 +171,18 @@ const verify = () => {
     isDisabled.value = true;
     putBack("password", false);
     if (!passwordValue.value || passwordValue.value == "") return inputError("password", "empty");
-    signIn(String(usernameValue.value), String(passwordValue.value), (error, result) => {
-        //@ts-ignore
-        if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        if (!result!['ok'] && ['USER_NOT_FOUND', 'UNKNOWN_ERROR'].includes(result!['error_code'])) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
+    refreshToken((error, token_result) => {
+        if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-        window.location.href = "/admin";
-    })
+        signIn(token_result!["result"]["P_token"], String(usernameValue.value), String(passwordValue.value), (error, result) => {
+            //@ts-ignore
+            if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
+            if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+            window.location.href = "/admin";
+        })
+    });
 }
 
 </script>

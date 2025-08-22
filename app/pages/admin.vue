@@ -14,7 +14,7 @@
           <div class="card">
             <div class="container">
               <div class="item" @click="maintenance()"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
-              <div class="item" @click="maintenance()"><i class="ri-user-5-line"></i> Pengunjung Website</div>
+              <div class="item" @click="showMenu('website')"><i class="ri-user-5-line"></i> Pengunjung Website</div>
             </div>
           </div>
 
@@ -40,6 +40,18 @@
             <i class="ri-arrow-left-s-line"></i>
           </div>
 
+          <!-- SUBMENU PENGUNJUNG WEBSITE -->
+          <div class="pengunjung-website" v-if="websiteView">
+            <div class="title"><i class="ri-user-5-line"></i> <span>Pengunjung Website</span></div>
+            <p>Berikut adalah data pengunjung website pada pblsmekensa.site</p>
+            <hr>
+            <div class="iframe-wrapper">
+              <iframe src="https://us.umami.is/share/d9SJdbGfjhprPcIi/pblsmekensa.site" frameborder="0"></iframe>
+            </div>
+
+          </div>
+          <!-- END OF SUBMENU PENGUNJUNG WEBSITE -->
+
           <!-- SUBMENU KAMERA -->
           <div class="kamera" v-if="kameraView">
             <div class="title"><i class="ri-camera-line"></i> <span>Kamera</span></div>
@@ -51,7 +63,9 @@
               <p class="desc">Siapa saja yang Anda izinkan untuk melakukan pemindaian terhadap tiket pengunjung?</p>
               <div class="card">
                 <div class="container">
-                  <div class="item" @click="changeCamPermissions('all')"><i class="ri-user-line"></i> Semua Pengguna <span><i :class="camPermissions == 'all' ? 'ri-check-line' : ''"></i></span></div>
+                  <div class="item" @click="changeCamPermissions('all')"><i class="ri-user-line"></i> Semua Pengguna
+                    <span><i :class="camPermissions == 'all' ? 'ri-check-line' : ''"></i></span>
+                  </div>
                 </div>
               </div>
               <div class="hint">
@@ -59,7 +73,8 @@
               </div>
               <div class="card">
                 <div class="container">
-                  <div class="item" @click="changeCamPermissions('admin')"><i class="ri-user-star-line"></i> Hanya Administrator <span><i :class="camPermissions == 'admin' ? 'ri-check-line' : ''"></i></span></div>
+                  <div class="item" @click="changeCamPermissions('admin')"><i class="ri-user-star-line"></i> Hanya
+                    Administrator <span><i :class="camPermissions == 'admin' ? 'ri-check-line' : ''"></i></span></div>
                 </div>
               </div>
               <div class="hint">Hanya administratorlah yang diizinkan untuk menggunakan fitur pemindaian, sign in
@@ -75,7 +90,8 @@
                   <div class="item" @click="camStatus()"><i :class="cameraStatusesIcon"></i> {{ cameraStatusesM }}</div>
                 </div>
               </div>
-              <div v-if="camHint" class="hint" style="color: red;"><i class="ri-spam-2-line"></i> Tindakan ini akan menghentikan semua
+              <div v-if="camHint" class="hint" style="color: red;"><i class="ri-spam-2-line"></i> Tindakan ini akan
+                menghentikan semua
                 pemindaian, memblokir panel dan melarang pengguna dari mengakses kamera, ini tidak berlaku untuk
                 administrator.</div>
             </div>
@@ -88,23 +104,24 @@
 </template>
 
 <script setup lang="ts">
-import '../css/admin.css';
-import { onMounted, ref } from 'vue';
-import { signOut, verify, cameraStatus, cameraPermissions, clearCookie } from '../server/Api';
-import { computed } from 'vue';
-import Swal from 'sweetalert2';
-import { useHead } from 'nuxt/app';
-import LoadingScreen from '../components/LoadingScreen.vue';
+import "../css/admin.css";
+import { onMounted, ref } from "vue";
+import { signOut, verify, cameraStatus, cameraPermissions, clearCookie, refreshToken } from "../server/Api";
+import { computed } from "vue";
+import Swal from "sweetalert2";
+import { useHead } from "nuxt/app";
+import LoadingScreen from "../components/LoadingScreen.vue";
 
 useHead({
   title: "Admin - PBL",
   link: [
-    { rel: 'icon', type: 'image/png', href: '/image.png' }
+    { rel: "icon", type: "image/png", href: "/image.png" }
   ]
 })
 
 const optionsView = ref(true);
 const kameraView = ref(false);
+const websiteView = ref(false);
 const adminPanel = ref(false);
 const adminObject = ref({});
 const routeNow = ref("");
@@ -116,25 +133,29 @@ const camPermissions = ref<"all" | "admin">();
 const cameraStatuses = ref<boolean>();
 
 onMounted(() => {
-  verify((error, result) => {
-    //@ts-ignore
-    if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    if (!result!['ok']) return window.location.href = '/signin';
-    adminObject.value = result as object;
-    cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-    camPermissions.value = result!["result"]["camera_permissions"];
-    camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
-    adminPanel.value = true;
-    isLoading.value = false;
+  refreshToken((error, token_result) => {
+    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+    verify(token_result!["result"]["P_token"], (error, result) => {
+      //@ts-ignore
+      if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      if (!result!["ok"]) return window.location.href = "/signin";
+      adminObject.value = result as object;
+      cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
+      camPermissions.value = result!["result"]["camera_permissions"];
+      camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+      adminPanel.value = true;
+      isLoading.value = false;
+    })
   })
 })
 
-const cameraStatusesIcon = computed(() => 
-  cameraStatuses.value ? 'ri-alert-line' : 'ri-check-line'
+const cameraStatusesIcon = computed(() =>
+  cameraStatuses.value ? "ri-alert-line" : "ri-check-line"
 );
 
-const cameraStatusesM = computed(() => 
-  cameraStatuses.value ? "Blokir Semua Kamera Aktif" : 'Izinkan Kamera'
+const cameraStatusesM = computed(() =>
+  cameraStatuses.value ? "Blokir Semua Kamera Aktif" : "Izinkan Kamera"
 );
 
 //@ts-ignore
@@ -142,19 +163,19 @@ const toast = useToast();
 
 const isLoggedIn = () => {
   //@ts-ignore
-  if (!adminPanel.value) return toast.error({ message: "Signin is required!", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+  if (!adminPanel.value) return toast.error({ message: "Signin is required!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 }
 
 const maintenance = () => {
   //@ts-ignore
   isLoggedIn();
-  return toast.error({ message: "This feature is currently under construction.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+  return toast.error({ message: "This feature is currently under construction.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 }
 
 const waits = () => {
   clicked.value = true;
   //@ts-ignore
-  toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 4000 });
+  toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 4000 });
   if (clicked.value) return;
 }
 
@@ -168,28 +189,36 @@ const changeCamPermissions = (role: string) => {
   isLoggedIn();
   waits();
   if (camPermissions.value == role) return;
-  cameraPermissions(role, (error, result) => {
-    if (error || !result!['ok']) return toast.error({ message: result!['message'], position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    camPermissions.value = role as "all" | "admin";
-    stayBack();
-  })
+  refreshToken((error, token_result) => {
+    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+    cameraPermissions(token_result!["result"]["P_token"], role, (error, result) => {
+      if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      camPermissions.value = role as "all" | "admin";
+      stayBack();
+    })
+  });
 }
 
 const camStatus = () => {
   isLoggedIn();
   waits();
-  cameraStatus(cameraStatuses.value ? "off" : "on", (error, result) => {
-    //@ts-ignore
-    if (error || !result!['ok']) return toast.error({ message: result['message'], position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    cameraStatuses.value = cameraStatuses.value ? false : true;
-    camHint.value = cameraStatuses.value ? true : false;
-    stayBack();
-  })
+  refreshToken((error, token_result) => {
+    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+    cameraStatus(token_result!["result"]["P_token"], cameraStatuses.value ? "off" : "on", (error, result) => {
+      //@ts-ignore
+      if (error || !result!["ok"]) return toast.error({ message: result["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      cameraStatuses.value = cameraStatuses.value ? false : true;
+      camHint.value = cameraStatuses.value ? true : false;
+      stayBack();
+    })
+  });
 }
 
 const showMenu = (type: string) => {
   isLoggedIn();
-  const refs = type == 'kamera' ? kameraView : null;
+  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : null;
   optionsView.value = false;
   routeNow.value = type;
   refs!.value = true;
@@ -197,7 +226,7 @@ const showMenu = (type: string) => {
 
 const back = () => {
   isLoggedIn();
-  const refs = routeNow.value == 'kamera' ? kameraView : null;
+  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : null;
   optionsView.value = true;
   refs!.value = false;
 }
@@ -212,9 +241,16 @@ const signout = () => {
     showConfirmButton: true
   }).then((result) => {
     if (result.isConfirmed) {
-      clearCookie();
-      signOut();
-      window.location.href = "/";
+      isLoading.value = true;
+      adminPanel.value = false;
+      refreshToken((error, token_result) => {
+        if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        clearCookie(token_result!["result"]["P_token"]);
+        signOut(token_result!["result"]["P_token"]);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
+      });
     }
   })
 }

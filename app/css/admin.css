@@ -33,7 +33,7 @@
     margin-bottom: 25px;
 }
 
-.admin  .content .card .container {
+.admin .content .card .container {
     display: flex;
     flex-direction: column;
 }
@@ -122,6 +122,25 @@
 }
 
 .admin .content .submenu .menu-section {
+    margin-bottom: 50px;
+}
+
+.admin .content .submenu {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.admin .content .submenu .iframe-wrapper {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    display: flex;
+    justify-content: center;
+}
+
+.admin .content .submenu .iframe-wrapper iframe {
+    width: min(90vw, 1000px);
+    height: 130vh;
+    border-radius: 8px;
     margin-bottom: 50px;
 }
 
