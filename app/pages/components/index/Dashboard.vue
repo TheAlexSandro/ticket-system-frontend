@@ -150,6 +150,7 @@ onMounted(() => {
 
             if (userStarts.value) {
                 userStarts.value = false;
+                toast.destroy();
                 toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
             }
         })
