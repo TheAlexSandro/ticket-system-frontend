@@ -278,9 +278,7 @@ const signout = () => {
         if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
         clearCookie(token_result!["result"]["P_token"]);
         signOut(token_result!["result"]["P_token"]);
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
+        window.location.href = "/";
       });
     }
   })
