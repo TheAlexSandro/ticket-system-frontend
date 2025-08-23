@@ -140,23 +140,21 @@ const camPermissions = ref<"all" | "admin">();
 const cameraStatuses = ref<boolean>();
 
 onMounted(() => {
-  isLoading.value = false;
-  adminPanel.value = true;
-  // refreshToken((error, token_result) => {
-  //   if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+  refreshToken((error, token_result) => {
+    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-  //   verify(token_result!["result"]["P_token"], (error, result) => {
-  //     //@ts-ignore
-  //     if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-  //     if (!result!["ok"]) return window.location.href = "/signin";
-  //     adminObject.value = result as object;
-  //     cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-  //     camPermissions.value = result!["result"]["camera_permissions"];
-  //     camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
-  //     adminPanel.value = true;
-  //     isLoading.value = false;
-  //   })
-  // })
+    verify(token_result!["result"]["P_token"], (error, result) => {
+      //@ts-ignore
+      if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      if (!result!["ok"]) return window.location.href = "/signin";
+      adminObject.value = result as object;
+      cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
+      camPermissions.value = result!["result"]["camera_permissions"];
+      camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+      adminPanel.value = true;
+      isLoading.value = false;
+    })
+  })
 })
 
 const onIframeLoading = () => {
