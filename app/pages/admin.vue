@@ -56,7 +56,7 @@
               </div>
 
               <iframe v-show="!iframeLoad && !iframeError" :src="iframes()" frameborder="0"
-                @load="onIframeLoading"></iframe>
+                @load="onIframeLoad" @error="onIframeError"></iframe>
             </div>
 
           </div>
@@ -121,7 +121,6 @@ import { computed } from "vue";
 import Swal from "sweetalert2";
 import { useHead, useRuntimeConfig } from "nuxt/app";
 import LoadingScreen from "../components/LoadingScreen.vue";
-import axios, { AxiosResponse } from "axios";
 
 useHead({
   title: "Admin - PBL",
@@ -169,24 +168,16 @@ onMounted(() => {
       isLoading.value = false;
     })
   })
-
-  axios.post(iframes(), {}, { withCredentials: true })
-    .then((rest: AxiosResponse) => {
-      if (rest.status != 200) {
-        iframeError.value = true;
-        iframeLoad.value = false;
-        showIframe.value = false;
-      }
-    })
-    .catch((err) => {
-      iframeError.value = true;
-      iframeLoad.value = false;
-      showIframe.value = false;
-    })
 })
 
-const onIframeLoading = () => {
-  iframeLoad.value = false;
+const onIframeLoad = () => {
+  iframeLoad.value = false
+  iframeError.value = false
+}
+
+const onIframeError = () => {
+  iframeLoad.value = false
+  iframeError.value = true
 }
 
 const cameraStatusesIcon = computed(() =>
