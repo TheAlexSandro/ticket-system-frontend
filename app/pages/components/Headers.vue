@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import '~/css/header.css'
+import './css/Header.css'
 
 const redirect = () => {
     window.location.href = "/admin";

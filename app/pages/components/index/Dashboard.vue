@@ -89,11 +89,11 @@
 <script setup lang="ts">
 import { ref, nextTick, computed, onMounted } from "vue";
 import { BrowserMultiFormatReader } from "@zxing/browser";
-import "~/css/dashboard.css";
-import "~/css/custom.css";
+import "./css/Dashboard.css";
+import "./css/Custom.css";
 import Camera from "./Camera.vue";
-import { useSocket } from '../../composables/useSocket';
-import { getInfo, verify, refreshToken } from "../../server/Api";
+import { useSocket } from '../../../composables/useSocket';
+import { getInfo, verify, refreshToken } from "../../../server/Api";
 import Swal from "sweetalert2";
 
 type OverflowState = "hidden" | "visible";

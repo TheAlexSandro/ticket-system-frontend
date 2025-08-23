@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import '~/css/style.css';
-import LoadingScreen from './components/LoadingScreen.vue';
-import Headers from './components/Headers.vue';
+import './css/Global.css';
+import LoadingScreen from './pages/components/LoadingScreen.vue';
+import Headers from './pages/components/Headers.vue';
 import { ref, onMounted } from 'vue';
 
 const isLoading = ref(true);

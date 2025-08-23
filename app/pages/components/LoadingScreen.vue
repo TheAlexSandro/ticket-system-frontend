@@ -7,5 +7,5 @@
 </template>
 
 <script setup lang="ts">
-    import '~/css/loading.css';
+    import './css/Loading.css';
 </script>

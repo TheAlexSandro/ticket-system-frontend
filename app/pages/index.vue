@@ -3,14 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import Dashboard from '../components/index/Dashboard.vue';
 import { useHead } from 'nuxt/app';
+import Dashboard from './components/index/Dashboard.vue';
 
 useHead({
-  title: 'Ticket Scanner - PBL',
-  link: [
-    { rel: 'icon', type: 'image/png', href: '/image.png' }
-  ]
+  title: 'Ticket Scanner - PBL'
 })
 
 </script>

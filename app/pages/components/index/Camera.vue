@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import "~/css/camera.css";
+import "./css/Camera.css";
 import { computed } from "vue";
 import { useRuntimeConfig } from "nuxt/app";
 
