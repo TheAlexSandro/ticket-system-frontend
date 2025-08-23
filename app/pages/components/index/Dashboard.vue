@@ -125,6 +125,7 @@ const popupShown = ref(false);
 const ok = ref(false);
 const flash = ref(false);
 const streams = ref<MediaStreamTrack | null>(null);
+const userStarts = ref(false);
 
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
@@ -146,6 +147,11 @@ onMounted(() => {
             ok.value = true;
             camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+
+            if (userStarts.value) {
+                userStarts.value = false;
+                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            }
         })
     })
 
@@ -234,7 +240,10 @@ const stopCamera = (type: StopCamera) => {
 
 const startCamera = async (video_id: string) => {
     //@ts-ignore
-    if (!ok.value) return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (!ok.value) {
+        userStarts.value = true;
+        return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    }
     //@ts-ignore
     if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
