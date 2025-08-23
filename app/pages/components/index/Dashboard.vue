@@ -93,7 +93,6 @@ import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
 import { useSocket } from '../../../composables/useSocket';
-import { getInfo, verify, refreshToken } from "../../../server/Api";
 import Swal from "sweetalert2";
 
 type OverflowState = "hidden" | "visible";
@@ -102,7 +101,8 @@ type StopCamera = "stops" | "change";
 
 //@ts-ignore
 const toast = useToast() as any;
-//
+//@ts-ignore
+const api = useApi();
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
 const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone" | "no_flash">();
@@ -122,7 +122,7 @@ const camStatus = ref(true);
 const permitted = ref(false);
 const camPermission = ref<"all" | "admin">();
 const popupShown = ref(false);
-const ok = ref(false);
+const ok = ref<"wait" | "done" | "error">();
 const flash = ref(false);
 const streams = ref<MediaStreamTrack | null>(null);
 const userStarts = ref(false);
@@ -134,18 +134,19 @@ const othersIcon = computed(() =>
 let codeReader: BrowserMultiFormatReader | null = null;
 
 onMounted(() => {
-    refreshToken((error, token_result) => {
-        if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    api.refreshToken((error, token_result) => {
+        ok.value = "wait";
+        if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
 
-        verify(token_result!["result"]["P_token"], (error, result) => {
-            if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        api.verify(token_result!["result"]["P_token"], (error, result) => {
+            if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
-        getInfo(token_result!["result"]["P_token"], (error, result) => {
-            if (error || !result!['ok']) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            ok.value = true;
+        api.getInfo(token_result!["result"]["P_token"], (error, result) => {
+            if (error || !result!['ok']) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+            ok.value = "done";
             camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
 
@@ -242,11 +243,11 @@ const stopCamera = (type: StopCamera) => {
 
 const startCamera = async (video_id: string) => {
     //@ts-ignore
-    if (!ok.value) {
+    if (ok.value == "wait") {
         userStarts.value = true;
         return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     }
-    //@ts-ignore
+    if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {

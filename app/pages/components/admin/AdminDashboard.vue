@@ -116,12 +116,13 @@
 <script setup lang="ts">
 import "./css/AdminDashboard.css";
 import { onMounted, ref } from "vue";
-import { signOut, verify, cameraStatus, cameraPermissions, clearCookie, refreshToken } from "../../../server/Api";
 import { computed } from "vue";
 import Swal from "sweetalert2";
 import { useRuntimeConfig } from "nuxt/app";
 import LoadingScreen from "../LoadingScreen.vue";
+import { useApi } from "../../../composables/useApi";
 
+const api = useApi();
 const optionsView = ref(true);
 const kameraView = ref(false);
 const websiteView = ref(false);
@@ -146,10 +147,10 @@ const iframes = (): string => {
 onMounted(() => {
   // adminPanel.value = true;
   // isLoading.value = false;
-  refreshToken((error, token_result) => {
+  api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    verify(token_result!["result"]["P_token"], (error, result) => {
+    api.verify(token_result!["result"]["P_token"], (error, result) => {
       //@ts-ignore
       if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       if (!result!["ok"]) return window.location.href = "/signin";
@@ -212,10 +213,10 @@ const changeCamPermissions = (role: string) => {
   isLoggedIn();
   waits();
   if (camPermissions.value == role) return;
-  refreshToken((error, token_result) => {
+  api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    cameraPermissions(token_result!["result"]["P_token"], role, (error, result) => {
+    api.cameraPermissions(token_result!["result"]["P_token"], role, (error, result) => {
       if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       camPermissions.value = role as "all" | "admin";
       stayBack();
@@ -226,10 +227,10 @@ const changeCamPermissions = (role: string) => {
 const camStatus = () => {
   isLoggedIn();
   waits();
-  refreshToken((error, token_result) => {
+  api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    cameraStatus(token_result!["result"]["P_token"], cameraStatuses.value ? "off" : "on", (error, result) => {
+    api.cameraStatus(token_result!["result"]["P_token"], cameraStatuses.value ? "off" : "on", (error, result) => {
       //@ts-ignore
       if (error || !result!["ok"]) return toast.error({ message: result["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       cameraStatuses.value = cameraStatuses.value ? false : true;
@@ -267,10 +268,10 @@ const signout = () => {
     if (result.isConfirmed) {
       isLoading.value = true;
       adminPanel.value = false;
-      refreshToken((error, token_result) => {
+      api.refreshToken((error, token_result) => {
         if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        clearCookie(token_result!["result"]["P_token"]);
-        signOut(token_result!["result"]["P_token"]);
+        api.clearCookie(token_result!["result"]["P_token"]);
+        api.signOut(token_result!["result"]["P_token"]);
         window.location.href = "/";
       });
     }

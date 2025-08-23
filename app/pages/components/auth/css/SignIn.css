@@ -1,3 +1,11 @@
+.input-error {
+  border-color: red !important;
+}
+
+.label-error {
+  color: red !important;
+}
+
 .signin {
     display: flex;
     flex-direction: column;
@@ -86,6 +94,11 @@
     flex-direction: column;
 }
 
+.signin .container .form .group {
+    display: flex;
+    flex-direction: column;
+}
+
 .signin .container .form .help {
     cursor: pointer;
     margin-top: 3px;
@@ -164,6 +177,30 @@
     font-size: 15px;
 }
 
+.signin .container .form .load {
+    width: 30vw;
+}
+
+.signin .container .form .load {
+    text-align: center;
+}
+
+.signin .container .form .load .spin {
+    display: inline-block;
+    font-size: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @keyframes scaleHover {
     0% {
         transform: scale(1);
@@ -204,6 +241,11 @@
         margin-top: 30px;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .signin .container .form .load {
+        width: 100%;
+        text-align: center;
     }
 
     .signin .container .form .input-group input {
@@ -255,6 +297,11 @@
         margin-top: 40px;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .signin .container .form .load {
+        width: 100%;
+        text-align: center;
     }
 
     .signin .container .form .input-group input {

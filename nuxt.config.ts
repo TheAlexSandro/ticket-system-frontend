@@ -16,7 +16,7 @@ export default defineNuxtConfig({
           content:
             "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet.",
         },
-        { name: 'robots', content: 'noindex, nofollow' }
+        { name: "robots", content: "noindex, nofollow" },
       ],
       link: [
         {
@@ -43,11 +43,15 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    API_TOKEN: process.env.API_TOKEN,
     public: {
-      API_TOKEN: process.env.API_TOKEN,
       BACKEND_URL: process.env.BACKEND_URL,
       EMAIL: process.env.EMAIL,
-      DATA_CHART_URL: process.env.DATA_CHART_URL
+      DATA_CHART_URL: process.env.DATA_CHART_URL,
     },
   },
+  plugins: [
+    "./plugins/api.ts"
+  ]
 });
+console.log("Server restarting...")
