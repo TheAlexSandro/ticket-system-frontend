@@ -134,28 +134,29 @@ const othersIcon = computed(() =>
 let codeReader: BrowserMultiFormatReader | null = null;
 
 onMounted(() => {
-    refreshToken((error, token_result) => {
-        if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    // refreshToken((error, token_result) => {
+    //     if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-        verify(token_result!["result"]["P_token"], (error, result) => {
-            if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            if (error || !result!['ok']) return;
-            permitted.value = true;
-        })
+    //     verify(token_result!["result"]["P_token"], (error, result) => {
+    //         if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    //         if (error || !result!['ok']) return;
+    //         permitted.value = true;
+    //     })
 
-        getInfo(token_result!["result"]["P_token"], (error, result) => {
-            if (error || !result!['ok']) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            ok.value = true;
-            camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
-            camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+    //     getInfo(token_result!["result"]["P_token"], (error, result) => {
+    //         if (error || !result!['ok']) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    //         ok.value = true;
+    //         camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
+    //         camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
 
-            if (userStarts.value) {
-                userStarts.value = false;
-                toast.destroy();
-                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            }
-        })
-    })
+    //         if (userStarts.value) {
+    //             userStarts.value = false;
+    //             toast.destroy();
+    //             toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    //         }
+    //     })
+    // })
+    ok.value = true;
 
     socket.on("camera_status", (data) => {
         if (data['status'] == null) return;
@@ -369,7 +370,8 @@ const switchCamera = async () => {
         const videoInputs = devices.filter(device => device.kind === "videoinput");
 
         if (videoInputs.length > 1) {
-            facingMode.value = facingMode.value == "environment" ? "user" : "environment"
+            facingMode.value = facingMode.value == "environment" ? "user" : "environment";
+            flash.value = false;
             startCamera('camera');
         } else {
             isDisabled.value = true;
