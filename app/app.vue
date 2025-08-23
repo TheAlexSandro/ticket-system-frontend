@@ -16,6 +16,11 @@ import './css/Global.css';
 import LoadingScreen from './pages/components/LoadingScreen.vue';
 import Headers from './pages/components/Headers.vue';
 import { ref, onMounted } from 'vue';
+import { useHead } from 'nuxt/app';
+
+useHead({
+  title: "Project Based Learning"
+})
 
 const isLoading = ref(true);
 

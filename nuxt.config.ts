@@ -16,6 +16,7 @@ export default defineNuxtConfig({
           content:
             "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet.",
         },
+        { name: 'robots', content: 'noindex, nofollow' }
       ],
       link: [
         {
