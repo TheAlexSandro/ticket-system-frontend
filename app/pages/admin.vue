@@ -45,8 +45,14 @@
             <div class="title"><i class="ri-user-5-line"></i> <span>Pengunjung Website</span></div>
             <p>Berikut adalah data pengunjung website pada pblsmekensa.site</p>
             <hr>
+
             <div class="iframe-wrapper">
-              <iframe src="https://us.umami.is/share/d9SJdbGfjhprPcIi/pblsmekensa.site" frameborder="0"></iframe>
+              <iframe v-show="!iframeLoad" src="https://us.umami.is/share/d9SJdbGfjhprPcIi/pblsmekensa.site"
+                frameborder="0" @load="onIframeLoading"></iframe>
+
+              <div class="loader" v-if="iframeLoad">
+                <i class="ri-loader-4-line spin"></i> Memuat data...
+              </div>
             </div>
 
           </div>
@@ -128,27 +134,34 @@ const routeNow = ref("");
 const camHint = ref(true);
 const clicked = ref(false);
 const isLoading = ref(true);
+const iframeLoad = ref(true);
 
 const camPermissions = ref<"all" | "admin">();
 const cameraStatuses = ref<boolean>();
 
 onMounted(() => {
-  refreshToken((error, token_result) => {
-    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+  isLoading.value = false;
+  adminPanel.value = true;
+  // refreshToken((error, token_result) => {
+  //   if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    verify(token_result!["result"]["P_token"], (error, result) => {
-      //@ts-ignore
-      if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-      if (!result!["ok"]) return window.location.href = "/signin";
-      adminObject.value = result as object;
-      cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-      camPermissions.value = result!["result"]["camera_permissions"];
-      camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
-      adminPanel.value = true;
-      isLoading.value = false;
-    })
-  })
+  //   verify(token_result!["result"]["P_token"], (error, result) => {
+  //     //@ts-ignore
+  //     if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+  //     if (!result!["ok"]) return window.location.href = "/signin";
+  //     adminObject.value = result as object;
+  //     cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
+  //     camPermissions.value = result!["result"]["camera_permissions"];
+  //     camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+  //     adminPanel.value = true;
+  //     isLoading.value = false;
+  //   })
+  // })
 })
+
+const onIframeLoading = () => {
+  iframeLoad.value = false;
+}
 
 const cameraStatusesIcon = computed(() =>
   cameraStatuses.value ? "ri-alert-line" : "ri-check-line"
@@ -229,6 +242,7 @@ const back = () => {
   const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : null;
   optionsView.value = true;
   refs!.value = false;
+  iframeLoad.value = true;
 }
 
 const signout = () => {
