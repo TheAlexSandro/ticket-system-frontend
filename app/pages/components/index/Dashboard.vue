@@ -63,7 +63,7 @@
                                             MirrorY</div>
                                     </div>
                                 </div>
-                                <div class="button">
+                                <div class="button" v-if="flashAvailable">
                                     <div class="btn" @click="changeFlash()"><i :class="getFlashStateIcon"></i>
                                         {{ getFlashStateText }}
                                     </div>
@@ -126,6 +126,7 @@ const ok = ref(false);
 const flash = ref(false);
 const streams = ref<MediaStreamTrack | null>(null);
 const userStarts = ref(false);
+const flashAvailable = ref(false);
 
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
@@ -268,6 +269,7 @@ const startCamera = async (video_id: string) => {
                 return;
             }
 
+            if (facingMode.value == "environment") { flashAvailable.value = true };
             cameraAccess.value = true;
             currentStream.value = stream;
             isLoading.value = false;
