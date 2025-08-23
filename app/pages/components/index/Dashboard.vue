@@ -269,7 +269,7 @@ const startCamera = async (video_id: string) => {
                 return;
             }
 
-            if (facingMode.value == "environment") { flashAvailable.value = true };
+            if (facingMode.value == "environment") { flashAvailable.value = true } else { flashAvailable.value = false };
             cameraAccess.value = true;
             currentStream.value = stream;
             isLoading.value = false;
