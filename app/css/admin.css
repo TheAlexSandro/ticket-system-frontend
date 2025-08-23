@@ -145,19 +145,27 @@
     margin-bottom: 50px;
 }
 
-.admin .content .submenu .iframe-wrapper .loader {
+.admin .content .submenu .iframe-wrapper .load,
+.admin .content .submenu .iframe-wrapper .error {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 200px;
     font-size: 16px;
-    color: #555;
 }
 
-.admin .content .submenu .iframe-wrapper .spin {
+.admin .content .submenu .iframe-wrapper i {
+    margin-right: 7px;
+}
+
+.admin .content .submenu .iframe-wrapper .load .spin {
     font-size: 24px;
     margin-right: 8px;
     animation: spin 1s linear infinite;
+}
+
+.admin .content .submenu .iframe-wrapper .error {
+    color: red;
 }
 
 @keyframes spin {

@@ -47,12 +47,16 @@
             <hr>
 
             <div class="iframe-wrapper">
-              <iframe v-show="!iframeLoad" src="https://us.umami.is/share/d9SJdbGfjhprPcIi/pblsmekensa.site"
-                frameborder="0" @load="onIframeLoading"></iframe>
-
-              <div class="loader" v-if="iframeLoad">
+              <div class="load" v-if="iframeLoad">
                 <i class="ri-loader-4-line spin"></i> Memuat data...
               </div>
+
+              <div class="error" v-if="iframeError">
+                <i class="ri-alert-line"></i> Gagal memuat data
+              </div>
+
+              <iframe v-show="!iframeLoad && !iframeError" :src="iframes()" frameborder="0"
+                @load="onIframeLoading"></iframe>
             </div>
 
           </div>
@@ -115,8 +119,9 @@ import { onMounted, ref } from "vue";
 import { signOut, verify, cameraStatus, cameraPermissions, clearCookie, refreshToken } from "../server/Api";
 import { computed } from "vue";
 import Swal from "sweetalert2";
-import { useHead } from "nuxt/app";
+import { useHead, useRuntimeConfig } from "nuxt/app";
 import LoadingScreen from "../components/LoadingScreen.vue";
+import axios, { AxiosResponse } from "axios";
 
 useHead({
   title: "Admin - PBL",
@@ -135,11 +140,20 @@ const camHint = ref(true);
 const clicked = ref(false);
 const isLoading = ref(true);
 const iframeLoad = ref(true);
+const iframeError = ref(false);
+const showIframe = ref(false);
 
 const camPermissions = ref<"all" | "admin">();
 const cameraStatuses = ref<boolean>();
 
+const iframes = (): string => {
+  const configs = useRuntimeConfig();
+  return String(configs.public["DATA_CHART_URL"]);
+}
+
 onMounted(() => {
+  // adminPanel.value = true;
+  // isLoading.value = false;
   refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
@@ -155,6 +169,20 @@ onMounted(() => {
       isLoading.value = false;
     })
   })
+
+  axios.post(iframes(), {}, { withCredentials: true })
+    .then((rest: AxiosResponse) => {
+      if (rest.status != 200) {
+        iframeError.value = true;
+        iframeLoad.value = false;
+        showIframe.value = false;
+      }
+    })
+    .catch((err) => {
+      iframeError.value = true;
+      iframeLoad.value = false;
+      showIframe.value = false;
+    })
 })
 
 const onIframeLoading = () => {
