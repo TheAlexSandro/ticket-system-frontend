@@ -43,7 +43,9 @@ export const getAdminDashboardInfo = (
 ) => {
   const { api } = useApi();
   api
-    .post(`/admin/getInfo?P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/admin/getInfo`, {
+      P_token
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
@@ -59,7 +61,10 @@ export const getUsername = (
 ) => {
   const { api } = useApi();
   api
-    .post(`/auth/getUsername?username=${username}&P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/auth/getUsername`, {
+      P_token,
+      username
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
@@ -77,8 +82,12 @@ export const signIn = (
   const { api } = useApi();
   api
     .post(
-      `/auth/signin?username=${username}&password=${password}&P_token=${P_token}`,
-      {},
+      `/auth/signin`,
+      {
+        P_token,
+        username,
+        password
+      },
       { withCredentials: true }
     )
     .then((result: AxiosResponse) => {
@@ -92,7 +101,9 @@ export const signIn = (
 export const signOut = (P_token: string, callback?: Callback<null | AxiosResponse>) => {
   const { api } = useApi();
   api
-    .post(`/auth/signOut?P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/auth/signOut`, {
+      P_token
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback?.(null, result.data);
     })
@@ -104,7 +115,9 @@ export const signOut = (P_token: string, callback?: Callback<null | AxiosRespons
 export const verify = (P_token: string, callback: Callback<null | AxiosResponse>) => {
   const { api } = useApi();
   api
-    .post(`/auth/verify?P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/auth/verify`, {
+      P_token
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
@@ -116,7 +129,9 @@ export const verify = (P_token: string, callback: Callback<null | AxiosResponse>
 export const clearCookie = (P_token: string, callback?: Callback<null | AxiosResponse>) => {
   const { api } = useApi();
   api
-    .post(`/auth/clearCookie?P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/auth/clearCookie`, {
+      P_token
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback?.(null, result.data);
     })
@@ -132,7 +147,10 @@ export const cameraStatus = (
 ) => {
   const { api } = useApi();
   api
-    .post(`/admin/cameraStatus?status=${status}&P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/admin/cameraStatus`, {
+      P_token,
+      status
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
@@ -148,7 +166,10 @@ export const cameraPermissions = (
 ) => {
   const { api } = useApi();
   api
-    .post(`/admin/cameraPermissions?role=${role}&P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/admin/cameraPermissions`, {
+      P_token,
+      role,
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
@@ -160,7 +181,9 @@ export const cameraPermissions = (
 export const getInfo = (P_token: string, callback: Callback<null | AxiosResponse>) => {
   const { api } = useApi();
   api
-    .post(`/admin/getInfo?P_token=${P_token}`, {}, { withCredentials: true })
+    .post(`/admin/getInfo`, {
+      P_token
+    }, { withCredentials: true })
     .then((result: AxiosResponse) => {
       return callback(null, result.data);
     })
