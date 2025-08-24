@@ -1,7 +1,9 @@
 <template>
-    <LoadingScreen v-if="isLoading" />
+    <template v-if="isLoading">
+        <LoadingScreen/>
+    </template>
 
-    <section v-else>
+    <template v-else>
         <section v-if="!isDisabled" class="dashboard">
             <template v-if="!cameraAccess">
                 <div class="banner">
@@ -83,7 +85,7 @@
         <section v-if="cameraErrType">
             <Camera :type="cameraErrType" />
         </section>
-    </section>
+    </template>
 </template>
 
 <script setup lang="ts">
@@ -92,6 +94,7 @@ import { BrowserMultiFormatReader } from "@zxing/browser";
 import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
+import LoadingScreen from "../LoadingScreen.vue";
 import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
 
@@ -273,9 +276,9 @@ const startCamera = async (video_id: string) => {
             if (facingMode.value == "environment") { flashAvailable.value = true } else { flashAvailable.value = false };
             cameraAccess.value = true;
             currentStream.value = stream;
-            isLoading.value = false;
             showWarning.value = false;
             streams.value = stream.getVideoTracks()[0];
+            isLoading.value = false;
             await nextTick();
             const video = document.getElementById(video_id) as HTMLVideoElement;
             if (video) {
@@ -389,7 +392,7 @@ const switchCamera = async () => {
 }
 
 const getFlashStateText = computed(() =>
-    !flash.value ? "Aktfikan Flash" : "Matikan Flash"
+    !flash.value ? "Aktifkan Flash" : "Matikan Flash"
 )
 
 const getFlashStateIcon = computed(() =>
