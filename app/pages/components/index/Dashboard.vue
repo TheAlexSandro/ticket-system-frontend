@@ -97,6 +97,7 @@ import Camera from "./Camera.vue";
 import LoadingScreen from "../LoadingScreen.vue";
 import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
+import { useApi } from "../../../composables/useApi";
 
 type OverflowState = "hidden" | "visible";
 type MirrorScale = "Y" | "X";
@@ -105,6 +106,7 @@ type StopCamera = "stops" | "change";
 //@ts-ignore
 const toast = useToast() as any;
 //@ts-ignore
+const isLoading = ref(true);
 const api = useApi();
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
@@ -113,7 +115,6 @@ const facingMode = ref("environment");
 const currentStream = ref<MediaStream | null>(null);
 const isCameraStopped = ref(false);
 const inChangeDirection = ref(false);
-const isLoading = ref(false);
 const hasSetOverflow = ref(false);
 const others = ref(false);
 const mirrorX = ref(1);
@@ -153,6 +154,7 @@ onMounted(() => {
             camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
 
+            isLoading.value = false;
             if (userStarts.value) {
                 userStarts.value = false;
                 toast.destroy();
