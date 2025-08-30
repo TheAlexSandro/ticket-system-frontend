@@ -303,6 +303,7 @@ const startCamera = async (video_id: string) => {
                 }
             }
         } catch (err: any) {
+            toast.info({ message: err, position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
             overflow("visible");
             isLoading.value = false;
             isDisabled.value = true;
