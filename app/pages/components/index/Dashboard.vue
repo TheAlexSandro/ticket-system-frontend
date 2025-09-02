@@ -321,10 +321,14 @@ const startQRScanning = (video: HTMLVideoElement) => {
         if (result) {
             if (!popupShown.value) {
                 popupShown.value = true;
+                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 7000 });
                 api.refreshToken((error, token_result) => {
-                    if (error) return;
+                    if (error) return toast.error({ message: "Error, please try again.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
                     api.scan(String(token_result), result.getText(), (error, result) => {
-                        if (error || !result) {
+                        if (error) return toast.error({ message: "Error, please try again.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                        //@ts-ignore
+                        toast.destroy();
+                        if (!result) {
                             Swal.fire({
                                 title: 'Failed!',
                                 icon: 'error',
@@ -337,6 +341,7 @@ const startQRScanning = (video: HTMLVideoElement) => {
                                     popupShown.value = false;
                                 }
                             })
+                            return;
                         }
 
                         Swal.fire({
