@@ -2,6 +2,14 @@ import { useNuxtApp } from "nuxt/app";
 import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
 type Callback<T> = (error: string | null, result: T) => void;
+type Ticket = {
+  id: string;
+  tipe: "internal" | "eksternal";
+  nama: string;
+  kelas?: string | null;
+  absen?: string | null;
+  nomor_hp?: string | null;
+};
 
 export function useApi() {
   const { $api } = useNuxtApp();
@@ -12,7 +20,7 @@ export function useApi() {
       apis
         .post(`/auth/generateAuthentication`)
         .then((result: AxiosResponse) => {
-          return callback(null, result.data);
+          return callback(null, result.data["result"]["P_token"]);
         })
         .catch((err: AxiosError) => {
           return callback(err.message, null);
@@ -146,6 +154,26 @@ export function useApi() {
         })
         .then((result: AxiosResponse) => {
           return callback(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
+    scan(P_token: string, identifier: string, callback: Callback<null | AxiosResponse | string | boolean>) {
+      apis
+        .post(`/users/scan`, {
+          P_token,
+          method: "id",
+          identifier,
+        })
+        .then((result: AxiosResponse) => {
+          if (!result["data"]["ok"]) return callback(null, false);
+          result["data"]["result"].map((item: Ticket) => {
+            var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
+            var absen = item.absen ? `Absen: ${item.absen}<br>` : "";
+            var nomor_hp = item.nomor_hp ? `Nomor HP: ${item.nomor_hp}<br>` : "";
+            return callback(null, `ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`)
+          })
         })
         .catch((err: AxiosError) => {
           return callback(err.message, null);

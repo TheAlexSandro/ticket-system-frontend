@@ -163,7 +163,7 @@ const signin = () => {
     } else {
         api.refreshToken((error, token_result) => {
             if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            api.getUsername(token_result!["result"]["P_token"], String(usernameValue.value), (error, result) => {
+            api.getUsername(String(token_result), String(usernameValue.value), (error, result) => {
                 //@ts-ignore
                 if (error) return toast.error({ message: error, position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
                 if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
@@ -186,7 +186,7 @@ const verify = () => {
     api.refreshToken((error, token_result) => {
         if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-        api.signIn(token_result!["result"]["P_token"], String(usernameValue.value), String(passwordValue.value), (error, result) => {
+        api.signIn(String(token_result), String(usernameValue.value), String(passwordValue.value), (error, result) => {
             //@ts-ignore
             if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");

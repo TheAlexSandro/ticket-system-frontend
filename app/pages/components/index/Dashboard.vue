@@ -1,6 +1,6 @@
 <template>
     <template v-if="isLoading">
-        <LoadingScreen/>
+        <LoadingScreen />
     </template>
 
     <template v-else>
@@ -105,7 +105,6 @@ type StopCamera = "stops" | "change";
 
 //@ts-ignore
 const toast = useToast() as any;
-//@ts-ignore
 const isLoading = ref(true);
 const api = useApi();
 const cameraAccess = ref(false);
@@ -142,13 +141,13 @@ onMounted(() => {
         ok.value = "wait";
         if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
 
-        api.verify(token_result!["result"]["P_token"], (error, result) => {
+        api.verify(String(token_result), (error, result) => {
             if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
-        api.getInfo(token_result!["result"]["P_token"], (error, result) => {
+        api.getInfo(String(token_result), (error, result) => {
             if (error || !result!['ok']) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
             ok.value = "done";
             camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
@@ -322,17 +321,37 @@ const startQRScanning = (video: HTMLVideoElement) => {
         if (result) {
             if (!popupShown.value) {
                 popupShown.value = true;
-                Swal.fire({
-                    title: 'Success!',
-                    icon: 'success',
-                    text: String(result),
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    confirmButtonText: "OK"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        popupShown.value = false;
-                    }
+                api.refreshToken((error, token_result) => {
+                    if (error) return;
+                    api.scan(String(token_result), result.getText(), (error, result) => {
+                        if (error || !result) {
+                            Swal.fire({
+                                title: 'Failed!',
+                                icon: 'error',
+                                text: "Pengguna tidak ditemukan!",
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonText: "OK"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    popupShown.value = false;
+                                }
+                            })
+                        }
+
+                        Swal.fire({
+                            title: 'Success!',
+                            icon: 'success',
+                            html: String(result),
+                            showCancelButton: false,
+                            showConfirmButton: true,
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                popupShown.value = false;
+                            }
+                        })
+                    })
                 })
             }
         };

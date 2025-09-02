@@ -150,7 +150,7 @@ onMounted(() => {
   api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    api.verify(token_result!["result"]["P_token"], (error, result) => {
+    api.verify(String(token_result), (error, result) => {
       //@ts-ignore
       if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       if (!result!["ok"]) return window.location.href = "/signin";
@@ -216,7 +216,7 @@ const changeCamPermissions = (role: string) => {
   api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    api.cameraPermissions(token_result!["result"]["P_token"], role, (error, result) => {
+    api.cameraPermissions(String(token_result), role, (error, result) => {
       if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       camPermissions.value = role as "all" | "admin";
       stayBack();
@@ -230,7 +230,7 @@ const camStatus = () => {
   api.refreshToken((error, token_result) => {
     if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
-    api.cameraStatus(token_result!["result"]["P_token"], cameraStatuses.value ? "off" : "on", (error, result) => {
+    api.cameraStatus(String(token_result), cameraStatuses.value ? "off" : "on", (error, result) => {
       //@ts-ignore
       if (error || !result!["ok"]) return toast.error({ message: result["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       cameraStatuses.value = cameraStatuses.value ? false : true;
@@ -270,8 +270,8 @@ const signout = () => {
       adminPanel.value = false;
       api.refreshToken((error, token_result) => {
         if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        api.clearCookie(token_result!["result"]["P_token"]);
-        api.signOut(token_result!["result"]["P_token"]);
+        api.clearCookie(String(token_result));
+        api.signOut(String(token_result));
         window.location.href = "/";
       });
     }
