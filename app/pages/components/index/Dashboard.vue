@@ -322,14 +322,39 @@ const startQRScanning = (video: HTMLVideoElement) => {
             if (!popupShown.value) {
                 popupShown.value = true;
                 toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 7000 });
-                if (!result.getText().startsWith("PBL-")) {
+                if (!String(result.getText()).startsWith("PBL-")) {
                     toast.destroy();
-                    toast.warning({ message: "Bukan tiket yang valid!", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                    Swal.fire({
+                        title: 'Warning!',
+                        icon: 'warning',
+                        text: "Bukan tiket yang valid!",
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: "OK"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            popupShown.value = false;
+                        }
+                    })
                     return;
                 }
                 api.scan(result.getText(), (error, result) => {
-                    if (error) return toast.error({ message: "Error, please try again!", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                    //@ts-ignore
+                    if (error) {
+                        toast.destroy();
+                        Swal.fire({
+                            title: 'Error!',
+                            icon: 'error',
+                            text: "Error, please try again.",
+                            showCancelButton: false,
+                            showConfirmButton: true,
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                popupShown.value = false;
+                            }
+                        })
+                        return;
+                    }
                     toast.destroy();
                     if (!result) {
                         Swal.fire({
