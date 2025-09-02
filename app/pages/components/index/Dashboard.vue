@@ -322,8 +322,13 @@ const startQRScanning = (video: HTMLVideoElement) => {
             if (!popupShown.value) {
                 popupShown.value = true;
                 toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 7000 });
+                if (!result.getText().startsWith("PBL-")) {
+                    toast.destroy();
+                    toast.warning({ message: "Bukan tiket yang valid!", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                    return;
+                }
                 api.scan(result.getText(), (error, result) => {
-                    if (error) return toast.error({ message: "Error, please try again.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                    if (error) return toast.error({ message: "Error, please try again!", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
                     //@ts-ignore
                     toast.destroy();
                     if (!result) {
