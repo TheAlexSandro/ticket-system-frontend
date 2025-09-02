@@ -159,10 +159,9 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    scan(P_token: string, identifier: string, callback: Callback<null | AxiosResponse | string | boolean>) {
+    scan(identifier: string, callback: Callback<null | AxiosResponse | string | boolean>) {
       apis
         .post(`/users/scan`, {
-          P_token,
           method: "id",
           identifier,
         })

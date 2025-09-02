@@ -322,32 +322,15 @@ const startQRScanning = (video: HTMLVideoElement) => {
             if (!popupShown.value) {
                 popupShown.value = true;
                 toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 7000 });
-                api.refreshToken((error, token_result) => {
+                api.scan(result.getText(), (error, result) => {
                     if (error) return toast.error({ message: "Error, please try again.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                    api.scan(String(token_result), result.getText(), (error, result) => {
-                        if (error) return toast.error({ message: "Error, please try again.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                        //@ts-ignore
-                        toast.destroy();
-                        if (!result) {
-                            Swal.fire({
-                                title: 'Failed!',
-                                icon: 'error',
-                                text: "Pengguna tidak ditemukan!",
-                                showCancelButton: false,
-                                showConfirmButton: true,
-                                confirmButtonText: "OK"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    popupShown.value = false;
-                                }
-                            })
-                            return;
-                        }
-
+                    //@ts-ignore
+                    toast.destroy();
+                    if (!result) {
                         Swal.fire({
-                            title: 'Success!',
-                            icon: 'success',
-                            html: String(result),
+                            title: 'Failed!',
+                            icon: 'error',
+                            text: "Pengguna tidak ditemukan!",
                             showCancelButton: false,
                             showConfirmButton: true,
                             confirmButtonText: "OK"
@@ -356,6 +339,20 @@ const startQRScanning = (video: HTMLVideoElement) => {
                                 popupShown.value = false;
                             }
                         })
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Success!',
+                        icon: 'success',
+                        html: String(result),
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: "OK"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            popupShown.value = false;
+                        }
                     })
                 })
             }
