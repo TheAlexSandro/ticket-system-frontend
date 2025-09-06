@@ -321,7 +321,7 @@ const startQRScanning = (video: HTMLVideoElement) => {
         if (result) {
             if (!popupShown.value) {
                 popupShown.value = true;
-                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 7000 });
+                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, close: false });
                 if (!String(result.getText()).startsWith("PBL-")) {
                     toast.destroy();
                     Swal.fire({
