@@ -9,6 +9,7 @@ type Ticket = {
   kelas?: string | null;
   absen?: string | null;
   nomor_hp?: string | null;
+  is_scanned?: boolean | null;
 };
 
 export function useApi() {
@@ -159,7 +160,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    scan(identifier: string, callback: Callback<null | AxiosResponse | string | boolean>) {
+    scan(identifier: string, callback: Callback<null | AxiosResponse | string | boolean | object>) {
       apis
         .post(`/users/scan`, {
           method: "id",
@@ -171,7 +172,10 @@ export function useApi() {
             var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
             var absen = item.absen ? `Absen: ${item.absen}<br>` : "";
             var nomor_hp = item.nomor_hp ? `Nomor HP: ${item.nomor_hp}<br>` : "";
-            return callback(null, `ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`)
+            var message = item.is_scanned ? `<strong>Tiket sudah dipindai!</strong><br><br>` : ``
+            var icon = item.is_scanned ? "warning" : "success";
+
+            return callback(null, { text: `${message}ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`, icon })
           })
         })
         .catch((err: AxiosError) => {

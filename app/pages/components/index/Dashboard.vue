@@ -374,8 +374,8 @@ const startQRScanning = (video: HTMLVideoElement) => {
 
                     Swal.fire({
                         title: 'Success!',
-                        icon: 'success',
-                        html: String(result),
+                        icon: result["icon"],
+                        html: result["text"],
                         showCancelButton: false,
                         showConfirmButton: true,
                         confirmButtonText: "OK"
