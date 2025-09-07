@@ -18,10 +18,11 @@
             </div>
           </div>
 
-          <span class="title">Pemindaian</span>
+          <span class="title">Sistem</span>
           <div class="card">
             <div class="container">
               <div class="item" @click="showMenu('kamera')"><i class="ri-camera-line"></i> Kamera</div>
+              <div class="item" @click="showMenu('pemindaian')"><i class="ri-coupon-2-line"></i> Metode Pemindaian</div>
             </div>
           </div>
 
@@ -40,6 +41,37 @@
             <i class="ri-arrow-left-s-line"></i>
           </div>
 
+          <!-- SUBMENU METODE PEMINDAIAN -->
+          <div class="metode-pemindaian" v-if="pemindaianView">
+            <div class="title"><i class="ri-coupon-2-line"></i> <span>Metode Pemindaian</span></div>
+            <p>Dari sini, Anda dapat memilih metode pemindaian bawaan untuk tiket.</p>
+            <hr>
+
+            <div class="menu-section">
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="changePemindaianMethod('name')"><i class="ri-font-family"></i> Dengan Nama
+                    <span><i :class="pemindaianMethod == 'name' ? 'ri-check-line' : ''"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hint">
+                Pemindaian pada tiket akan dilakukan dengan menggunakan nama pada tiket.
+              </div>
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="changePemindaianMethod('id')"><i class="ri-id-card-line"></i> Dengan ID
+                    <span><i :class="pemindaianMethod == 'id' ? 'ri-check-line' : ''"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hint">
+                Pemindaian pada tiket akan dilakukan dengan menggunakan ID pada tiket.
+              </div>
+            </div>
+          </div>
+          <!-- END OF SUBMENU METODE PEMINDAIAN -->
+
           <!-- SUBMENU PENGUNJUNG WEBSITE -->
           <div class="pengunjung-website" v-if="websiteView">
             <div class="title"><i class="ri-user-5-line"></i> <span>Pengunjung Website</span></div>
@@ -55,8 +87,8 @@
                 <i class="ri-alert-line"></i> Gagal memuat data
               </div>
 
-              <iframe v-show="!iframeLoad && !iframeError" :src="iframes()" frameborder="0"
-                @load="onIframeLoad" @error="onIframeError"></iframe>
+              <iframe v-show="!iframeLoad && !iframeError" :src="iframes()" frameborder="0" @load="onIframeLoad"
+                @error="onIframeError"></iframe>
             </div>
 
           </div>
@@ -111,6 +143,10 @@
       </template>
     </div>
   </section>
+
+  <section v-if="isFailed">
+    <Errors />
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -121,11 +157,14 @@ import Swal from "sweetalert2";
 import { useRuntimeConfig } from "nuxt/app";
 import LoadingScreen from "../LoadingScreen.vue";
 import { useApi } from "../../../composables/useApi";
+import Errors from "../errors/Errors.vue";
 
 const api = useApi();
 const optionsView = ref(true);
 const kameraView = ref(false);
 const websiteView = ref(false);
+const pemindaianView = ref(false);
+
 const adminPanel = ref(false);
 const adminObject = ref({});
 const routeNow = ref("");
@@ -134,9 +173,10 @@ const clicked = ref(false);
 const isLoading = ref(true);
 const iframeLoad = ref(true);
 const iframeError = ref(false);
-const showIframe = ref(false);
+const isFailed = ref(false);
 
 const camPermissions = ref<"all" | "admin">();
+const pemindaianMethod = ref<"id" | "name">();
 const cameraStatuses = ref<boolean>();
 
 const iframes = (): string => {
@@ -144,19 +184,27 @@ const iframes = (): string => {
   return String(configs.public["DATA_CHART_URL"]);
 }
 
+const stopRequest = () => {
+  toast.destroy();
+  isLoading.value = false;
+  adminPanel.value = false;
+  isFailed.value = true;
+}
+
 onMounted(() => {
   // adminPanel.value = true;
   // isLoading.value = false;
   api.refreshToken((error, token_result) => {
-    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (error) { stopRequest(); return; }
 
     api.verify(String(token_result), (error, result) => {
       //@ts-ignore
-      if (error) return toast.error({ message: "Failed to fetch pblsmekensa.site", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      if (error) { stopRequest(); return; }
       if (!result!["ok"]) return window.location.href = "/signin";
       adminObject.value = result as object;
       cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
       camPermissions.value = result!["result"]["camera_permissions"];
+      pemindaianMethod.value = result!["result"]["scanning_method"];
       camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
       adminPanel.value = true;
       isLoading.value = false;
@@ -199,7 +247,7 @@ const maintenance = () => {
 const waits = () => {
   clicked.value = true;
   //@ts-ignore
-  toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 4000 });
+  toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
   if (clicked.value) return;
 }
 
@@ -214,11 +262,26 @@ const changeCamPermissions = (role: string) => {
   waits();
   if (camPermissions.value == role) return;
   api.refreshToken((error, token_result) => {
-    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (error) { stopRequest(); return; }
 
     api.cameraPermissions(String(token_result), role, (error, result) => {
-      if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      if (error || !result!["ok"]) { stopRequest(); return; }
       camPermissions.value = role as "all" | "admin";
+      stayBack();
+    })
+  });
+}
+
+const changePemindaianMethod = (method: string) => {
+  isLoggedIn();
+  waits();
+  if (pemindaianMethod.value == method) return;
+  api.refreshToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
+
+    api.changePemindaianMethod(String(token_result), method, (error, result) => {
+      if (error || !result!["ok"]) { stopRequest(); return; }
+      pemindaianMethod.value = method as "id" | "name";
       stayBack();
     })
   });
@@ -228,7 +291,7 @@ const camStatus = () => {
   isLoggedIn();
   waits();
   api.refreshToken((error, token_result) => {
-    if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (error) { stopRequest(); return; }
 
     api.cameraStatus(String(token_result), cameraStatuses.value ? "off" : "on", (error, result) => {
       //@ts-ignore
@@ -242,7 +305,7 @@ const camStatus = () => {
 
 const showMenu = (type: string) => {
   isLoggedIn();
-  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : null;
+  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : null;
   optionsView.value = false;
   routeNow.value = type;
   refs!.value = true;
@@ -250,7 +313,7 @@ const showMenu = (type: string) => {
 
 const back = () => {
   isLoggedIn();
-  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : null;
+  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : null;
   optionsView.value = true;
   refs!.value = false;
   iframeLoad.value = true;
@@ -269,7 +332,7 @@ const signout = () => {
       isLoading.value = true;
       adminPanel.value = false;
       api.refreshToken((error, token_result) => {
-        if (error) return toast.error({ message: "Failed to fetch backend.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        if (error) { stopRequest(); return; }
         api.clearCookie(String(token_result));
         api.signOut(String(token_result));
         window.location.href = "/";

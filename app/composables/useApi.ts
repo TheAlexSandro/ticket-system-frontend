@@ -15,7 +15,7 @@ type Ticket = {
 export function useApi() {
   const { $api } = useNuxtApp();
   const apis = $api as AxiosInstance;
-  
+
   return {
     refreshToken(callback: Callback<null | AxiosResponse>) {
       apis
@@ -160,10 +160,14 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    scan(identifier: string, callback: Callback<null | AxiosResponse | string | boolean | object>) {
+    scan(
+      identifier: string,
+      method: string,
+      callback: Callback<null | AxiosResponse | string | boolean | object>
+    ) {
       apis
         .post(`/users/scan`, {
-          method: "id",
+          method,
           identifier,
         })
         .then((result: AxiosResponse) => {
@@ -171,12 +175,36 @@ export function useApi() {
           result["data"]["result"].map((item: Ticket) => {
             var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
             var absen = item.absen ? `Absen: ${item.absen}<br>` : "";
-            var nomor_hp = item.nomor_hp ? `Nomor HP: ${item.nomor_hp}<br>` : "";
-            var message = item.is_scanned ? `<strong>Tiket sudah dipindai!</strong><br><br>` : ``
+            var nomor_hp = item.nomor_hp
+              ? `Nomor HP: ${item.nomor_hp}<br>`
+              : "";
+            var message = item.is_scanned
+              ? `<strong>Tiket sudah dipindai!</strong><br><br>`
+              : ``;
             var icon = item.is_scanned ? "warning" : "success";
 
-            return callback(null, { text: `${message}ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`, icon })
-          })
+            return callback(null, {
+              text: `${message}ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`,
+              icon,
+            });
+          });
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
+    changePemindaianMethod(
+      P_token: string,
+      method: string,
+      callback: Callback<null | AxiosResponse>
+    ) {
+      apis
+        .post(`/admin/scanningMethod`, {
+          P_token,
+          method,
+        })
+        .then((result: AxiosResponse) => {
+          return callback(null, result.data);
         })
         .catch((err: AxiosError) => {
           return callback(err.message, null);

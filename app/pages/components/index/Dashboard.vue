@@ -85,6 +85,9 @@
         <section v-if="cameraErrType">
             <Camera :type="cameraErrType" />
         </section>
+        <section v-if="ok == 'error'">
+            <Errors />
+        </section>
     </template>
 </template>
 
@@ -95,6 +98,7 @@ import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
 import LoadingScreen from "../LoadingScreen.vue";
+import Errors from "../errors/Errors.vue";
 import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
 import { useApi } from "../../../composables/useApi";
@@ -124,6 +128,7 @@ const socket = useSocket();
 const camStatus = ref(true);
 const permitted = ref(false);
 const camPermission = ref<"all" | "admin">();
+const scanMethod = ref<"id" | "name">();
 const popupShown = ref(false);
 const ok = ref<"wait" | "done" | "error">();
 const flash = ref(false);
@@ -136,22 +141,29 @@ const othersIcon = computed(() =>
 );
 let codeReader: BrowserMultiFormatReader | null = null;
 
+const stopRequest = () => {
+    isLoading.value = false;
+    isDisabled.value = true;
+    ok.value = "error";
+}
+
 onMounted(() => {
     api.refreshToken((error, token_result) => {
         ok.value = "wait";
-        if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+        if (error) { stopRequest(); return };
 
         api.verify(String(token_result), (error, result) => {
-            if (error) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+            if (error) { stopRequest(); return };
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
         api.getInfo(String(token_result), (error, result) => {
-            if (error || !result!['ok']) { ok.value = "error"; return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+            if (error || !result!['ok']) { stopRequest(); return };
             ok.value = "done";
-            camStatus.value = result!["result"]["camera_status"] == "on" ? true : false;
+            camStatus.value = result!["result"]["camera_status"] == "on";
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+            scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
             isLoading.value = false;
             if (userStarts.value) {
@@ -221,8 +233,8 @@ const mirror = (video_id: string, type: MirrorScale) => {
     const video = document.getElementById(video_id) as HTMLVideoElement;
     if (video) {
         const mirrorCase = (type == "X") ? mirrorX.value == 1 ? -1 : 1 : mirrorY.value == 1 ? -1 : 1;
-        const mirroScale = (type == "X") ? `scale(${mirrorCase}, ${mirrorY.value})` : `scale(${mirrorX.value}, ${mirrorCase})`;
-        video.style.transform = mirroScale;
+        const mirrorScale = (type == "X") ? `scale(${mirrorCase}, ${mirrorY.value})` : `scale(${mirrorX.value}, ${mirrorCase})`;
+        video.style.transform = mirrorScale;
         if (type == "X") { mirrorX.value = mirrorCase } else { mirrorY.value = mirrorCase };
     }
 }
@@ -321,7 +333,7 @@ const startQRScanning = (video: HTMLVideoElement) => {
         if (result) {
             if (!popupShown.value) {
                 popupShown.value = true;
-                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, close: false });
+                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, close: false, timeout: 10000 });
                 if (!String(result.getText()).startsWith("PBL-")) {
                     toast.destroy();
                     Swal.fire({
@@ -338,7 +350,7 @@ const startQRScanning = (video: HTMLVideoElement) => {
                     })
                     return;
                 }
-                api.scan(result.getText(), (error, result) => {
+                api.scan(result.getText(), String(scanMethod.value), (error, result) => {
                     if (error) {
                         toast.destroy();
                         Swal.fire({

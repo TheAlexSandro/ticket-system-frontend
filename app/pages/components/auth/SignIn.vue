@@ -1,5 +1,9 @@
 <template>
-    <section class="signin">
+    <template v-if="isLoading">
+        <LoadingScreen />
+    </template>
+
+    <section class="signin" v-if="panels">
         <div class="container">
             <div class="left">
                 <img src="/image.png" alt="Logo">
@@ -59,14 +63,20 @@
             </div>
         </div>
     </section>
+
+    <section v-if="isFailed">
+        <Errors />
+    </section>
 </template>
 
 <script setup lang="ts">
 import './css/SignIn.css'
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Swal from 'sweetalert2';
 import { useRuntimeConfig } from 'nuxt/app';
 import { useApi } from "../../../composables/useApi";
+import Errors from "../errors/Errors.vue";
+import LoadingScreen from "../LoadingScreen.vue";
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -80,6 +90,7 @@ const usernameError = ref<"empty" | "not_found" | false>();
 const passwordError = ref<"empty" | "invalid" | false>();
 const usernameErrorClass = ref(false);
 const passwordErrorClass = ref(false);
+const isLoading = ref(true);
 
 const usernameValue = ref("");
 const usernameInput = ref<HTMLInputElement | null>();
@@ -87,8 +98,31 @@ const passwordValue = ref("");
 const lastUsername = ref("");
 const isDisabled = ref(false);
 const loading = ref(false);
+const panels = ref(false);
+const isFailed = ref(false);
 
 const showPassword = ref(false);
+
+const stopRequest = () => {
+    toast.destroy();
+    isLoading.value = false;
+    panels.value = false;
+    isFailed.value = true;
+}
+
+onMounted(() => {
+    api.refreshToken((error, token_result) => {
+        if (error) { stopRequest(); return; }
+
+        api.verify(String(token_result), (error, result) => {
+            //@ts-ignore
+            if (error) { stopRequest(); return; }
+            if (result!["ok"]) return window.location.href = "/admin";
+            panels.value = true;
+            isLoading.value = false;
+        })
+    })
+})
 
 const getEmail = () => {
     const configs = useRuntimeConfig();
@@ -162,10 +196,10 @@ const signin = () => {
         putBack("username", true);
     } else {
         api.refreshToken((error, token_result) => {
-            if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            if (error) { stopRequest(); return; }
             api.getUsername(String(token_result), String(usernameValue.value), (error, result) => {
                 //@ts-ignore
-                if (error) return toast.error({ message: error, position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                if (error) { stopRequest(); return; }
                 if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
                 if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
@@ -184,13 +218,13 @@ const verify = () => {
     loading.value = true;
     if (!passwordValue.value || passwordValue.value == "") return inputError("password", "empty");
     api.refreshToken((error, token_result) => {
-        if (error) return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        if (error) { stopRequest(); return; }
 
         api.signIn(String(token_result), String(usernameValue.value), String(passwordValue.value), (error, result) => {
             //@ts-ignore
-            if (error) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            if (error) { stopRequest(); return; }
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
-            if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            if (!result!['ok']) { stopRequest(); return; }
 
             window.location.href = "/admin";
         })
