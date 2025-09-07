@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import "./css/Errors.css";
+import "./css/errors.css";
 </script>
