@@ -210,5 +210,25 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
+    forceRefresh(P_token: string, callback: Callback<null | AxiosResponse>) {
+      apis
+        .post("/admin/forceRefresh", { P_token })
+        .then((result: AxiosResponse) => {
+          return callback(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
+    getTotal(P_token: string, callback: Callback<null | AxiosResponse>) {
+      apis
+        .post("/admin/getTotal", { P_token })
+        .then((result: AxiosResponse) => {
+          return callback(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
   };
 }

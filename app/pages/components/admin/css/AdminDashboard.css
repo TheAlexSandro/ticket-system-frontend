@@ -24,6 +24,8 @@
 
 .admin .content .options .title {
     font-size: 18px;
+    display: block;
+    margin-bottom: 3px;
 }
 
 .admin .content .card {
@@ -130,7 +132,7 @@
     margin: 0 auto;
 }
 
-.admin .content .submenu .iframe-wrapper {
+.admin .content .submenu .load-wrapper {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
     display: flex;
@@ -138,15 +140,15 @@
     overflow-x: hidden;
 }
 
-.admin .content .submenu .iframe-wrapper iframe {
+.admin .content .submenu .load-wrapper iframe {
     width: min(90vw, 1000px);
     height: 130vh;
     border-radius: 8px;
     margin-bottom: 50px;
 }
 
-.admin .content .submenu .iframe-wrapper .load,
-.admin .content .submenu .iframe-wrapper .error {
+.admin .content .submenu .load-wrapper .load,
+.admin .content .submenu .load-wrapper .error {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -154,18 +156,58 @@
     font-size: 16px;
 }
 
-.admin .content .submenu .iframe-wrapper i {
+.admin .content .submenu .load-wrapper i {
     margin-right: 7px;
 }
 
-.admin .content .submenu .iframe-wrapper .load .spin {
+.admin .content .submenu .load-wrapper .load .spin {
     font-size: 24px;
     margin-right: 8px;
     animation: spin 1s linear infinite;
 }
 
-.admin .content .submenu .iframe-wrapper .error {
+.admin .content .submenu .load-wrapper .error {
     color: red;
+}
+
+.admin .content .submenu .dash {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+    max-width: 100%;
+    width: 400px;
+    margin-bottom: 20px;
+}
+
+.admin .content .submenu .dash .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin .content .submenu .dash .item .sub {
+    display: flex;
+    align-items: center;
+    max-width: 60%;
+    gap: 10px;
+    flex: 1;
+    font-size: 20px;
+}
+
+.admin .content .submenu .dash .item .sub i {
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.admin .content .submenu .dash .item span:last-child {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 @keyframes spin {
@@ -182,6 +224,15 @@
     .admin {
         margin-top: 25%;
         padding: 0 20px;
+    }
+
+    .admin .content .submenu .dash {
+        max-width: 100%;
+        margin: 20px;
+    }
+
+    .admin .content .submenu .dash .item .sub {
+        max-width: 80%;
     }
 }
 

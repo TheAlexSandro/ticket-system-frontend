@@ -189,12 +189,10 @@ onMounted(() => {
 
     socket.on("logout", (data) => {
         if (data['status'] == null) return;
-        if (!permitted.value) {
-            if (data['status']) {
-                stopCamera("stops");
-                isDisabled.value = true;
-                window.location.reload();
-            }
+        if (data['status']) {
+            stopCamera("stops");
+            isDisabled.value = true;
+            window.location.reload();
         }
     })
 })

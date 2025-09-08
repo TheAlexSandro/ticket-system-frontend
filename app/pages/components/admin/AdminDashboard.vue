@@ -13,7 +13,7 @@
           <span class="title">Kunjungan</span>
           <div class="card">
             <div class="container">
-              <div class="item" @click="maintenance()"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
+              <div class="item" @click="showMenu('pengunjung')"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
               <div class="item" @click="showMenu('website')"><i class="ri-user-5-line"></i> Pengunjung Website</div>
             </div>
           </div>
@@ -23,6 +23,7 @@
             <div class="container">
               <div class="item" @click="showMenu('kamera')"><i class="ri-camera-line"></i> Kamera</div>
               <div class="item" @click="showMenu('pemindaian')"><i class="ri-coupon-2-line"></i> Metode Pemindaian</div>
+              <div class="item" @click="showMenu('restart')"><i class="ri-restart-line"></i> Restart</div>
             </div>
           </div>
 
@@ -40,6 +41,56 @@
           <div class="back" @click="back()">
             <i class="ri-arrow-left-s-line"></i>
           </div>
+
+          <!-- SUBMENU PENGUNJUNG PBL -->
+          <div class="pengunjung-pbl" v-if="pengunjungView">
+            <div class="title"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
+            <p>Berikut adalah total jumlah pengunjung dan jumlah tiket yang tersedia saat ini.</p>
+            <hr>
+
+            <div class="load-wrapper">
+              <div class="load" v-if="pblLoad">
+                <i class="ri-loader-4-line spin"></i> Memuat data...
+              </div>
+
+              <div class="error" v-if="pblError">
+                <i class="ri-alert-line"></i> Gagal memuat data
+              </div>
+
+              <div class="dash" v-if="pblDone">
+                <div class="item">
+                  <span class="sub"><i style="color: #5CE65C;" class="ri-coupon-line"></i> Total Tiket</span>
+                  <span>{{ ticketTotal }}</span>
+                </div>
+                <div class="item">
+                  <span class="sub"><i style="color: #FF8DA1;" class="ri-coupon-fill"></i> Tiket Dipindai</span>
+                  <span>{{ pengunjungTotal }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END OF SUBMENU PENGUNJUNG PBL -->
+
+          <!-- SUBMENU RESTART -->
+          <div class="restart" v-if="restartView">
+            <div class="title"><i class="ri-restart-line"></i> <span>Restart</span></div>
+            <p>Dari sini, Anda dapat me-restart paksa layanan ini.</p>
+            <hr>
+
+            <div class="menu-section">
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="restart()" style="color: red;"><i class="ri-alert-fill"></i> Restart Paksa
+                  </div>
+                </div>
+              </div>
+              <div class="hint" style="color: red;"><i class="ri-spam-2-line"></i>
+                Dengan Anda me-restart paksa layanan ini, semua proses yang sedang berjalan akan dihentikan, dan semua
+                sesi admin akan dihapus.
+              </div>
+            </div>
+          </div>
+          <!-- END OF SUBMENU RESTART -->
 
           <!-- SUBMENU METODE PEMINDAIAN -->
           <div class="metode-pemindaian" v-if="pemindaianView">
@@ -78,7 +129,7 @@
             <p>Berikut adalah data pengunjung website pada pblsmekensa.site</p>
             <hr>
 
-            <div class="iframe-wrapper">
+            <div class="load-wrapper">
               <div class="load" v-if="iframeLoad">
                 <i class="ri-loader-4-line spin"></i> Memuat data...
               </div>
@@ -163,10 +214,13 @@ const api = useApi();
 const optionsView = ref(true);
 const kameraView = ref(false);
 const websiteView = ref(false);
+const pengunjungView = ref(false);
 const pemindaianView = ref(false);
+const restartView = ref(false);
 
 const adminPanel = ref(false);
-const adminObject = ref({});
+const ticketTotal = ref(0);
+const pengunjungTotal = ref(0);
 const routeNow = ref("");
 const camHint = ref(true);
 const clicked = ref(false);
@@ -174,6 +228,9 @@ const isLoading = ref(true);
 const iframeLoad = ref(true);
 const iframeError = ref(false);
 const isFailed = ref(false);
+const pblLoad = ref(true);
+const pblError = ref(false);
+const pblDone = ref(false);
 
 const camPermissions = ref<"all" | "admin">();
 const pemindaianMethod = ref<"id" | "name">();
@@ -201,11 +258,11 @@ onMounted(() => {
       //@ts-ignore
       if (error) { stopRequest(); return; }
       if (!result!["ok"]) return window.location.href = "/signin";
-      adminObject.value = result as object;
       cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
       camPermissions.value = result!["result"]["camera_permissions"];
       pemindaianMethod.value = result!["result"]["scanning_method"];
       camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+
       adminPanel.value = true;
       isLoading.value = false;
     })
@@ -257,6 +314,28 @@ const stayBack = () => {
   toast.destroy();
 }
 
+const restart = () => {
+  isLoggedIn();
+  Swal.fire({
+    title: "Are you sure?",
+    icon: "warning",
+    text: "Apa Anda yakin ingin melakukan ini? tindakan tidak dapat dibatalkan, ini mempengaruhi semua perangkat!!!",
+    showCancelButton: true,
+    showConfirmButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      waits();
+      api.refreshToken((error, token_result) => {
+        if (error) { stopRequest(); return; }
+        api.forceRefresh(String(token_result), (error, result) => {
+          if (error || !result!["ok"]) { stopRequest(); return; }
+          return;
+        })
+      })
+    }
+  })
+}
+
 const changeCamPermissions = (role: string) => {
   isLoggedIn();
   waits();
@@ -305,18 +384,34 @@ const camStatus = () => {
 
 const showMenu = (type: string) => {
   isLoggedIn();
-  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : null;
+  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : null;
   optionsView.value = false;
   routeNow.value = type;
   refs!.value = true;
+
+  if (type == "pengunjung") {
+    api.refreshToken((error, token_result) => {
+      if (error) { pblError.value = true; pblLoad.value = false; return };
+      api.getTotal(String(token_result), (error, total) => {
+        if (error || !total!["ok"]) { pblError.value = true; pblLoad.value = false; return };
+        ticketTotal.value = Number(total!["result"]["total_ticket"]);
+        pengunjungTotal.value = Number(total!["result"]["total_pengunjung"]);
+        pblDone.value = true;
+        pblError.value = false;
+        pblLoad.value = false;
+      })
+    })
+  }
 }
 
 const back = () => {
   isLoggedIn();
-  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : null;
+  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : routeNow.value == "restart" ? restartView : routeNow.value == "pengunjung" ? pengunjungView : null;
   optionsView.value = true;
   refs!.value = false;
   iframeLoad.value = true;
+  pblDone.value = false;
+  pblLoad.value = true;
 }
 
 const signout = () => {
