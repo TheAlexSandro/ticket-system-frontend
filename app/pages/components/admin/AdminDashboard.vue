@@ -53,10 +53,6 @@
                 <i class="ri-loader-4-line spin"></i> Memuat data...
               </div>
 
-              <div class="error" v-if="pblError">
-                <i class="ri-alert-line"></i> Gagal memuat data
-              </div>
-
               <div class="dash" v-if="pblDone">
                 <div class="item">
                   <span class="sub"><i style="color: #5CE65C;" class="ri-coupon-line"></i> Total Tiket</span>
@@ -391,9 +387,9 @@ const showMenu = (type: string) => {
 
   if (type == "pengunjung") {
     api.refreshToken((error, token_result) => {
-      if (error) { pblError.value = true; pblLoad.value = false; return };
+      if (error) { stopRequest(); return };
       api.getTotal(String(token_result), (error, total) => {
-        if (error || !total!["ok"]) { pblError.value = true; pblLoad.value = false; return };
+        if (error || !total!["ok"]) { stopRequest(); return };
         ticketTotal.value = Number(total!["result"]["total_ticket"]);
         pengunjungTotal.value = Number(total!["result"]["total_pengunjung"]);
         pblDone.value = true;
