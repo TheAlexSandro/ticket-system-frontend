@@ -1,5 +1,5 @@
 <template>
-    <section class="error">
+    <section class="info-error">
         <div class="container">
             <i class="ri-alert-line"></i>
             <p>Unable to complete the request. Please check your internet connection or contact the administrator.</p>

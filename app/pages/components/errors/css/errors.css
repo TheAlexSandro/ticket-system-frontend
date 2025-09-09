@@ -1,4 +1,4 @@
-.error {
+.info-error {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -10,26 +10,26 @@
     color: red;
 }
 
-.error i {
+.info-error i {
     font-size: 70px;
     display: block;
     margin-bottom: 10px;
 }
 
 @media (min-width: 300px) and (max-width: 400px) {
-    .error {
+    .info-error {
         width: 100%;
     }
 }
 
 @media (max-width: 600px) {
-    .error {
+    .info-error {
         width: 300px;
     }
 }
 
 @media (min-width: 601px) and (max-width: 1300px) {
-    .error {
+    .info-error {
         width: 500px;
     }
 }
