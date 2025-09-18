@@ -12,20 +12,20 @@
             <div id="pl-1" class="marquee pl">
                 <div class="mar">
                     <div class="group-1">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                     <div class="group-1">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                 </div>
             </div>
@@ -44,20 +44,20 @@
             <div id="pl-2" class="marquee pl">
                 <div class="mar">
                     <div class="group-2">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                     <div class="group-2">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                 </div>
             </div>
@@ -75,20 +75,20 @@
             <div id="pl-1" class="marquee pl">
                 <div class="mar">
                     <div class="group-1">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                     <div class="group-1">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                 </div>
             </div>
@@ -106,20 +106,20 @@
             <div id="pl-2" class="marquee pl">
                 <div class="mar">
                     <div class="group-2">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                     <div class="group-2">
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
-                        <h1>{{ marqueeText() }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
+                        <h1>{{ marqueeText().a }}</h1>
                     </div>
                 </div>
             </div>
@@ -139,20 +139,20 @@
                 <div class="marquee ticket">
                     <div class="mar-t">
                         <div class="group-1">
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
                         </div>
                         <div class="group-1">
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
-                            <h1>01 Oktober 2025 <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
+                            <h1>{{ marqueeText().b }} <i class="ri-bard-fill"></i></h1>
                         </div>
                     </div>
                 </div>
@@ -307,6 +307,6 @@ onBeforeUnmount(() => {
 
 const marqueeText = () => {
     const env = useRuntimeConfig();
-    return String(env.public["MARQUEE_CONTENT"]);
+    return { a: String(env.public["MARQUEE_CONTENT"]), b: String(env.public["PUNCAK"]) };
 }
 </script>
