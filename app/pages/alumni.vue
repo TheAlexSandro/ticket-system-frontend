@@ -1,13 +1,13 @@
 <template>
-    <Index />
+    <Alumni />
 </template>
 
 <script setup lang="ts">
 import { useHead } from 'nuxt/app';
-import Index from './components/index/Index.vue';
+import Alumni from './components/alumni/Alumni.vue';
 
 useHead({
-  title: 'Smekensa 60th - PBL'
+  title: 'Periksa Daftar Alumni - PBL'
 })
 
 </script>

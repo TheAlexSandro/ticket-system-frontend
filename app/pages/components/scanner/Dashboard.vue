@@ -7,7 +7,7 @@
         <section v-if="!isDisabled" class="dashboard">
             <template v-if="!cameraAccess">
                 <div class="banner">
-                    <img src="/banner.png" alt="Banner"></img>
+                    <img src="/images/banner.png" alt="Banner"></img>
                 </div>
                 <h1>Welcome to Ticket Scanner!</h1>
                 <p>Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode
@@ -97,7 +97,7 @@ import { BrowserMultiFormatReader } from "@zxing/browser";
 import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import LoadingScreen from "../global/LoadingScreen.vue";
 import Errors from "../errors/Errors.vue";
 import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
@@ -154,15 +154,20 @@ onMounted(() => {
 
         api.verify(String(token_result), (error, result) => {
             if (error) { stopRequest(); return };
+            //@ts-ignore
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
         api.getInfo(String(token_result), (error, result) => {
+            //@ts-ignore
             if (error || !result!['ok']) { stopRequest(); return };
             ok.value = "done";
+            //@ts-ignore
             camStatus.value = result!["result"]["camera_status"] == "on";
+            //@ts-ignore
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+            //@ts-ignore
             scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
             isLoading.value = false;
@@ -384,7 +389,9 @@ const startQRScanning = (video: HTMLVideoElement) => {
 
                     Swal.fire({
                         title: 'Success!',
+                        //@ts-ignore
                         icon: result["icon"],
+                        //@ts-ignore
                         html: result["text"],
                         showCancelButton: false,
                         showConfirmButton: true,

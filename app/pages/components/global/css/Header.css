@@ -47,6 +47,31 @@
     will-change: transform;
 }
 
+.header .menu {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.header .menu li {
+    list-style: none;
+}
+
+.header .menu li p {
+    font-size: 17px;
+}
+
+.header .menu li a {
+    color: black;
+    transition: all 0.5s ease-in-out;
+}
+
+.header .menu li a:hover {
+    color: var(--green-strong);
+    transition: all 0.5s ease-in-out;
+}
+
 @keyframes bounce {
 
     0%,
@@ -110,6 +135,12 @@
         padding: 15px 20px;
     }
     .header p {
+        font-size: 15px;
+    }
+    .header .menu {
+        gap: 15px;
+    }
+    .header .menu li p {
         font-size: 15px;
     }
 }

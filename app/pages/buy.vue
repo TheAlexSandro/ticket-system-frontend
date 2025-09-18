@@ -1,13 +1,13 @@
 <template>
-    <Index />
+    <Buy />
 </template>
 
 <script setup lang="ts">
 import { useHead } from 'nuxt/app';
-import Index from './components/index/Index.vue';
+import Buy from './components/buy/Buy.vue';
 
 useHead({
-  title: 'Smekensa 60th - PBL'
+  title: 'Beli Tiket - PBL'
 })
 
 </script>

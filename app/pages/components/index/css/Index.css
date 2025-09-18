@@ -1,0 +1,421 @@
+.indexes {
+    min-height: 100vh;
+    height: auto;
+}
+
+.hero {
+    padding: 8% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background:
+        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    overflow-x: hidden;
+    height: auto;
+}
+
+.hero .beginning {
+    max-width: 100%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 100px;
+}
+
+.hero .beginning .title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hero .beginning .title h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.hero .beginning .title img {
+    height: 30px;
+    width: auto;
+}
+
+.hero .card {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    max-height: 65vh;
+}
+
+.hero .card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero .card .desc {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    color: #fff;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.80);
+}
+
+.hero .card .desc .cont {
+    max-width: 100%;
+    width: 50%;
+}
+
+.hero #right {
+    flex-direction: row-reverse;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 65px;
+    margin-bottom: 50px;
+}
+
+.info .subinfo {
+    max-width: 100%;
+    width: 70%;
+    margin-bottom: 50px;
+}
+
+.info .subinfo span {
+    font-size: 50px;
+    font-weight: 600;
+}
+
+.info .card {
+    padding: 20px 0;
+    background: var(--dark);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    width: 100%;
+    height: auto;
+}
+
+.info .card .content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    color: white;
+}
+
+.info .card .content .image {
+    display: flex;
+    flex-direction: row;
+    user-select: none;
+}
+
+.info .card .content .image img {
+    opacity: 1;
+    transition: all 0.4s ease-in-out;
+}
+
+.info .card .content .image:hover img {
+    opacity: 0.3;
+}
+
+.info .card .content .image .t-1 {
+    opacity: 0.3;
+    transform: translate(50px, 27px) rotate(-10deg);
+    transition: all 0.4s ease-in-out;
+}
+
+.info .card .content .image .t-2 {
+    opacity: 0.3;
+    transform: translate(-50px, 27px) rotate(10deg);
+    transition: all 0.4s ease-in-out;
+}
+
+.info .card .content .image .t-1:hover,
+.info .card .content .image .t-2:hover {
+    opacity: 1;
+    transition: all 0.4s ease-in-out;
+    transform: scale(1.1) rotate(0);
+    z-index: 5;
+}
+
+.info .card .content .image .t-0 {
+    transform: scale(1);
+    transition: all 0.4s ease-in-out;
+}
+
+.info .card .content .image .t-0:hover {
+    transform: scale(1.1);
+    opacity: 1;
+    transition: all 0.4s ease-in-out;
+}
+
+.info .card .content img {
+    width: 30vw;
+    max-width: 350px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.90);
+}
+
+.info .card .content .desc {
+    margin-top: 60px;
+    flex: 1;
+}
+
+.info .card .content .desc span {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.info .card .content .desc #buy {
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-decoration: none;
+    color: black;
+    transition: all 0.3s ease;
+    background: white;
+    overflow: hidden;
+    max-width: fit-content;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.info .card .content .desc #buy span {
+    font-size: 20px;
+}
+
+.info .card .content .desc #buy span i {
+    margin-right: 7px;
+}
+
+.info .card .content .desc #buy span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.3s ease;
+}
+
+.info .card .content .desc #buy #arrow {
+    display: inline-flex;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+}
+
+.info .card .content .desc #buy:hover span:first-child {
+    transform: translateX(-8px);
+}
+
+.info .card .content .desc #buy:hover #arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.info .card .content .mobile {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    margin-bottom: -70px;
+}
+
+.info .card .content .mobile .slider {
+    width: 100%;
+    height: 40vh;
+    aspect-ratio: 16 / 9;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+.info .card .content .mobile .slider img {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateX(100%);
+    border-radius: 15px;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.info .card .content .mobile .slider img.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.info .card .content .mobile .slider img.previous {
+    transform: translateX(-100%);
+}
+
+.info .card .content .mobile .navigation-button {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.line {
+    cursor: pointer;
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #777;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.line.active {
+    background-color: #ffffff;
+    transform: scale(1.2);
+}
+
+.info .card .content .mobile .nav-button {
+    position: absolute;
+    top: 50%;
+    background-color: rgba(134, 129, 129, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 15px;
+    z-index: 10;
+    transition: background-color 0.3s, transform 0.3s;
+    transform: translateY(-50%);
+}
+
+.info .card .content .mobile .nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.info .card .content .mobile .prev {
+    left: 15px;
+}
+
+.info .card .content .mobile .next {
+    right: 15px;
+}
+
+@media (max-width: 600px) {
+    .hero {
+        margin-top: 10%;
+        overflow: hidden;
+    }
+
+    .hero .beginning {
+        max-width: 100%;
+        width: 90%;
+    }
+
+    .hero .card {
+        max-height: 45vh;
+    }
+
+    .hero .card .desc {
+        padding: 20px;
+    }
+
+    .hero .card .desc .cont {
+        max-width: 100%;
+        width: 80%;
+    }
+
+    .hero .card .desc h1 {
+        font-size: 20px;
+    }
+
+    .hero .card .desc p {
+        font-size: 13px;
+    }
+
+    .info {
+        padding: 0 20px;
+    }
+
+    .info .subinfo {
+        max-width: 100%;
+        width: 90%;
+        margin-bottom: 50px;
+    }
+
+    .info .subinfo span {
+        font-size: 40px;
+    }
+
+    .info .subinfo p {
+        font-size: 15px;
+    }
+
+    .info .card .content {
+        max-width: 100%;
+    }
+
+    .info .card .content .desc {
+        padding: 0 30px;
+    }
+
+    .info .card .content .desc span {
+        font-size: 40px;
+    }
+
+    .info .card .content .mobile {
+        width: 90%;
+    }
+
+    .info .card .content .mobile .navigation-button {
+        bottom: 10px;
+    }
+
+    .line {
+        height: 7px;
+        width: 7px;
+    }
+
+    .info .card .content .mobile .nav-button {
+        font-size: 14px;
+        padding: 7px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .hero {
+        padding: 15% 0;
+        overflow: hidden;
+    }
+
+    .hero .card {
+        max-height: 45vh;
+    }
+}

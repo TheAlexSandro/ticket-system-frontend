@@ -6,7 +6,7 @@
     <section class="signin" v-if="panels">
         <div class="container">
             <div class="left">
-                <img src="/image.png" alt="Logo">
+                <img src="/images/head.png" alt="Logo">
                 <span class="head">Sign In</span>
                 <p>Masuk untuk mengakses halaman admin.</p>
             </div>
@@ -76,7 +76,7 @@ import Swal from 'sweetalert2';
 import { useRuntimeConfig } from 'nuxt/app';
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import LoadingScreen from "../global/LoadingScreen.vue";
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -117,6 +117,7 @@ onMounted(() => {
         api.verify(String(token_result), (error, result) => {
             //@ts-ignore
             if (error) { stopRequest(); return; }
+            //@ts-ignore
             if (result!["ok"]) return window.location.href = "/admin";
             panels.value = true;
             isLoading.value = false;
@@ -200,7 +201,9 @@ const signin = () => {
             api.getUsername(String(token_result), String(usernameValue.value), (error, result) => {
                 //@ts-ignore
                 if (error) { stopRequest(); return; }
+                //@ts-ignore
                 if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
+                //@ts-ignore
                 if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
                 putBack("username", true);
@@ -223,7 +226,9 @@ const verify = () => {
         api.signIn(String(token_result), String(usernameValue.value), String(passwordValue.value), (error, result) => {
             //@ts-ignore
             if (error) { stopRequest(); return; }
+            //@ts-ignore
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
+            //@ts-ignore
             if (!result!['ok']) { stopRequest(); return; }
 
             window.location.href = "/admin";

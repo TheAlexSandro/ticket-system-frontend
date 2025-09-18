@@ -10,8 +10,18 @@
         <p class="description">Berikut adalah isi dari dashboard administrator yang saat ini tersedia.</p>
 
         <div class="options">
+          <div class="bg">
+            <span class="title">Pintasan Cepat</span>
+            <div class="card">
+              <div class="container">
+                <div class="item" @click="redirect('scanner')"><i class="ri-dv-fill"></i> Mulai Memindai</div>
+                <div class="item" @click="redirect('alumni')"><i class="ri-file-list-line"></i> Periksa Alumni</div>
+              </div>
+            </div>
+          </div>
+
           <span class="title">Kunjungan</span>
-          <div class="card">
+          <div class="card bg-w">
             <div class="container">
               <div class="item" @click="showMenu('pengunjung')"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
               <div class="item" @click="showMenu('website')"><i class="ri-user-5-line"></i> Pengunjung Website</div>
@@ -19,7 +29,7 @@
           </div>
 
           <span class="title">Sistem</span>
-          <div class="card">
+          <div class="card bg-w">
             <div class="container">
               <div class="item" @click="showMenu('kamera')"><i class="ri-camera-line"></i> Kamera</div>
               <div class="item" @click="showMenu('pemindaian')"><i class="ri-coupon-2-line"></i> Metode Pemindaian</div>
@@ -28,7 +38,7 @@
           </div>
 
           <span class="title">Sudo</span>
-          <div class="card">
+          <div class="card bg-w">
             <div class="container">
               <div class="item" @click="signout()"><i class="ri-logout-circle-line"></i> Keluar</div>
             </div>
@@ -202,7 +212,7 @@ import { onMounted, ref } from "vue";
 import { computed } from "vue";
 import Swal from "sweetalert2";
 import { useRuntimeConfig } from "nuxt/app";
-import LoadingScreen from "../LoadingScreen.vue";
+import LoadingScreen from "../global/LoadingScreen.vue";
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
 
@@ -253,10 +263,15 @@ onMounted(() => {
     api.verify(String(token_result), (error, result) => {
       //@ts-ignore
       if (error) { stopRequest(); return; }
+      //@ts-ignore
       if (!result!["ok"]) return window.location.href = "/signin";
+      //@ts-ignore
       cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
+      //@ts-ignore
       camPermissions.value = result!["result"]["camera_permissions"];
+      //@ts-ignore
       pemindaianMethod.value = result!["result"]["scanning_method"];
+      //@ts-ignore
       camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
 
       adminPanel.value = true;
@@ -297,6 +312,12 @@ const maintenance = () => {
   return toast.error({ message: "This feature is currently under construction.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
 }
 
+const redirect = (type: string) => {
+  isLoggedIn();
+  if (type == "scanner") return window.location.href = "/scanner";
+  if (type == "alumni") return window.location.href = "/alumni";
+}
+
 const waits = () => {
   clicked.value = true;
   //@ts-ignore
@@ -324,6 +345,7 @@ const restart = () => {
       api.refreshToken((error, token_result) => {
         if (error) { stopRequest(); return; }
         api.forceRefresh(String(token_result), (error, result) => {
+          //@ts-ignore
           if (error || !result!["ok"]) { stopRequest(); return; }
           return;
         })
@@ -340,6 +362,7 @@ const changeCamPermissions = (role: string) => {
     if (error) { stopRequest(); return; }
 
     api.cameraPermissions(String(token_result), role, (error, result) => {
+      //@ts-ignore
       if (error || !result!["ok"]) { stopRequest(); return; }
       camPermissions.value = role as "all" | "admin";
       stayBack();
@@ -355,6 +378,7 @@ const changePemindaianMethod = (method: string) => {
     if (error) { stopRequest(); return; }
 
     api.changePemindaianMethod(String(token_result), method, (error, result) => {
+      //@ts-ignore
       if (error || !result!["ok"]) { stopRequest(); return; }
       pemindaianMethod.value = method as "id" | "name";
       stayBack();
@@ -389,8 +413,11 @@ const showMenu = (type: string) => {
     api.refreshToken((error, token_result) => {
       if (error) { stopRequest(); return };
       api.getTotal(String(token_result), (error, total) => {
+        //@ts-ignore
         if (error || !total!["ok"]) { stopRequest(); return };
+        //@ts-ignore
         ticketTotal.value = Number(total!["result"]["total_ticket"]);
+        //@ts-ignore
         pengunjungTotal.value = Number(total!["result"]["total_pengunjung"]);
         pblDone.value = true;
         pblError.value = false;

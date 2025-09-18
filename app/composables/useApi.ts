@@ -230,5 +230,32 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
+    register(
+      P_token: string,
+      nama: string | null,
+      umur: string | null,
+      phone: string | null,
+      lulus_tahun: string | null,
+      alamat: string | null,
+      bukti: string | null,
+      callback: Callback<null | AxiosResponse>
+    ) {
+      apis
+        .post("/users/register", {
+          P_token,
+          nama,
+          umur,
+          phone,
+          lulus_tahun,
+          alamat,
+          bukti,
+        })
+        .then((result: AxiosResponse) => {
+          return callback(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
   };
 }

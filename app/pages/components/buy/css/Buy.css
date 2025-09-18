@@ -1,0 +1,271 @@
+.buy {
+    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/38816/image-from-rawpixel-id-2210775-jpeg.jpg") center no-repeat;
+    background-size: cover;
+    width: 100%;
+    padding: 10% 0;
+    min-height: 100vh;
+}
+
+.buy .error {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.buy .error i {
+    font-size: 35px;
+    color: red;
+}
+
+.buy .error span {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.buy .error p {
+    font-size: 17px;
+    margin-bottom: 20px;
+}
+
+.buy .form {
+    max-width: 100%;
+    width: 50%;
+    margin: 0 auto;
+    background: #f8f4e5;
+    padding: 50px 100px;
+    border: 2px solid rgba(0, 0, 0, 1);
+    box-shadow: 15px 15px 1px #ffa580, 15px 15px 1px 2px rgba(0, 0, 0, 1);
+}
+
+.buy .form .desc {
+    margin-bottom: 30px;
+}
+
+.buy .form .desc span {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.buy .form .desc p {
+    font-size: 15px;
+}
+
+.buy .form .desc #wajib {
+    margin-top: 5px;
+    font-style: italic;
+    color: red;
+}
+
+.buy .form input[type="text"],
+.buy .form input[type="tel"],
+.buy .form input[type="number"] {
+    border-bottom: 5px solid rgba(0, 0, 0, 1);
+}
+
+.buy .form .phone {
+    display: flex;
+    align-items: center;
+}
+
+.buy .form .phone .prefix {
+    font-size: 14pt;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 37px;
+    margin-right: 10px;
+}
+
+.buy .form .upload {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.buy .form .upload .information {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0 0;
+}
+
+.buy .form .upload .information p {
+    text-align: right;
+}
+
+.buy .form .upload .information i {
+    margin-right: 5px;
+}
+
+.buy .form .upload label {
+    font-size: 14pt;
+}
+
+.buy .form .upload p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.buy .form .upload .file-info {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.buy .form .upload .file-info #u-file {
+    font-size: 15px;
+    padding: 10px 20px;
+    background: #ffa580;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+}
+
+.buy .form .upload .file-info #u-file:hover {
+    background: rgba(0, 0, 0, 1);
+    color: white;
+    transition: all 0.5s ease-in-out;
+}
+
+.buy .form input {
+    display: block;
+    width: 100%;
+    font-size: 14pt;
+    line-height: calc(14pt * 2);
+    margin-bottom: calc(14pt * 2);
+    border: none;
+    background: #f8f4e5;
+    padding-left: 5px;
+    outline: none;
+    color: rgba(0, 0, 0, 1);
+}
+
+.buy .form input[type="text"]:focus,
+.buy .form input[type="tel"]:focus,
+.buy .form input[type="number"]:focus {
+    border-bottom: 5px solid #ffa580;
+}
+
+.buy button {
+    margin-top: 30px;
+    display: block;
+    line-height: calc(14pt * 2);
+    padding: 0 20px;
+    width: 100%;
+    background: #ff8080;
+    letter-spacing: 2px;
+    transition: 0.2s all ease-in-out;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 1);
+    box-shadow: 3px 3px 1px 1px #95a4ff,
+        3px 3px 1px 2px rgba(0, 0, 0, 1);
+}
+
+.buy button:hover {
+    background: rgba(0, 0, 0, 1);
+    color: white;
+    border: 1px solid rgba(0, 0, 0, 1);
+}
+
+.buy .form .load {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buy .form .load .spin {
+    font-size: 25px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.buy .form input:-webkit-autofill,
+.buy .form input:-webkit-autofill:hover,
+.buy .form input:-webkit-autofill:focus {
+    border-bottom: 5px solid #95a4ff;
+    -webkit-text-fill-color: #2a293e;
+    -webkit-box-shadow: 0 0 0px 1000px #f8f4e5 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+@media (max-width: 600px) {
+    .buy {
+        padding: 20% 0;
+    }
+
+    .buy .form {
+        max-width: 100%;
+        width: 80%;
+        padding: 20px;
+    }
+
+    .buy .form .desc span {
+        font-size: 25px;
+    }
+
+    .buy .form .desc p {
+        font-size: 14px;
+    }
+
+    .buy .form .phone .prefix {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .buy .form input {
+        width: 100%;
+        font-size: 12pt;
+        margin-bottom: 20px;
+    }
+
+    .buy .form button {
+        width: 100%;
+        font-size: 12pt;
+        line-height: 30px;
+        margin-top: 50px;
+    }
+
+    .buy .form .upload label {
+        font-size: 15px;
+    }
+
+    .buy .form .upload p {
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .buy .form .upload .file-info #u-file {
+        font-size: 13px;
+        padding: 7px 20px;
+    }
+
+    .buy .form .upload .file-info span {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .buy {
+        padding: 20% 0;
+    }
+
+    .buy .form {
+        max-width: 100%;
+        width: 70%;
+        padding: 20px;
+    }
+}

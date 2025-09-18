@@ -1,7 +1,7 @@
 <template>
     <section class="loading">
         <div class="logo">
-            <img src="/image.png" alt="Logo" />
+            <img src="/images/head.png" alt="Logo" />
         </div>
     </section>
 </template>

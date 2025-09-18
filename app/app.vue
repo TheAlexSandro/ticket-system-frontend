@@ -3,22 +3,19 @@
   <template v-else>
     <NuxtLayout>
       <Headers />
-      <section class="main">
-        <RouterView />
-      </section>
+      <!-- PAGE RENDERING -->
+      <NuxtPage />
     </NuxtLayout>
-
   </template>
 </template>
 
 <script setup lang="ts">
 import './css/Global.css';
-import LoadingScreen from './pages/components/LoadingScreen.vue';
-import Headers from './pages/components/Headers.vue';
+import LoadingScreen from './pages/components/global/LoadingScreen.vue';
+import Headers from './pages/components/global/Headers.vue';
 import { ref, onMounted } from 'vue';
 import { useHead } from 'nuxt/app';
 import { useSocket } from './composables/useSocket';
-
 const socket = useSocket();
 
 useHead({

@@ -2,11 +2,14 @@
     <div class="header">
         <div class="logo" @click="home()">
             <div class="bounce-wrap">
-                <img src="/image.png" alt="Logo">
+                <img src="/images/head.png" alt="Logo">
             </div>
-            <p>Project Based Learning</p>
+            <p>PBL Smekensa</p>
         </div>
-        <div class="user" @click="redirect()"><i class="ri-user-line"></i></div>
+        <div class="menu">
+            <li><p><a href="/buy">Beli Tiket</a></p></li>
+            <div class="user" @click="redirect()"><i class="ri-user-line"></i></div>
+        </div>
     </div>
 </template>
 

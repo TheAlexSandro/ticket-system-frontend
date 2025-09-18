@@ -15,7 +15,6 @@
     "@zxing/browser": "^0.1.5",
     "axios": "^1.11.0",
     "html5-qrcode": "^2.3.8",
-    "lru-cache": "^11.1.0",
     "nuxt": "^4.0.3",
     "nuxt-toast": "^1.1.4",
     "remixicon": "^4.6.0",

@@ -1,9 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-:root{
-  --green-strong: #2b818b;
-  --glow-size: 18px;
-  --glow-alpha: 0.45;
+:root {
+    --green-strong: #2b818b;
+    --dark: #24292e;
+    --green-rgb: 43, 129, 139;
+    --glow-size: 18px;
+    --glow-alpha: 0.45;
+    --footer-bg: #0f1720;
+    --footer-ink: #e6eef8;
+    --muted: #9aa7b8;
 }
 
 * {
@@ -27,5 +32,5 @@ body {
 
 a {
     text-decoration: none !important;
-    color: var(--green-strong) !important;
+    color: var(--green-strong);
 }

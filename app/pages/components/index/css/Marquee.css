@@ -1,0 +1,124 @@
+.marquee {
+    display: block;
+    align-items: center;
+    color: white;
+    overflow: hidden;
+}
+
+.pl {
+    width: 110%;
+    z-index: 2;
+    background:
+        repeating-linear-gradient(-45deg,
+            #ffcc00 0 20px,
+            #000 20px 40px);
+    padding: 12px;
+}
+
+.ticket {
+    background: #7dff9d;
+    max-height: fit-content;
+    padding: 5px;
+}
+
+.ticket-2 {
+    background: #f7f96a;
+    max-height: fit-content;
+    padding: 5px;
+}
+
+@keyframes scrollText {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.mar {
+    display: flex;
+    background: black;
+    padding: 2px 0;
+    gap: 0;
+    white-space: nowrap;
+}
+
+.mar-t {
+    display: flex;
+    padding: 2px 0;
+    gap: 0;
+    color: black;
+    white-space: nowrap;
+}
+
+.mar-t i {
+    margin-left: 3rem;
+}
+
+.marquee .group-1 {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    min-width: 100%;
+    gap: 0;
+    animation: scrollText 10s linear infinite;
+}
+
+.marquee .group-2 {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    min-width: 100%;
+    gap: 0;
+    animation: scrollText 10s linear infinite reverse;
+}
+
+.marquee h1 {
+    display: inline-block;
+    font-size: 1.8rem;
+    margin-right: 3rem;
+    white-space: nowrap;
+}
+
+.marquee h1.strong-glow {
+    position: relative;
+    color: var(--green-strong);
+    z-index: 2;
+}
+
+.marquee h1.strong-glow::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: var(--green-strong);
+    z-index: -1;
+    filter: blur(calc(var(--glow-size) * 0.8));
+    opacity: 0.9;
+    transform: translateY(0);
+    pointer-events: none;
+}
+
+#pl-1 {
+    margin-top: -25px;
+    margin-bottom: -25px;
+    transform: rotate(2deg);
+}
+
+#pl-2 {
+    margin-top: -25px;
+    margin-bottom: -25px;
+    transform: rotate(-2deg);
+}
+
+@media (max-width: 600px) {
+    .marquee {
+        height: auto;
+    }
+    .marquee h1 {
+        font-size: 1.5rem;
+    }
+}
