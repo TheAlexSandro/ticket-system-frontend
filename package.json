@@ -20,6 +20,7 @@
     "remixicon": "^4.6.0",
     "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.22.4",
+    "vue-matomo": "^4.2.0",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
@@ -32,7 +33,10 @@
     "type": "git",
     "url": "git+https://github.com/TheAlexSandro/ticket-system-frontend.git"
   },
-  "keywords": ["ticket-scanner", "frontend"],
+  "keywords": [
+    "ticket-scanner",
+    "frontend"
+  ],
   "author": "Panitia Project Based Learning",
   "license": "ISC",
   "bugs": {

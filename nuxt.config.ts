@@ -50,8 +50,8 @@ export default defineNuxtConfig({
       script: [
         {
           defer: true,
-          src: "https://cloud.umami.is/script.js",
-          "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e",
+          src: "https://plausible.io/js/script.js",
+          "data-domain": "pblsmekensa.site",
         },
       ],
     },
