@@ -47,13 +47,6 @@ export default defineNuxtConfig({
         },
         { rel: "manifest", href: "/images/favicon/site.webmanifest" },
       ],
-      script: [
-        {
-          defer: true,
-          src: "https://plausible.io/js/script.js",
-          "data-domain": "pblsmekensa.site",
-        },
-      ],
     },
   },
   modules: ["@nuxt/ui", "nuxt-toast"],
@@ -74,6 +67,6 @@ export default defineNuxtConfig({
       PUNCAK: process.env.PUNCAK
     },
   },
-  plugins: ["./plugins/api.ts"],
+  plugins: ["./plugins/api.ts", "./plugins/heap.client.ts"],
 });
 console.log("Server restarting...");
