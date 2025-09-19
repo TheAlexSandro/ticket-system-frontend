@@ -47,6 +47,13 @@ export default defineNuxtConfig({
         },
         { rel: "manifest", href: "/images/favicon/site.webmanifest" },
       ],
+      script: [
+        {
+          defer: true,
+          src: "https://cloud.umami.is/script.js",
+          "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e",
+        },
+      ],
     },
   },
   modules: ["@nuxt/ui", "nuxt-toast"],
@@ -67,6 +74,6 @@ export default defineNuxtConfig({
       PUNCAK: process.env.PUNCAK
     },
   },
-  plugins: ["./plugins/api.ts", "./plugins/heap.client.ts"],
+  plugins: ["./plugins/api.ts"],
 });
-console.log("Server restarting...");
+console.log("Server starting...");
