@@ -80,6 +80,8 @@ type AlumniData = {
     bukti: string;
 };
 
+//@ts-ignore
+const toast = useToast() as any;
 const api = useApi();
 const isLoading = ref(true);
 const panels = ref(false);
@@ -127,6 +129,7 @@ const clear = () => {
 }
 
 const search = () => {
+    if (!query.value) return toast.warning({ message: 'Kueri tidak boleh kosong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     displayClear.value = true;
     lastPage.value = currentPage.value;
     currentPage.value = 1;
