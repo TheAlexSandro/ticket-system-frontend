@@ -12,12 +12,20 @@ type Ticket = {
   is_scanned?: boolean | null;
 };
 
+type ApiResponse = {
+  status_code: number;
+  ok: boolean;
+  message: string | Error | null;
+  error_code: string | null;
+  result?: any;
+};
+
 export function useApi() {
   const { $api } = useNuxtApp();
   const apis = $api as AxiosInstance;
 
   return {
-    refreshToken(callback: Callback<null | AxiosResponse>) {
+    refreshToken(callback: Callback<null | ApiResponse>) {
       apis
         .post(`/auth/generateAuthentication`)
         .then((result: AxiosResponse) => {
@@ -29,7 +37,7 @@ export function useApi() {
     },
     getAdminDashboardInfo(
       P_token: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/admin/getInfo`, {
@@ -45,7 +53,7 @@ export function useApi() {
     getUsername(
       P_token: string,
       username: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/auth/getUsername`, {
@@ -63,7 +71,7 @@ export function useApi() {
       P_token: string,
       username: string,
       password: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/auth/signin`, {
@@ -78,7 +86,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    signOut(P_token: string, callback?: Callback<null | AxiosResponse>) {
+    signOut(P_token: string, callback?: Callback<null | ApiResponse>) {
       apis
         .post(`/auth/signOut`, {
           P_token,
@@ -90,7 +98,7 @@ export function useApi() {
           return callback?.(err.message, null);
         });
     },
-    verify(P_token: string, callback: Callback<null | AxiosResponse>) {
+    verify(P_token: string, callback: Callback<null | ApiResponse>) {
       apis
         .post(`/auth/verify`, {
           P_token,
@@ -102,7 +110,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    clearCookie(P_token: string, callback?: Callback<null | AxiosResponse>) {
+    clearCookie(P_token: string, callback?: Callback<null | ApiResponse>) {
       apis
         .post(`/auth/clearCookie`, {
           P_token,
@@ -117,7 +125,7 @@ export function useApi() {
     cameraStatus(
       P_token: string,
       status: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/admin/cameraStatus`, {
@@ -134,7 +142,7 @@ export function useApi() {
     cameraPermissions(
       P_token: string,
       role: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/admin/cameraPermissions`, {
@@ -148,7 +156,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    getInfo(P_token: string, callback: Callback<null | AxiosResponse>) {
+    getInfo(P_token: string, callback: Callback<null | ApiResponse>) {
       apis
         .post(`/admin/getInfo`, {
           P_token,
@@ -163,7 +171,7 @@ export function useApi() {
     scan(
       identifier: string,
       method: string,
-      callback: Callback<null | AxiosResponse | string | boolean | object>
+      callback: Callback<null | ApiResponse | string | boolean | object>
     ) {
       apis
         .post(`/users/scan`, {
@@ -196,7 +204,7 @@ export function useApi() {
     changePemindaianMethod(
       P_token: string,
       method: string,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post(`/admin/scanningMethod`, {
@@ -210,7 +218,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    forceRefresh(P_token: string, callback: Callback<null | AxiosResponse>) {
+    forceRefresh(P_token: string, callback: Callback<null | ApiResponse>) {
       apis
         .post("/admin/forceRefresh", { P_token })
         .then((result: AxiosResponse) => {
@@ -220,7 +228,7 @@ export function useApi() {
           return callback(err.message, null);
         });
     },
-    getTotal(P_token: string, callback: Callback<null | AxiosResponse>) {
+    getTotal(P_token: string, callback: Callback<null | ApiResponse>) {
       apis
         .post("/admin/getTotal", { P_token })
         .then((result: AxiosResponse) => {
@@ -238,7 +246,7 @@ export function useApi() {
       lulus_tahun: string | null,
       alamat: string | null,
       bukti: string | null,
-      callback: Callback<null | AxiosResponse>
+      callback: Callback<null | ApiResponse>
     ) {
       apis
         .post("/users/register", {
@@ -250,6 +258,16 @@ export function useApi() {
           alamat,
           bukti,
         })
+        .then((result: AxiosResponse) => {
+          return callback(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback(err.message, null);
+        });
+    },
+    getAlumni(P_token: string, callback: Callback<null | ApiResponse>) {
+      apis
+        .post("/users/getAlumni", { P_token })
         .then((result: AxiosResponse) => {
           return callback(null, result.data);
         })

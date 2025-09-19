@@ -20,6 +20,8 @@
             </div>
           </div>
 
+          <hr>
+
           <span class="title">Kunjungan</span>
           <div class="card bg-w">
             <div class="container">
@@ -261,17 +263,11 @@ onMounted(() => {
     if (error) { stopRequest(); return; }
 
     api.verify(String(token_result), (error, result) => {
-      //@ts-ignore
-      if (error) { stopRequest(); return; }
-      //@ts-ignore
-      if (!result!["ok"]) return window.location.href = "/signin";
-      //@ts-ignore
+      if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
+      if (error || !result!["ok"]) { stopRequest(); return; }
       cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-      //@ts-ignore
       camPermissions.value = result!["result"]["camera_permissions"];
-      //@ts-ignore
       pemindaianMethod.value = result!["result"]["scanning_method"];
-      //@ts-ignore
       camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
 
       adminPanel.value = true;
@@ -345,7 +341,6 @@ const restart = () => {
       api.refreshToken((error, token_result) => {
         if (error) { stopRequest(); return; }
         api.forceRefresh(String(token_result), (error, result) => {
-          //@ts-ignore
           if (error || !result!["ok"]) { stopRequest(); return; }
           return;
         })
@@ -362,7 +357,6 @@ const changeCamPermissions = (role: string) => {
     if (error) { stopRequest(); return; }
 
     api.cameraPermissions(String(token_result), role, (error, result) => {
-      //@ts-ignore
       if (error || !result!["ok"]) { stopRequest(); return; }
       camPermissions.value = role as "all" | "admin";
       stayBack();
@@ -378,7 +372,6 @@ const changePemindaianMethod = (method: string) => {
     if (error) { stopRequest(); return; }
 
     api.changePemindaianMethod(String(token_result), method, (error, result) => {
-      //@ts-ignore
       if (error || !result!["ok"]) { stopRequest(); return; }
       pemindaianMethod.value = method as "id" | "name";
       stayBack();
@@ -393,8 +386,7 @@ const camStatus = () => {
     if (error) { stopRequest(); return; }
 
     api.cameraStatus(String(token_result), cameraStatuses.value ? "off" : "on", (error, result) => {
-      //@ts-ignore
-      if (error || !result!["ok"]) return toast.error({ message: result["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       cameraStatuses.value = cameraStatuses.value ? false : true;
       camHint.value = cameraStatuses.value ? true : false;
       stayBack();
@@ -413,11 +405,8 @@ const showMenu = (type: string) => {
     api.refreshToken((error, token_result) => {
       if (error) { stopRequest(); return };
       api.getTotal(String(token_result), (error, total) => {
-        //@ts-ignore
         if (error || !total!["ok"]) { stopRequest(); return };
-        //@ts-ignore
         ticketTotal.value = Number(total!["result"]["total_ticket"]);
-        //@ts-ignore
         pengunjungTotal.value = Number(total!["result"]["total_pengunjung"]);
         pblDone.value = true;
         pblError.value = false;

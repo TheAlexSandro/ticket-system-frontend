@@ -15,7 +15,7 @@
     padding: 20px;
     color: white;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     background: linear-gradient(45deg, #00c6ff, #0072ff, #ff00cc, #333399);
     background-size: 400% 400%;
     animation: glow 6s ease infinite;
@@ -40,10 +40,11 @@
 .admin .content .bg .card {
     border-radius: 10px;
     margin-bottom: -10px;
+    background: none;
 }
 
 .admin .content .bg .card .container .item i {
-    margin-right: 9px;
+    margin-right: 12px;
 }
 
 .admin .content .bg .card .container .item:hover {
@@ -78,6 +79,7 @@
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 25px;
+    background-color: #ececec;
 }
 
 .admin .content .card .container {
@@ -146,7 +148,7 @@
     font-size: 14px;
 }
 
-.admin .content .submenu hr {
+.admin .content hr {
     margin: 25px auto;
     width: 50%;
 }

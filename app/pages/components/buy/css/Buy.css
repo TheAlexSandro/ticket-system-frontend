@@ -93,7 +93,7 @@
 }
 
 .buy .form .upload .information p {
-    text-align: right;
+    text-align: left;
 }
 
 .buy .form .upload .information i {
@@ -213,6 +213,10 @@
         padding: 20px;
     }
 
+    .buy .form .upload .information {
+        margin-top: -5px;
+    }
+
     .buy .form .desc span {
         font-size: 25px;
     }
@@ -236,7 +240,7 @@
         width: 100%;
         font-size: 12pt;
         line-height: 30px;
-        margin-top: 50px;
+        margin-top: -5px;
     }
 
     .buy .form .upload label {
@@ -267,5 +271,12 @@
         max-width: 100%;
         width: 70%;
         padding: 20px;
+    }
+
+    .buy .form button {
+        width: 100%;
+        font-size: 12pt;
+        line-height: 30px;
+        margin-top: -5px;
     }
 }

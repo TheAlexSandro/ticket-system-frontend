@@ -154,20 +154,15 @@ onMounted(() => {
 
         api.verify(String(token_result), (error, result) => {
             if (error) { stopRequest(); return };
-            //@ts-ignore
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
         api.getInfo(String(token_result), (error, result) => {
-            //@ts-ignore
             if (error || !result!['ok']) { stopRequest(); return };
             ok.value = "done";
-            //@ts-ignore
             camStatus.value = result!["result"]["camera_status"] == "on";
-            //@ts-ignore
             camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
-            //@ts-ignore
             scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
             isLoading.value = false;
@@ -390,9 +385,9 @@ const startQRScanning = (video: HTMLVideoElement) => {
                     Swal.fire({
                         title: 'Success!',
                         //@ts-ignore
-                        icon: result["icon"],
+                        icon: result!["icon"],
                         //@ts-ignore
-                        html: result["text"],
+                        html: result!["text"],
                         showCancelButton: false,
                         showConfirmButton: true,
                         confirmButtonText: "OK"

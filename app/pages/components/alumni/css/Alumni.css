@@ -1,0 +1,193 @@
+.alumni {
+    margin: 0 auto;
+    margin-top: 7%;
+    margin-bottom: 50px;
+    max-width: 100%;
+    width: 90%;
+}
+
+.alumni .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.alumni .form span {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.alumni .form .input-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    min-width: 60%;
+}
+
+.alumni .form .input-group .buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.alumni .form .input-group .buttons button {
+    background: var(--footer-bg);
+    height: 35px;
+    width: 100px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+}
+
+.alumni .form .input-group i {
+    font-size: 15px;
+}
+
+.alumni .form .input-group .buttons button:hover {
+    background: rgb(73, 73, 73);
+    transition: all 0.5s ease-in-out;
+}
+
+.alumni .form .input-group .input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 90%;
+}
+
+.alumni .form .input-group .input-wrapper i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+    font-size: 16px;
+}
+
+.alumni .form .input-group .input-wrapper input {
+    width: 100%;
+    padding: 8px 10px;
+    padding-left: 35px;
+    font-size: 16px;
+    border: 1.2px solid gray;
+    border-radius: 5px;
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.alumni .table-container {
+    overflow-x: auto;
+    height: auto;
+}
+
+.alumni .table-container .alumni-table {
+    margin: 0 auto;
+    min-width: 800px;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.alumni .table-container .alumni-table th,
+.alumni .table-container .alumni-table td {
+    width: 20%;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.alumni .table-container .alumni-table th {
+    background-color: #2d3748;
+    color: white;
+}
+
+.alumni .table-container .alumni-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.alumni .table-container .alumni-table tr:hover {
+    background-color: #edf2f7;
+}
+
+.alumni .table-container .alumni-table .bukti-img {
+    max-width: 180px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.alumni .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+.alumni .pagination .hidden {
+    display: none;
+}
+
+.alumni .pagination button {
+    background: var(--green-strong);
+    padding: 10px 25px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.alumni .error {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.alumni .error i {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .alumni {
+        margin-top: 15%;
+    }
+}
+
+@media (max-width: 600px) {
+    .alumni {
+        margin-top: 20%;
+    }
+
+    .alumni .form .input-group {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+        width: 90%;
+    }
+
+    .alumni .form .input-group .input-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .alumni .form .input-group .buttons {
+        display: flex;
+        flex-direction: row;
+        max-width: 100%;
+        width: 100%;
+        justify-content: space-between;
+    }
+}

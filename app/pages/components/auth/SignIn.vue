@@ -115,9 +115,7 @@ onMounted(() => {
         if (error) { stopRequest(); return; }
 
         api.verify(String(token_result), (error, result) => {
-            //@ts-ignore
             if (error) { stopRequest(); return; }
-            //@ts-ignore
             if (result!["ok"]) return window.location.href = "/admin";
             panels.value = true;
             isLoading.value = false;
@@ -199,11 +197,8 @@ const signin = () => {
         api.refreshToken((error, token_result) => {
             if (error) { stopRequest(); return; }
             api.getUsername(String(token_result), String(usernameValue.value), (error, result) => {
-                //@ts-ignore
                 if (error) { stopRequest(); return; }
-                //@ts-ignore
                 if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
-                //@ts-ignore
                 if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
 
                 putBack("username", true);
@@ -224,11 +219,8 @@ const verify = () => {
         if (error) { stopRequest(); return; }
 
         api.signIn(String(token_result), String(usernameValue.value), String(passwordValue.value), (error, result) => {
-            //@ts-ignore
             if (error) { stopRequest(); return; }
-            //@ts-ignore
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
-            //@ts-ignore
             if (!result!['ok']) { stopRequest(); return; }
 
             window.location.href = "/admin";

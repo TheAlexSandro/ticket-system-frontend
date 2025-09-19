@@ -153,29 +153,24 @@ const handleSubmit = () => {
         const fileBase64 = reader.result as string;
 
         api.refreshToken((error, token_result) => {
-            if (error) { stopRequest(); return alert(JSON.stringify(error)) }
+            if (error) { stopRequest(); return };
 
             api.register(String(token_result), form.nama, form.umur, form.phone, form.lulus_tahun, form.alamat, fileBase64, (err, result) => {
-                if (err) { stopRequest(); return alert(JSON.stringify(error)) }
-                //@ts-ignore
+                if (err) { stopRequest(); return };
                 if (!result!["ok"]) {
                     displayForm.value = false;
                     displayError.value = true;
                     loading.value = false;
-                    //@ts-ignore
                     if (result!["error_code"] == "USER_FOUND") {
                         errorMessage.value = "Pengguna sudah berada dalam database.";
                         return;
                     }
-
-                    //@ts-ignore
                     if (result!["error_code"] == "FILE_TOO_LARGE") {
                         errorMessage.value = "Maximal ukuran file adalah 500 MB.";
                         return;
                     }
                 }
-
-                loading.value = false;
+                window.location.href = result!["result"]["url"];
                 return;
             })
         })
