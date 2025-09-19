@@ -441,8 +441,10 @@ const signout = () => {
       api.refreshToken((error, token_result) => {
         if (error) { stopRequest(); return; }
         api.clearCookie(String(token_result));
-        api.signOut(String(token_result));
-        window.location.href = "/";
+        api.signOut(String(token_result), (err, results) => {
+          if (err) { toast.info({ message: err, position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+          window.location.href = "/";
+        });
       });
     }
   })
