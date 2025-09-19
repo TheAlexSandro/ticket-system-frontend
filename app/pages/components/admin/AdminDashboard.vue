@@ -26,7 +26,8 @@
           <div class="card bg-w">
             <div class="container">
               <div class="item" @click="showMenu('pengunjung')"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
-              <div class="item" @click="showMenu('website')"><i class="ri-user-5-line"></i> Pengunjung Website</div>
+              <!-- DISABLED FOR SOME REASON -->
+              <!-- <div class="item" @click="showMenu('website')"><i class="ri-user-5-line"></i> Pengunjung Website</div> -->
             </div>
           </div>
 
