@@ -14,8 +14,7 @@
                     Blitar, serta menjadi bagian dari karya nyata Project Based Learning (PBL) Smekensa. Kolaborasi
                     ini
                     menghadirkan sebuah perayaan yang bukan hanya sekadar ajang hiburan, tetapi juga menjadi wujud
-                    kreativitas, kebersamaan, dan semangat seluruh keluarga besar Smekensa dalam menyemarakkan Dies
-                    Natalis tahun ini.</p>
+                    kreativitas, kebersamaan, dan semangat seluruh keluarga besar Smekensa dalam menyemarakkan Project Based Learning tahun ini.</p>
             </div>
         </div>
         <div class="cp">
