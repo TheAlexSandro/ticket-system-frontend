@@ -128,7 +128,7 @@
         <section class="info">
             <div class="subinfo">
                 <span>Untuk Umum!</span>
-                <p>Perayaan Dies Natalis SMKN 1 Blitar tahun ini dibuka secara resmi untuk umum, sehingga tidak hanya
+                <p>Perayaan Project Based Learning SMKN 1 Blitar tahun ini dibuka secara resmi untuk umum, sehingga tidak hanya
                     siswa dan civitas sekolah saja yang dapat mengikuti rangkaian acara, tetapi juga masyarakat luas.
                     Dengan dibukanya kegiatan ini untuk umum, diharapkan semakin banyak pihak yang dapat merasakan
                     semarak perayaan, menikmati berbagai stand, pertunjukan, serta program yang telah dipersiapkan oleh
