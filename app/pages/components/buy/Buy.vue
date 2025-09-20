@@ -10,17 +10,19 @@
                     <p id="wajib">*) wajib</p>
                 </div>
                 <form v-if="displayForm" @submit.prevent="handleSubmit">
-                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required @input="onInputNama" />
+                    <input v-model="form.nama" placeholder="Nama Lengkap*" type="text" required
+                        style="text-transform: uppercase;" @update:modelValue="(val: string) => form.nama = val.toUpperCase()" />
+
                     <input :disabled="loading" v-model="form.umur" placeholder="Umur*" type="text" inputmode="numeric"
-                        required @input="onUmurInput" />
+                        required @update:modelValue="(umur: string) => form.umur = umur.replace(/[^0-9]/g, '')" />
                     <div class="phone">
                         <span class="prefix">+62</span>
                         <input :disabled="loading" v-model="form.phone" placeholder="Nomor HP*" type="tel"
-                            inputmode="numeric" pattern="^8[0-9]{7,11}$" required @input="onPhoneInput" />
+                            inputmode="numeric" pattern="^8[0-9]{7,11}$" @update:modelValue="(phone: string) => form.phone = phone.replace(/[^0-9]/g, '')" />
                     </div>
                     <input :disabled="loading" v-model="form.alamat" placeholder="Alamat*" type="text" required />
                     <input :disabled="loading" v-model="form.lulus_tahun" placeholder="Lulusan Tahun*" type="text"
-                        inputmode="numeric" required @input="onLulusTahun" />
+                        inputmode="numeric" required @update:modelValue="(lulus_tahun: string) => form.lulus_tahun = lulus_tahun.replace(/[^0-9]/g, '')" />
                     <div class="upload">
                         <label for="upload-bukti">Upload Bukti*</label>
                         <p>Upload bukti ijazah atau kartu pelajar Anda, ini digunakan untuk memverifikasi bahwa Anda
@@ -93,28 +95,6 @@ const returns = () => {
     displayError.value = false;
 }
 
-const onInputNama = () => {
-    form.nama = form.nama.toUpperCase();
-}
-
-const onLulusTahun = (e: Event) => {
-    const target = e.target as HTMLInputElement | null;
-    if (!target) return;
-    form.lulus_tahun = target.value.replace(/[^0-9]/g, "");
-};
-
-const onPhoneInput = (e: Event) => {
-    const target = e.target as HTMLInputElement | null;
-    if (!target) return;
-    form.phone = target.value.replace(/[^0-9]/g, "");
-};
-
-const onUmurInput = (e: Event) => {
-    const target = e.target as HTMLInputElement | null;
-    if (!target) return;
-    form.umur = target.value.replace(/[^0-9]/g, "");
-};
-
 const handleFileUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (!target.files || target.files.length == 0) return;
@@ -122,7 +102,7 @@ const handleFileUpload = (event: Event) => {
     file.value = target.files[0];
     form.file = target.files[0];
     fileName.value = form.file.name;
-};
+}
 
 const handleSubmit = () => {
     if (Number(form.umur) < 18) return Swal.fire({
@@ -175,5 +155,5 @@ const handleSubmit = () => {
             })
         })
     }
-};
+}
 </script>

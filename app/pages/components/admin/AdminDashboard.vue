@@ -258,8 +258,6 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-  // adminPanel.value = true;
-  // isLoading.value = false;
   api.refreshToken((error, token_result) => {
     if (error) { stopRequest(); return; }
 
