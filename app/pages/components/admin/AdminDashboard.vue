@@ -57,7 +57,7 @@
 
           <!-- SUBMENU PENGUNJUNG PBL -->
           <div class="pengunjung-pbl" v-if="pengunjungView">
-            <div class="title"><i class="ri-user-2-line"></i> Pengunjung PBL</div>
+            <div class="title"><i class="ri-user-2-line"></i> <span>Pengunjung PBL</span></div>
             <p>Berikut adalah total jumlah pengunjung dan jumlah tiket yang tersedia saat ini.</p>
             <hr>
 
@@ -133,7 +133,7 @@
           <!-- END OF SUBMENU METODE PEMINDAIAN -->
 
           <!-- SUBMENU PENGUNJUNG WEBSITE -->
-          <div class="pengunjung-website" v-if="websiteView">
+          <!-- <div class="pengunjung-website" v-if="websiteView">
             <div class="title"><i class="ri-user-5-line"></i> <span>Pengunjung Website</span></div>
             <p>Berikut adalah data pengunjung website pada pblsmekensa.site</p>
             <hr>
@@ -151,7 +151,7 @@
                 @error="onIframeError"></iframe>
             </div>
 
-          </div>
+          </div> -->
           <!-- END OF SUBMENU PENGUNJUNG WEBSITE -->
 
           <!-- SUBMENU KAMERA -->
