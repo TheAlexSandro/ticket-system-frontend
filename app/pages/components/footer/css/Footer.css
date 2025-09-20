@@ -3,41 +3,44 @@ footer {
     color: var(--footer-ink);
     padding: 20px 10px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 footer .info {
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    gap: 40px;
+    gap: 50px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding-bottom: 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-footer .logo-container {
+footer .info .logo-container {
     padding-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
 
-footer .logo-container>span {
+footer .info .logo-container>span {
     font-size: 14px;
     color: var(--muted);
     font-weight: 600;
     letter-spacing: 0.6px;
 }
 
-footer .logo-container .logos {
+footer .info .logo-container .logos {
     display: flex;
     gap: 12px;
     align-items: center;
     flex-wrap: wrap;
 }
 
-footer .logo-container .logos img {
+footer .info .logo-container .logos img {
     display: inline-block;
     width: 100px;
     height: auto;
@@ -47,13 +50,13 @@ footer .logo-container .logos img {
     transition: transform .22s ease, box-shadow .22s ease;
 }
 
-footer .logo-container .logos img:hover {
+footer .info .logo-container .logos img:hover {
     transform: translateY(-4px) scale(1.03);
 }
 
-footer .desc {
-    flex: 1;
-    padding: 0 20px;
+footer .info .desc {
+    max-width: 100%;
+    width: 50%;
 }
 
 footer .desc p {
@@ -61,7 +64,6 @@ footer .desc p {
     color: var(--footer-ink);
     line-height: 1.65;
     font-size: 15px;
-    max-width: 900px;
 }
 
 footer .cp {
@@ -81,19 +83,22 @@ footer .cp {
         display: flex;
         flex-direction: column;
         margin: 0 auto;
+        padding: 0 20px;
     }
 
-    footer .logo-container {
+    footer .info .logo-container {
         margin: 0 auto;
+        margin-bottom: -20px;
         align-items: center;
     }
 
-    footer .logo-container .logos img {
+    footer .info .logo-container .logos img {
         width: 20vw;
     }
 
-    footer .desc {
-        flex: 1;
+    footer .info .desc {
         max-width: 100%;
+        width: 100%;
+        margin-bottom: 20px;
     }
 }
