@@ -10,21 +10,20 @@
                     <p id="wajib">*) wajib</p>
                 </div>
                 <form v-if="displayForm" @submit.prevent="handleSubmit">
-                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required
-                        style="text-transform: uppercase;"
-                        @update:modelValue="(val: string) => form.nama = val.toUpperCase()" />
+                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required @input="(e: Event) => form.nama = toUpperCases(e)"
+                         />
                     <input :disabled="loading" v-model="form.umur" placeholder="Umur*" type="text" inputmode="numeric"
-                        required @update:modelValue="(umur: string) => form.umur = umur.replace(/[^0-9]/g, '')" />
+                        required @input="(e: Event) => form.umur = removeNonNumeric(e)" />
                     <div class="phone">
                         <span class="prefix">+62</span>
                         <input :disabled="loading" v-model="form.phone" placeholder="Nomor HP*" type="tel"
                             inputmode="numeric" pattern="^8[0-9]{7,11}$" required
-                            @update:modelValue="(phone: string) => form.phone = phone.replace(/[^0-9]/g, '')" />
+                            @input="(e: Event) => form.phone = removeNonNumeric(e)" />
                     </div>
                     <input :disabled="loading" v-model="form.alamat" placeholder="Alamat*" type="text" required />
                     <input :disabled="loading" v-model="form.lulus_tahun" placeholder="Lulusan Tahun*" type="text"
                         inputmode="numeric" required
-                        @update:modelValue="(lulus_tahun: string) => form.lulus_tahun = lulus_tahun.replace(/[^0-9]/g, '')" />
+                        @input="(e: Event) => form.lulus_tahun = removeNonNumeric(e)" />
                     <div class="upload">
                         <label for="upload-bukti">Upload Bukti*</label>
                         <p>Upload bukti ijazah atau kartu pelajar Anda, ini digunakan untuk memverifikasi bahwa Anda
@@ -95,6 +94,18 @@ const stopRequest = () => {
 const returns = () => {
     displayForm.value = true;
     displayError.value = false;
+}
+
+const toUpperCases = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    target.value = target.value.toUpperCase()
+    return target.value
+}
+
+const removeNonNumeric = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    target.value = target.value.replace(/[^0-9]/g, '')
+    return target.value
 }
 
 const handleFileUpload = (event: Event) => {
