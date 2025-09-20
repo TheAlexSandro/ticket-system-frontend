@@ -10,9 +10,8 @@
                     <p id="wajib">*) wajib</p>
                 </div>
                 <form v-if="displayForm" @submit.prevent="handleSubmit">
-                    <input v-model="form.nama" placeholder="Nama Lengkap*" type="text" required
+                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required
                         style="text-transform: uppercase;" @update:modelValue="(val: string) => form.nama = val.toUpperCase()" />
-
                     <input :disabled="loading" v-model="form.umur" placeholder="Umur*" type="text" inputmode="numeric"
                         required @update:modelValue="(umur: string) => form.umur = umur.replace(/[^0-9]/g, '')" />
                     <div class="phone">
