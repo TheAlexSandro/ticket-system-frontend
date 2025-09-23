@@ -29,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in paginatedData" :key="index">
+                    <tr v-for="(item, index) in paginatedData" :key="item.nama">
                         <td class="col">{{ item.nama }}</td>
                         <td class="col">{{ item.umur }}</td>
                         <td class="col">{{ item.phone }}</td>
