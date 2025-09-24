@@ -77,6 +77,16 @@
                 </div>
               </div>
             </div>
+
+            <div class="menu-section">
+              <div class="subtitle"><i class="ri-coupon-3-line"></i> <span>Lihat Daftar</span></div>
+              <p class="desc">Lihat daftar tiket yang sudah di pindai.</p>
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="showMenu('daftar-tiket')"><i class="ri-user-follow-line"></i> Daftar Tiket Dipindai</div>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- END OF SUBMENU PENGUNJUNG PBL -->
 
@@ -131,28 +141,6 @@
             </div>
           </div>
           <!-- END OF SUBMENU METODE PEMINDAIAN -->
-
-          <!-- SUBMENU PENGUNJUNG WEBSITE -->
-          <!-- <div class="pengunjung-website" v-if="websiteView">
-            <div class="title"><i class="ri-user-5-line"></i> <span>Pengunjung Website</span></div>
-            <p>Berikut adalah data pengunjung website pada pblsmekensa.site</p>
-            <hr>
-
-            <div class="load-wrapper">
-              <div class="load" v-if="iframeLoad">
-                <i class="ri-loader-4-line spin"></i> Memuat data...
-              </div>
-
-              <div class="error" v-if="iframeError">
-                <i class="ri-alert-line"></i> Gagal memuat data
-              </div>
-
-              <iframe v-show="!iframeLoad && !iframeError" :src="iframes()" frameborder="0" @load="onIframeLoad"
-                @error="onIframeError"></iframe>
-            </div>
-
-          </div> -->
-          <!-- END OF SUBMENU PENGUNJUNG WEBSITE -->
 
           <!-- SUBMENU KAMERA -->
           <div class="kamera" v-if="kameraView">
@@ -214,7 +202,6 @@ import "./css/AdminDashboard.css";
 import { onMounted, ref } from "vue";
 import { computed } from "vue";
 import Swal from "sweetalert2";
-import { useRuntimeConfig } from "nuxt/app";
 import LoadingScreen from "../global/LoadingScreen.vue";
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
@@ -235,7 +222,6 @@ const camHint = ref(true);
 const clicked = ref(false);
 const isLoading = ref(true);
 const iframeLoad = ref(true);
-const iframeError = ref(false);
 const isFailed = ref(false);
 const pblLoad = ref(true);
 const pblError = ref(false);
@@ -244,11 +230,6 @@ const pblDone = ref(false);
 const camPermissions = ref<"all" | "admin">();
 const pemindaianMethod = ref<"id" | "name">();
 const cameraStatuses = ref<boolean>();
-
-const iframes = (): string => {
-  const configs = useRuntimeConfig();
-  return String(configs.public["DATA_CHART_URL"]);
-}
 
 const stopRequest = () => {
   toast.destroy();
@@ -274,16 +255,6 @@ onMounted(() => {
     })
   })
 })
-
-const onIframeLoad = () => {
-  iframeLoad.value = false
-  iframeError.value = false
-}
-
-const onIframeError = () => {
-  iframeLoad.value = false
-  iframeError.value = true
-}
 
 const cameraStatusesIcon = computed(() =>
   cameraStatuses.value ? "ri-alert-line" : "ri-check-line"
@@ -395,6 +366,10 @@ const camStatus = () => {
 
 const showMenu = (type: string) => {
   isLoggedIn();
+  if (type == 'daftar-tiket') {
+    window.location.href = "/scanned-ticket";
+    return;
+  }
   const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : null;
   optionsView.value = false;
   routeNow.value = type;
@@ -405,8 +380,8 @@ const showMenu = (type: string) => {
       if (error) { stopRequest(); return };
       api.getTotal(String(token_result), (error, total) => {
         if (error || !total!["ok"]) { stopRequest(); return };
-        ticketTotal.value = Number(total!["result"]["total_ticket"]);
-        pengunjungTotal.value = Number(total!["result"]["total_pengunjung"]);
+        ticketTotal.value = Number(total!["result"]["total"]["total_ticket"]);
+        pengunjungTotal.value = Number(total!["result"]["total"]["total_pengunjung"]);
         pblDone.value = true;
         pblError.value = false;
         pblLoad.value = false;

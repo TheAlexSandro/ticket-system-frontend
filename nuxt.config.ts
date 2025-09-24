@@ -69,7 +69,6 @@ export default defineNuxtConfig({
     public: {
       BACKEND_URL: process.env.BACKEND_URL,
       EMAIL: process.env.EMAIL,
-      DATA_CHART_URL: process.env.DATA_CHART_URL,
       MARQUEE_CONTENT: process.env.MARQUEE_CONTENT,
       PUNCAK: process.env.PUNCAK
     },

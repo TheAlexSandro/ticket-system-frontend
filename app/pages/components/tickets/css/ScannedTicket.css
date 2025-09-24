@@ -1,4 +1,4 @@
-.alumni {
+.tickets {
     margin: 0 auto;
     margin-top: 7%;
     margin-bottom: 50px;
@@ -6,16 +6,16 @@
     width: 90%;
 }
 
-.alumni .head {
+.tickets .head {
     margin-bottom: 30px;
 }
 
-.alumni .head span {
+.tickets .head span {
     font-size: 25px;
     font-weight: 600;
 }
 
-.alumni .form {
+.tickets .form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,12 +23,12 @@
     margin-bottom: 50px;
 }
 
-.alumni .form span {
+.tickets .form span {
     font-size: 20px;
     margin-bottom: 10px;
 }
 
-.alumni .form .input-group {
+.tickets .form .input-group {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -36,13 +36,13 @@
     min-width: 60%;
 }
 
-.alumni .form .input-group .buttons {
+.tickets .form .input-group .buttons {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-.alumni .form .input-group .buttons button {
+.tickets .form .input-group .buttons button {
     background: var(--footer-bg);
     height: 35px;
     width: 100px;
@@ -54,22 +54,22 @@
     transition: all 0.5s ease-in-out;
 }
 
-.alumni .form .input-group i {
+.tickets .form .input-group i {
     font-size: 15px;
 }
 
-.alumni .form .input-group .buttons button:hover {
+.tickets .form .input-group .buttons button:hover {
     background: rgb(73, 73, 73);
     transition: all 0.5s ease-in-out;
 }
 
-.alumni .form .input-group .input-wrapper {
+.tickets .form .input-group .input-wrapper {
     position: relative;
     width: 100%;
     max-width: 90%;
 }
 
-.alumni .form .input-group .input-wrapper i {
+.tickets .form .input-group .input-wrapper i {
     position: absolute;
     top: 50%;
     left: 12px;
@@ -79,7 +79,7 @@
     font-size: 16px;
 }
 
-.alumni .form .input-group .input-wrapper input {
+.tickets .form .input-group .input-wrapper input {
     width: 100%;
     padding: 8px 10px;
     padding-left: 35px;
@@ -91,21 +91,21 @@
     box-sizing: border-box;
 }
 
-.alumni .form .hint {
+.tickets .form .hint {
     margin-top: 10px;
 }
 
-.alumni .form .hint span {
+.tickets .form .hint span {
     font-size: 15px;
     text-align: left;
 }
 
-.alumni .table-container {
+.tickets .table-container {
     overflow-x: auto;
     height: auto;
 }
 
-.alumni .table-container .alumni-table {
+.tickets .table-container .tickets-table {
     margin: 0 auto;
     min-width: 800px;
     border-collapse: collapse;
@@ -113,34 +113,28 @@
     text-align: left;
 }
 
-.alumni .table-container .alumni-table th,
-.alumni .table-container .alumni-table td {
-    width: 20%;
+.tickets .table-container .tickets-table th,
+.tickets .table-container .tickets-table td {
+    width: 10%;
     padding: 10px;
     border-bottom: 1px solid #ddd;
     vertical-align: middle;
 }
 
-.alumni .table-container .alumni-table th {
+.tickets .table-container .tickets-table th {
     background-color: #2d3748;
     color: white;
 }
 
-.alumni .table-container .alumni-table tr:nth-child(even) {
+.tickets .table-container .tickets-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.alumni .table-container .alumni-table tr:hover {
+.tickets .table-container .tickets-table tr:hover {
     background-color: #edf2f7;
 }
 
-.alumni .table-container .alumni-table .bukti-img {
-    max-width: 180px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.alumni .pagination {
+.tickets .pagination {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
@@ -148,11 +142,11 @@
     gap: 1rem;
 }
 
-.alumni .pagination .hidden {
+.tickets .pagination .hidden {
     display: none;
 }
 
-.alumni .pagination button {
+.tickets .pagination button {
     background: var(--green-strong);
     padding: 10px 25px;
     border: none;
@@ -162,7 +156,7 @@
     cursor: pointer;
 }
 
-.alumni .error {
+.tickets .error {
     margin-top: 5%;
     display: flex;
     flex-direction: column;
@@ -170,17 +164,17 @@
     align-items: center;
 }
 
-.alumni .error i {
+.tickets .error i {
     font-size: 30px;
     margin-bottom: 10px;
 }
 
 @media (min-width: 601px) and (max-width: 1024px) {
-    .alumni {
+    .tickets {
         margin-top: 15%;
     }
 
-    .alumni .error {
+    .tickets .error {
         margin-top: 20%;
         max-width: 100%;
         width: 100%;
@@ -188,18 +182,18 @@
 }
 
 @media (max-width: 600px) {
-    .alumni {
+    .tickets {
         min-height: auto;
         margin-top: 20%;
     }
 
-    .alumni .error {
+    .tickets .error {
         margin-top: 30%;
         max-width: 100%;
         width: 100%;
     }
 
-    .alumni .form .input-group {
+    .tickets .form .input-group {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -209,12 +203,12 @@
         width: 90%;
     }
 
-    .alumni .form .input-group .input-wrapper {
+    .tickets .form .input-group .input-wrapper {
         width: 100%;
         max-width: 100%;
     }
 
-    .alumni .form .input-group .buttons {
+    .tickets .form .input-group .buttons {
         display: flex;
         flex-direction: row;
         max-width: 100%;
@@ -222,18 +216,18 @@
         justify-content: space-between;
     }
 
-    .alumni .form .hint {
+    .tickets .form .hint {
         margin-top: 20px;
         max-width: 100%;
         width: 90%;
         line-height: 1.3rem;
     }
 
-    .alumni .form .hint span {
+    .tickets .form .hint span {
         font-size: 13px;
     }
 
-    .alumni .form .hint span i {
+    .tickets .form .hint span i {
         margin-right: 7px;
     }
 }
