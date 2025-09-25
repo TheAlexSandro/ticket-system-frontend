@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from "nuxt/config";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
@@ -10,6 +12,8 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: "PBL Smekensa",
+      titleTemplate: "%s - PBL Smekensa",
       meta: [
         {
           name: "description",
@@ -46,6 +50,12 @@ export default defineNuxtConfig({
           href: "/images/favicon/apple-touch-icon.png",
         },
         { rel: "manifest", href: "/images/favicon/site.webmanifest" },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "48x48",
+          href: "/images/favicon/favicon-48x48.png"
+        }
       ],
       script: [
         {

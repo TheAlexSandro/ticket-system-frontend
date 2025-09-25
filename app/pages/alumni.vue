@@ -7,7 +7,7 @@ import { useHead } from 'nuxt/app';
 import Alumni from './components/alumni/Alumni.vue';
 
 useHead({
-  title: 'Periksa Daftar Alumni - PBL'
+  title: 'Daftar Alumni'
 })
 
 </script>

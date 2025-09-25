@@ -7,7 +7,7 @@ import { useHead } from 'nuxt/app';
 import ScannedTicket from './components/tickets/ScannedTicket.vue';
 
 useHead({
-  title: 'Daftar Tiket Dipindai - PBL'
+  title: 'Tiket Dipindai'
 })
 
 </script>

@@ -7,7 +7,7 @@ import { useHead } from 'nuxt/app';
 import Dashboard from './components/scanner/Dashboard.vue';
 
 useHead({
-  title: 'Ticket Scanner - PBL'
+  title: 'Ticket Scanner'
 })
 
 </script>

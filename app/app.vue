@@ -14,13 +14,8 @@ import './css/Global.css';
 import LoadingScreen from './pages/components/global/LoadingScreen.vue';
 import Headers from './pages/components/global/Headers.vue';
 import { ref, onMounted } from 'vue';
-import { useHead } from 'nuxt/app';
 import { useSocket } from './composables/useSocket';
 const socket = useSocket();
-
-useHead({
-  title: "Project Based Learning"
-})
 
 onMounted(() => {
   socket.on("refresh", (data) => {

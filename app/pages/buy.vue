@@ -7,7 +7,7 @@ import { useHead } from 'nuxt/app';
 import Buy from './components/buy/Buy.vue';
 
 useHead({
-  title: 'Beli Tiket - PBL'
+  title: 'Beli Tiket'
 })
 
 </script>

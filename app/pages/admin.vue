@@ -7,7 +7,7 @@ import { useHead } from 'nuxt/app';
 import AdminDashboard from './components/admin/AdminDashboard.vue';
 
 useHead({
-  title: 'Admin Dashboard - PBL'
+  title: 'Admin Dashboard'
 })
 
 </script>
