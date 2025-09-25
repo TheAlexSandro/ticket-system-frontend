@@ -44,10 +44,17 @@
                         <td class="col">{{ item.alamat }}</td>
                         <td class="col">{{ item.lulus_tahun }}</td>
                         <td class="col">
-                            <a :href="item.bukti" target="_blank">
-                                <img :src="item.bukti" alt="bukti" class="bukti-img" />
-                            </a>
+                            <template v-if="!imgError[index]">
+                                <a :href="item.bukti" target="_blank">
+                                    <img :src="item.bukti" alt="bukti" class="bukti-img"
+                                        @error="imgError[index] = true" />
+                                </a>
+                            </template>
+                            <template v-else>
+                                <span class="img-404"><i class="ri-alert-line"></i> 404 - Not Found</span>
+                            </template>
                         </td>
+
                     </tr>
                 </tbody>
             </table>
@@ -103,6 +110,7 @@ const isFound = ref<boolean>(true);
 const message = ref("");
 const foundData = ref<AlumniData[]>([]);
 const displayClear = ref(false);
+const imgError = ref<{ [key: number]: boolean }>({});
 
 const stopRequest = () => {
     isLoading.value = false;

@@ -115,10 +115,22 @@
 
 .alumni .table-container .alumni-table th,
 .alumni .table-container .alumni-table td {
-    width: 20%;
+    width: 10%;
     padding: 10px;
     border-bottom: 1px solid #ddd;
     vertical-align: middle;
+}
+
+.alumni .table-container .alumni-table td .img-404 {
+    display: flex;
+    flex-direction: row;
+    color: red;
+    align-items: center;
+}
+
+.alumni .table-container .alumni-table td .img-404 i {
+    margin-right: 7px;
+    font-size: 17px;
 }
 
 .alumni .table-container .alumni-table th {
