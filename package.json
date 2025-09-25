@@ -17,6 +17,7 @@
     "html5-qrcode": "^2.3.8",
     "nuxt": "^4.0.3",
     "nuxt-toast": "^1.1.4",
+    "qr-scanner": "^1.4.2",
     "remixicon": "^4.6.0",
     "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.22.4",

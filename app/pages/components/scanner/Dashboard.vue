@@ -33,7 +33,7 @@
                         <div class="overlay" v-if="showWarning">
                             <div class="icon"><i class="ri-alert-line"></i></div>
                             <h1>Camera Disabled!</h1>
-                            <p>{{ !isFromWebsocket ? 'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' : 'Camera is disabled by the administrator.' }}</p>
+                            <p>{{ !isFromWebsocket ? 'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' : 'Camera is by the administrator.' }}</p>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, computed, onMounted } from "vue";
-import { BrowserMultiFormatReader } from "@zxing/browser";
+import QrScanner from "qr-scanner";
 import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
@@ -114,7 +114,7 @@ const api = useApi();
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
 const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone" | "no_flash">();
-const facingMode = ref("environment");
+const facingMode = ref<"user" | "environment">("environment");
 const currentStream = ref<MediaStream | null>(null);
 const isCameraStopped = ref(false);
 const inChangeDirection = ref(false);
@@ -139,7 +139,7 @@ const flashAvailable = ref(false);
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
 );
-let codeReader: BrowserMultiFormatReader | null = null;
+let codeReader: QrScanner | null = null
 
 const stopRequest = () => {
     isLoading.value = false;
@@ -275,7 +275,24 @@ const startCamera = async (video_id: string) => {
         try {
             stopCamera("stops");
             isLoading.value = true;
-            const videoType = detectDeviceType() == "mobile" ? { video: { facingMode: { exact: facingMode.value } } } : { video: true };
+            const videoType: MediaStreamConstraints =
+                detectDeviceType() == "mobile"
+                    ? {
+                        video: {
+                            facingMode: { ideal: facingMode.value },
+                            width: { ideal: 3840 },
+                            height: { ideal: 2160 },
+                            frameRate: { ideal: 30, max: 60 },
+                        },
+                    }
+                    : {
+                        video: {
+                            width: { ideal: 3840 },
+                            height: { ideal: 2160 },
+                            frameRate: { ideal: 30, max: 60 },
+                        },
+                    };
+
             const stream = await navigator.mediaDevices.getUserMedia(videoType);
             if (!stream) {
                 isDisabled.value = true;
@@ -283,6 +300,14 @@ const startCamera = async (video_id: string) => {
                 cameraErrType.value = "camera_gone";
                 return;
             }
+            const track = stream.getVideoTracks()[0];
+
+            await (track as any).applyConstraints({
+                advanced: [
+                    { focusMode: "continuous" as any },
+                    { zoom: 2 as any }
+                ]
+            });
 
             if (facingMode.value == "environment") { flashAvailable.value = true } else { flashAvailable.value = false };
             cameraAccess.value = true;
@@ -326,81 +351,102 @@ const startCamera = async (video_id: string) => {
 }
 
 const startQRScanning = (video: HTMLVideoElement) => {
-    codeReader = new BrowserMultiFormatReader();
-    codeReader.decodeFromVideoElement(video, (result, error) => {
-        if (result) {
-            if (!popupShown.value) {
-                popupShown.value = true;
-                toast.info({ message: "Sedang meminta data ke server...", position: 'topRight', pauseOnHover: false, displayMode: 2, close: false, timeout: 10000 });
-                if (String(scanMethod.value) == "id" && !String(result.getText()).startsWith("PBL-")) {
-                    toast.destroy();
+    if (codeReader) {
+        try { codeReader.stop(); } catch { }
+    }
+
+    codeReader = new QrScanner(
+        video,
+        (result) => {
+            toast.info({
+                message: "Sedang meminta data ke server...",
+                position: "topRight",
+                pauseOnHover: false,
+                displayMode: 2,
+                close: false,
+                timeout: 10000,
+            });
+
+            if (
+                String(scanMethod.value) == "id" &&
+                !String(result.data).startsWith("PBL-")
+            ) {
+                toast.destroy();
+                Swal.fire({
+                    title: "Warning!",
+                    icon: "warning",
+                    text: "Bukan tiket yang valid!",
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                }).then((res) => {
+                    if (res.isConfirmed) popupShown.value = false;
+                });
+                return;
+            }
+
+            api.scan(result.data, String(scanMethod.value), (error, response) => {
+                toast.destroy();
+                if (error) {
                     Swal.fire({
-                        title: 'Warning!',
-                        icon: 'warning',
-                        text: "Bukan tiket yang valid!",
+                        title: "Error!",
+                        icon: "error",
+                        text: "Error, please try again.",
                         showCancelButton: false,
                         showConfirmButton: true,
-                        confirmButtonText: "OK"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            popupShown.value = false;
-                        }
-                    })
+                        confirmButtonText: "OK",
+                    }).then((res) => {
+                        if (res.isConfirmed) popupShown.value = false;
+                    });
                     return;
                 }
-                api.scan(result.getText(), String(scanMethod.value), (error, result) => {
-                    if (error) {
-                        toast.destroy();
-                        Swal.fire({
-                            title: 'Error!',
-                            icon: 'error',
-                            text: "Error, please try again.",
-                            showCancelButton: false,
-                            showConfirmButton: true,
-                            confirmButtonText: "OK"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                popupShown.value = false;
-                            }
-                        })
-                        return;
-                    }
-                    toast.destroy();
-                    if (!result) {
-                        Swal.fire({
-                            title: 'Failed!',
-                            icon: 'error',
-                            text: "Pengguna tidak ditemukan!",
-                            showCancelButton: false,
-                            showConfirmButton: true,
-                            confirmButtonText: "OK"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                popupShown.value = false;
-                            }
-                        })
-                        return;
-                    }
 
+                if (!response) {
                     Swal.fire({
-                        title: 'Success!',
-                        //@ts-ignore
-                        icon: result!["icon"],
-                        //@ts-ignore
-                        html: result!["text"],
+                        title: "Failed!",
+                        icon: "error",
+                        text: "Pengguna tidak ditemukan!",
                         showCancelButton: false,
                         showConfirmButton: true,
-                        confirmButtonText: "OK"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            popupShown.value = false;
-                        }
-                    })
-                })
-            }
-        };
-    })
-}
+                        confirmButtonText: "OK",
+                    }).then((res) => {
+                        if (res.isConfirmed) popupShown.value = false;
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Success!",
+                    //@ts-ignore
+                    icon: response!["icon"],
+                    //@ts-ignore
+                    html: response!["text"],
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                }).then((res) => {
+                    if (res.isConfirmed) popupShown.value = false;
+                });
+            });
+        },
+        {
+            preferredCamera: facingMode.value,
+            highlightScanRegion: true,
+            maxScansPerSecond: 120,
+            returnDetailedScanResult: true,
+            calculateScanRegion: (video) => {
+                return {
+                    x: 0,
+                    y: 0,
+                    width: video.videoWidth,
+                    height: video.videoHeight
+                };
+            },
+        }
+    );
+
+    codeReader.start();
+};
 
 const changeFlash = async () => {
     //@ts-ignore
