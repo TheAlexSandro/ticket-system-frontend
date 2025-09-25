@@ -135,6 +135,7 @@ const flash = ref(false);
 const streams = ref<MediaStreamTrack | null>(null);
 const userStarts = ref(false);
 const flashAvailable = ref(false);
+const isMobile = ref(false);
 
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
@@ -146,6 +147,11 @@ const stopRequest = () => {
     isDisabled.value = true;
     ok.value = "error";
 }
+
+const checkMobile = () => {
+    const mobile = window.innerWidth <= 768 || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.devicePixelRatio > 1)
+    isMobile.value = mobile;
+};
 
 onMounted(() => {
     api.refreshToken((error, token_result) => {
@@ -173,6 +179,9 @@ onMounted(() => {
             }
         })
     });
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
 
     socket.on("camera_status", (data) => {
         if (data['status'] == null) return;
@@ -249,6 +258,7 @@ const overflow = (state: OverflowState) => {
 const stopCamera = (type: StopCamera) => {
     if (currentStream.value) {
         currentStream.value.getTracks().forEach(track => track.stop());
+        currentStream.value = null;
         if (type == "stops") { showWarning.value = true };
         isCameraStopped.value = true;
         others.value = false;
@@ -292,7 +302,6 @@ const startCamera = async (video_id: string) => {
                             frameRate: { ideal: 30, max: 60 },
                         },
                     };
-
             const stream = await navigator.mediaDevices.getUserMedia(videoType);
             if (!stream) {
                 isDisabled.value = true;
@@ -302,12 +311,14 @@ const startCamera = async (video_id: string) => {
             }
             const track = stream.getVideoTracks()[0];
 
-            await (track as any).applyConstraints({
-                advanced: [
-                    { focusMode: "continuous" as any },
-                    { zoom: 2 as any }
-                ]
-            });
+            if (isMobile.value) {
+                await (track as any).applyConstraints({
+                    advanced: [
+                        { focusMode: "continuous" as any },
+                        { zoom: 2 as any }
+                    ]
+                });
+            }
 
             if (facingMode.value == "environment") { flashAvailable.value = true } else { flashAvailable.value = false };
             cameraAccess.value = true;
@@ -333,11 +344,13 @@ const startCamera = async (video_id: string) => {
                     }
                     startQRScanning(video);
                 } catch {
+                    stopCamera("stops");
                     toast.error({ message: 'Failed to start camera!' });
                 }
             }
         } catch (err: any) {
             toast.error({ message: err.message, position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            stopCamera("stops");
             overflow("visible");
             isLoading.value = false;
             isDisabled.value = true;
@@ -351,6 +364,7 @@ const startCamera = async (video_id: string) => {
 }
 
 const startQRScanning = (video: HTMLVideoElement) => {
+    if (isCameraStopped.value || !currentStream.value) return;
     if (codeReader) {
         try { codeReader.stop(); } catch { }
     }
@@ -431,7 +445,6 @@ const startQRScanning = (video: HTMLVideoElement) => {
         },
         {
             preferredCamera: facingMode.value,
-            highlightScanRegion: true,
             maxScansPerSecond: 120,
             returnDetailedScanResult: true,
             calculateScanRegion: (video) => {
