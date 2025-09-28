@@ -23,17 +23,21 @@
             </template>
 
             <template v-else>
-                <h1>Ticket Scanner</h1>
-                <p>Arahkan kamera ke Kode QR yang tersedia pada tiket pengunjung, pastikan Kode QR terlihat jelas di
-                    kamera agar dapat dipindai.</p>
-                <div class="content">
-                    <div class="video-wrapper">
-                        <video id="camera" autoplay playsinline></video>
+                <div class="scanner">
+                    <h1>Ticket Scanner</h1>
+                    <p>Arahkan kamera ke Kode QR yang tersedia pada tiket pengunjung, pastikan Kode QR terlihat jelas di
+                        kamera agar dapat dipindai.</p>
+                    <div class="content">
+                        <div class="video-wrapper">
+                            <video id="camera" autoplay playsinline></video>
 
-                        <div class="overlay" v-if="showWarning">
-                            <div class="icon"><i class="ri-alert-line"></i></div>
-                            <h1>Camera Disabled!</h1>
-                            <p>{{ !isFromWebsocket ? 'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' : 'Camera is by the administrator.' }}</p>
+                            <div class="overlay" v-if="showWarning">
+                                <div class="icon"><i class="ri-alert-line"></i></div>
+                                <h1>Camera Disabled!</h1>
+                                <p>{{ !isFromWebsocket ?
+                                'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' :
+                                'Camera is disabled by the administrator.' }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -93,7 +97,8 @@
 
 <script setup lang="ts">
 import { ref, nextTick, computed, onMounted } from "vue";
-import QrScanner from "qr-scanner";
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { DecodeHintType, BarcodeFormat } from "@zxing/library";
 import "./css/Dashboard.css";
 import "./css/Custom.css";
 import Camera from "./Camera.vue";
@@ -114,7 +119,7 @@ const api = useApi();
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
 const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone" | "no_flash">();
-const facingMode = ref<"user" | "environment">("environment");
+const facingMode = ref("environment");
 const currentStream = ref<MediaStream | null>(null);
 const isCameraStopped = ref(false);
 const inChangeDirection = ref(false);
@@ -140,7 +145,7 @@ const isMobile = ref(false);
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
 );
-let codeReader: QrScanner | null = null
+let codeReader: BrowserMultiFormatReader | null = null;
 
 const stopRequest = () => {
     isLoading.value = false;
@@ -215,18 +220,6 @@ const isCameraSupported = () => {
     )
 }
 
-const detectDeviceType = (): "mobile" | "desktop" => {
-    const ua = navigator.userAgent;
-
-    const isIPad = /\b(iPad)\b/i.test(ua) ||
-        (/\bMacintosh\b/i.test(ua) && navigator.maxTouchPoints > 1);
-
-    if (/android|iphone|ipod|windows phone|mobile/i.test(ua) || isIPad) {
-        return "mobile";
-    }
-    return "desktop";
-}
-
 const toggleOther = () => {
     if (isCameraStopped.value) {
         //@ts-ignore
@@ -258,7 +251,6 @@ const overflow = (state: OverflowState) => {
 const stopCamera = (type: StopCamera) => {
     if (currentStream.value) {
         currentStream.value.getTracks().forEach(track => track.stop());
-        currentStream.value = null;
         if (type == "stops") { showWarning.value = true };
         isCameraStopped.value = true;
         others.value = false;
@@ -286,22 +278,16 @@ const startCamera = async (video_id: string) => {
             stopCamera("stops");
             isLoading.value = true;
             const videoType: MediaStreamConstraints =
-                detectDeviceType() == "mobile"
+                isMobile.value
                     ? {
                         video: {
                             facingMode: { ideal: facingMode.value },
-                            width: { ideal: 3840 },
-                            height: { ideal: 2160 },
-                            frameRate: { ideal: 30, max: 60 },
                         },
                     }
                     : {
-                        video: {
-                            width: { ideal: 3840 },
-                            height: { ideal: 2160 },
-                            frameRate: { ideal: 30, max: 60 },
-                        },
+                        video: true
                     };
+
             const stream = await navigator.mediaDevices.getUserMedia(videoType);
             if (!stream) {
                 isDisabled.value = true;
@@ -324,7 +310,7 @@ const startCamera = async (video_id: string) => {
             cameraAccess.value = true;
             currentStream.value = stream;
             showWarning.value = false;
-            streams.value = stream.getVideoTracks()[0];
+            streams.value = track;
             isLoading.value = false;
             await nextTick();
             const video = document.getElementById(video_id) as HTMLVideoElement;
@@ -344,13 +330,11 @@ const startCamera = async (video_id: string) => {
                     }
                     startQRScanning(video);
                 } catch {
-                    stopCamera("stops");
                     toast.error({ message: 'Failed to start camera!' });
                 }
             }
         } catch (err: any) {
             toast.error({ message: err.message, position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            stopCamera("stops");
             overflow("visible");
             isLoading.value = false;
             isDisabled.value = true;
@@ -363,102 +347,70 @@ const startCamera = async (video_id: string) => {
     }, 500)
 }
 
-const startQRScanning = (video: HTMLVideoElement) => {
-    if (isCameraStopped.value || !currentStream.value) return;
-    if (codeReader) {
-        try { codeReader.stop(); } catch { }
-    }
+const startQRScanning = async (video: HTMLVideoElement) => {
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE]);
+    hints.set(DecodeHintType.TRY_HARDER, true);
+    codeReader = new BrowserMultiFormatReader();
 
-    codeReader = new QrScanner(
-        video,
-        (result) => {
-            toast.info({
-                message: "Sedang meminta data ke server...",
-                position: "topRight",
-                pauseOnHover: false,
-                displayMode: 2,
-                close: false,
-                timeout: 10000,
-            });
+    try {
+        await codeReader.decodeFromVideoElement(
+            video,
+            (result) => {
+                if (result) {
+                    const text = result.getText();
+                    console.log("QR Detected:", text);
 
-            if (
-                String(scanMethod.value) == "id" &&
-                !String(result.data).startsWith("PBL-")
-            ) {
-                toast.destroy();
-                Swal.fire({
-                    title: "Warning!",
-                    icon: "warning",
-                    text: "Bukan tiket yang valid!",
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    confirmButtonText: "OK",
-                }).then((res) => {
-                    if (res.isConfirmed) popupShown.value = false;
-                });
-                return;
+                    if (!popupShown.value) {
+                        popupShown.value = true;
+                        toast.info({
+                            message: "Sedang meminta data ke server...",
+                            position: "topRight",
+                            pauseOnHover: false,
+                            displayMode: 2,
+                            close: false,
+                            timeout: 10000,
+                        });
+
+                        if (String(scanMethod.value) === "id" && !text.startsWith("PBL-")) {
+                            toast.destroy();
+                            Swal.fire({
+                                title: "Warning!",
+                                icon: "warning",
+                                text: "Bukan tiket yang valid!",
+                                confirmButtonText: "OK",
+                            }).then(() => (popupShown.value = false));
+                            return;
+                        }
+
+                        api.scan(text, String(scanMethod.value), (error, response) => {
+                            toast.destroy();
+                            if (error || !response) {
+                                Swal.fire({
+                                    title: "Error!",
+                                    icon: "error",
+                                    text: error ? "Error, please try again." : "Pengguna tidak ditemukan!",
+                                    confirmButtonText: "OK",
+                                }).then(() => (popupShown.value = false));
+                                return;
+                            }
+
+                            Swal.fire({
+                                title: "Success!",
+                                //@ts-ignore
+                                icon: response["icon"],
+                                //@ts-ignore
+                                html: response["text"],
+                                confirmButtonText: "OK",
+                            }).then(() => (popupShown.value = false));
+                        });
+                    }
+                }
             }
-
-            api.scan(result.data, String(scanMethod.value), (error, response) => {
-                toast.destroy();
-                if (error) {
-                    Swal.fire({
-                        title: "Error!",
-                        icon: "error",
-                        text: "Error, please try again.",
-                        showCancelButton: false,
-                        showConfirmButton: true,
-                        confirmButtonText: "OK",
-                    }).then((res) => {
-                        if (res.isConfirmed) popupShown.value = false;
-                    });
-                    return;
-                }
-
-                if (!response) {
-                    Swal.fire({
-                        title: "Failed!",
-                        icon: "error",
-                        text: "Pengguna tidak ditemukan!",
-                        showCancelButton: false,
-                        showConfirmButton: true,
-                        confirmButtonText: "OK",
-                    }).then((res) => {
-                        if (res.isConfirmed) popupShown.value = false;
-                    });
-                    return;
-                }
-
-                Swal.fire({
-                    title: "Success!",
-                    //@ts-ignore
-                    icon: response!["icon"],
-                    //@ts-ignore
-                    html: response!["text"],
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    confirmButtonText: "OK",
-                }).then((res) => {
-                    if (res.isConfirmed) popupShown.value = false;
-                });
-            });
-        },
-        {
-            preferredCamera: facingMode.value,
-            maxScansPerSecond: 120,
-            returnDetailedScanResult: true,
-            calculateScanRegion: (video) => {
-                return {
-                    x: 0,
-                    y: 0,
-                    width: video.videoWidth,
-                    height: video.videoHeight
-                };
-            },
-        }
-    );
-
-    codeReader.start();
+        );
+    } catch (err) {
+        toast.error({ message: "Gagal memulai scanner", position: "topRight" });
+    }
 };
 
 const changeFlash = async () => {

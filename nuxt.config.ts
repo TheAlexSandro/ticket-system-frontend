@@ -12,13 +12,13 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: "PBL Smekensa",
+      title: "60th",
       titleTemplate: "%s - PBL Smekensa",
       meta: [
         {
           name: "description",
           content:
-            "Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode QR pada tiket menggunakan perangkat smartphone, PC ataupun tablet.",
+            "Selamat datang di website PBL Smekensa yang ke 60th.",
         },
       ],
       link: [
