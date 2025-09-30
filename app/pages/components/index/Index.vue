@@ -128,7 +128,8 @@
         <section class="info">
             <div class="subinfo">
                 <span>Untuk Umum!</span>
-                <p>Perayaan Project Based Learning SMKN 1 Blitar tahun ini dibuka secara resmi untuk umum, sehingga tidak hanya
+                <p>Perayaan Project Based Learning SMKN 1 Blitar tahun ini dibuka secara resmi untuk umum, sehingga
+                    tidak hanya
                     siswa dan civitas sekolah saja yang dapat mengikuti rangkaian acara, tetapi juga masyarakat luas.
                     Dengan dibukanya kegiatan ini untuk umum, diharapkan semakin banyak pihak yang dapat merasakan
                     semarak perayaan, menikmati berbagai stand, pertunjukan, serta program yang telah dipersiapkan oleh
@@ -180,17 +181,16 @@
                     </div>
 
                     <div class="desc">
-                        <span>Pembelian Tiket</span>
+                        <span>PBL Smekensa</span>
                         <p>
                             Jangan lewatkan momen istimewa <strong>Project Based Learning di SMKN 1 Blitar</strong>!
-                            Acara ini terbuka untuk umum dan menjadi kesempatan bagi seluruh masyarakat
-                            untuk ikut merasakan kemeriahan, kebersamaan, dan semangat keluarga besar SMKN 1 Blitar.
+                            Puncak acara PBL Smekensa akan berlangsung pada <strong>{{ marqueeText().b }}</strong>,
+                            terbuka untuk umum dan menjadi kesempatan bagi seluruh masyarakat untuk ikut merasakan
+                            kemeriahan, kebersamaan, serta semangat keluarga besar SMKN 1 Blitar.
                             Segera pastikan kehadiranmu agar tidak ketinggalan berbagai rangkaian acara seru
-                            yang sudah dipersiapkan.
-                        </p>
+                            yang telah dipersiapkan khusus untukmu!
 
-                        <a href="/buy" id="buy"><span><i class="ri-coupon-2-fill"></i> Beli Tiket</span> <span
-                                id="arrow"><i class="ri-arrow-right-line"></i></span></a>
+                        </p>
                     </div>
                 </div>
 
