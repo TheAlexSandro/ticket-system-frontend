@@ -61,7 +61,6 @@ export function useApi() {
           identifier,
         })
         .then((result: AxiosResponse) => {
-          if (!result["data"]["ok"]) return callback(null, false);
           const item = result["data"]["result"];
           var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
           var absen = item.absen ? `Absen: ${item.absen}<br>` : "";

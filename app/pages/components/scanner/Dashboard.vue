@@ -163,25 +163,25 @@ onMounted(() => {
         ok.value = "wait";
         if (error) { stopRequest(); return };
 
+        isLoading.value = false;
         api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return };
             if (error || !result!['ok']) return;
             permitted.value = true;
+        })
 
-            api.request("/admin/getInfo", String(token_result), null, (error, result) => {
-                if (error || !result!['ok']) { stopRequest(); return };
-                ok.value = "done";
-                camStatus.value = result!["result"]["camera_status"] == "on";
-                camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
-                scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
+        api.request("/admin/getInfo", String(token_result), null, (error, result) => {
+            if (error || !result!['ok']) { stopRequest(); return };
+            ok.value = "done";
+            camStatus.value = result!["result"]["camera_status"] == "on";
+            camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+            scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
-                isLoading.value = false;
-                if (userStarts.value) {
-                    userStarts.value = false;
-                    toast.destroy();
-                    toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                }
-            })
+            if (userStarts.value) {
+                userStarts.value = false;
+                toast.destroy();
+                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            }
         })
     });
 
@@ -359,8 +359,6 @@ const startQRScanning = async (video: HTMLVideoElement) => {
             (result) => {
                 if (result) {
                     const text = result.getText();
-                    console.log("QR Detected:", text);
-
                     if (!popupShown.value) {
                         popupShown.value = true;
                         toast.info({
@@ -372,7 +370,7 @@ const startQRScanning = async (video: HTMLVideoElement) => {
                             timeout: 10000,
                         });
 
-                        if (String(scanMethod.value) === "id" && !text.startsWith("PBL-")) {
+                        if (String(scanMethod.value) == "id" && !text.startsWith("PBL-")) {
                             toast.destroy();
                             Swal.fire({
                                 title: "Warning!",
@@ -385,7 +383,7 @@ const startQRScanning = async (video: HTMLVideoElement) => {
 
                         api.scan(text, String(scanMethod.value), (error, response) => {
                             toast.destroy();
-                            if (error || !response) {
+                            if (error) {
                                 Swal.fire({
                                     title: "Error!",
                                     icon: "error",
