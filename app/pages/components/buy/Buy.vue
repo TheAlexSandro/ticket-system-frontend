@@ -10,8 +10,8 @@
                     <p id="wajib">*) wajib</p>
                 </div>
                 <form v-if="displayForm" @submit.prevent="handleSubmit">
-                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required @input="(e: Event) => form.nama = toUpperCases(e)"
-                         />
+                    <input :disabled="loading" v-model="form.nama" placeholder="Nama Lengkap*" type="text" required
+                        @input="(e: Event) => form.nama = toUpperCases(e)" />
                     <input :disabled="loading" v-model="form.umur" placeholder="Umur*" type="text" inputmode="numeric"
                         required @input="(e: Event) => form.umur = removeNonNumeric(e)" />
                     <div class="phone">
@@ -22,8 +22,7 @@
                     </div>
                     <input :disabled="loading" v-model="form.alamat" placeholder="Alamat*" type="text" required />
                     <input :disabled="loading" v-model="form.lulus_tahun" placeholder="Lulusan Tahun*" type="text"
-                        inputmode="numeric" required
-                        @input="(e: Event) => form.lulus_tahun = removeNonNumeric(e)" />
+                        inputmode="numeric" required @input="(e: Event) => form.lulus_tahun = removeNonNumeric(e)" />
                     <div class="upload">
                         <label for="upload-bukti">Upload Bukti*</label>
                         <p>Upload bukti ijazah atau kartu pelajar Anda, ini digunakan untuk memverifikasi bahwa Anda
@@ -47,7 +46,7 @@
                 <div class="error" v-if="displayError">
                     <i class="ri-spam-2-line"></i>
                     <span>Error!</span>
-                    <p>Pengguna sudah berada dalam basis data.</p>
+                    <p>{{ errorMessage }}</p>
 
                     <button @click="returns()">KEMBALI</button>
                 </div>
@@ -118,21 +117,6 @@ const handleFileUpload = (event: Event) => {
 }
 
 const handleSubmit = () => {
-    if (Number(form.umur) < 18) return Swal.fire({
-        title: "Warning!",
-        icon: "warning",
-        text: "Umur tidak valid!"
-    })
-    if (Number(form.lulus_tahun) > 2025) return Swal.fire({
-        title: "Warning!",
-        icon: "warning",
-        text: "Ini hanya untuk alumni!"
-    })
-    if (Number(form.lulus_tahun) < 1965) return Swal.fire({
-        title: "Warning!",
-        icon: "warning",
-        text: "Tahun kelulusan tidak valid!"
-    })
     if (!fileName.value) return Swal.fire({
         title: "Warning!",
         icon: "warning",
@@ -145,23 +129,17 @@ const handleSubmit = () => {
     reader.onload = () => {
         const fileBase64 = reader.result as string;
 
-        api.refreshToken((error, token_result) => {
+        api.accessToken((error, token_result) => {
             if (error) { stopRequest(); return };
 
-            api.register(String(token_result), form.nama, form.umur, form.phone, form.lulus_tahun, form.alamat, fileBase64, (err, result) => {
+            api.request("/users/register", String(token_result), { nama: form.nama, umur: form.umur, phone: form.phone, lulus_tahun: form.lulus_tahun, alamat: form.alamat, bukti: fileBase64 }, (err, result) => {
                 if (err) { stopRequest(); return };
                 if (!result!["ok"]) {
+                    loading.value = false;
                     displayForm.value = false;
                     displayError.value = true;
-                    loading.value = false;
-                    if (result!["error_code"] == "USER_FOUND") {
-                        errorMessage.value = "Pengguna sudah berada dalam database.";
-                        return;
-                    }
-                    if (result!["error_code"] == "FILE_TOO_LARGE") {
-                        errorMessage.value = "Maximal ukuran file adalah 500 MB.";
-                        return;
-                    }
+                    errorMessage.value = String(result!["message"]);
+                    return;
                 }
                 window.location.href = result!["result"]["url"];
                 return;

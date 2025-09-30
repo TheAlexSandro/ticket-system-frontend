@@ -206,6 +206,8 @@ import LoadingScreen from "../global/LoadingScreen.vue";
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
 
+//@ts-ignore
+const toast = useToast();
 const api = useApi();
 const optionsView = ref(true);
 const kameraView = ref(false);
@@ -239,10 +241,10 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-  api.refreshToken((error, token_result) => {
+  api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return; }
 
-    api.verify(String(token_result), (error, result) => {
+    api.request("/auth/verify", String(token_result), null, (error, result) => {
       if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
       if (error || !result!["ok"]) { stopRequest(); return; }
       cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
@@ -263,9 +265,6 @@ const cameraStatusesIcon = computed(() =>
 const cameraStatusesM = computed(() =>
   cameraStatuses.value ? "Blokir Semua Kamera Aktif" : "Izinkan Kamera"
 );
-
-//@ts-ignore
-const toast = useToast();
 
 const isLoggedIn = () => {
   //@ts-ignore
@@ -308,9 +307,9 @@ const restart = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       waits();
-      api.refreshToken((error, token_result) => {
+      api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
-        api.forceRefresh(String(token_result), (error, result) => {
+        api.request("/admin/forceRefresh", String(token_result), null, (error, result) => {
           if (error || !result!["ok"]) { stopRequest(); return; }
           return;
         })
@@ -323,10 +322,10 @@ const changeCamPermissions = (role: string) => {
   isLoggedIn();
   waits();
   if (camPermissions.value == role) return;
-  api.refreshToken((error, token_result) => {
+  api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return; }
 
-    api.cameraPermissions(String(token_result), role, (error, result) => {
+    api.request("/admin/cameraPermissions", String(token_result), { role }, (error, result) => {
       if (error || !result!["ok"]) { stopRequest(); return; }
       camPermissions.value = role as "all" | "admin";
       stayBack();
@@ -338,10 +337,10 @@ const changePemindaianMethod = (method: string) => {
   isLoggedIn();
   waits();
   if (pemindaianMethod.value == method) return;
-  api.refreshToken((error, token_result) => {
+  api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return; }
 
-    api.changePemindaianMethod(String(token_result), method, (error, result) => {
+    api.request("/admin/scanningMethod", String(token_result), { method }, (error, result) => {
       if (error || !result!["ok"]) { stopRequest(); return; }
       pemindaianMethod.value = method as "id" | "name";
       stayBack();
@@ -352,10 +351,10 @@ const changePemindaianMethod = (method: string) => {
 const camStatus = () => {
   isLoggedIn();
   waits();
-  api.refreshToken((error, token_result) => {
+  api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return; }
 
-    api.cameraStatus(String(token_result), cameraStatuses.value ? "off" : "on", (error, result) => {
+    api.request("/admin/cameraStatus", String(token_result), { status: cameraStatuses.value ? "off" : "on" }, (error, result) => {
       if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
       cameraStatuses.value = cameraStatuses.value ? false : true;
       camHint.value = cameraStatuses.value ? true : false;
@@ -376,9 +375,9 @@ const showMenu = (type: string) => {
   refs!.value = true;
 
   if (type == "pengunjung") {
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
       if (error) { stopRequest(); return };
-      api.getTotal(String(token_result), (error, total) => {
+      api.request("/admin/getTotal", String(token_result), null, (error, total) => {
         if (error || !total!["ok"]) { stopRequest(); return };
         ticketTotal.value = Number(total!["result"]["total"]["total_ticket"]);
         pengunjungTotal.value = Number(total!["result"]["total"]["total_pengunjung"]);
@@ -412,10 +411,10 @@ const signout = () => {
     if (result.isConfirmed) {
       isLoading.value = true;
       adminPanel.value = false;
-      api.refreshToken((error, token_result) => {
+      api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
-        api.clearCookie(String(token_result));
-        api.signOut(String(token_result), (err, results) => {
+        api.request("/auth/clearCookie", String(token_result), null);
+        api.request("/auth/signOut", String(token_result), null, (err, results) => {
           if (err) { toast.info({ message: err, position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
           window.location.href = "/";
         });

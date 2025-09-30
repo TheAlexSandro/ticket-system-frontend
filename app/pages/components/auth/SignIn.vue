@@ -111,10 +111,10 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
 
-        api.verify(String(token_result), (error, result) => {
+        api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return; }
             if (result!["ok"]) return window.location.href = "/admin";
             panels.value = true;
@@ -194,9 +194,9 @@ const signin = () => {
         next.value = true;
         putBack("username", true);
     } else {
-        api.refreshToken((error, token_result) => {
+        api.accessToken((error, token_result) => {
             if (error) { stopRequest(); return; }
-            api.getUsername(String(token_result), String(usernameValue.value), (error, result) => {
+            api.request("/auth/getUsername", String(token_result), { username: String(usernameValue.value) }, (error, result) => {
                 if (error) { stopRequest(); return; }
                 if (!result!['ok'] && result!['error_code'] == 'USER_NOT_FOUND') return inputError("username", "not_found");
                 if (!result!['ok']) return toast.error({ message: 'Something went wrong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
@@ -215,10 +215,10 @@ const verify = () => {
     isDisabled.value = true;
     loading.value = true;
     if (!passwordValue.value || passwordValue.value == "") return inputError("password", "empty");
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
 
-        api.signIn(String(token_result), String(usernameValue.value), String(passwordValue.value), (error, result) => {
+        api.request("/auth/signIn", String(token_result), { username: String(usernameValue.value), password: String(passwordValue.value) }, (error, result) => {
             if (error) { stopRequest(); return; }
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
             if (!result!['ok']) { stopRequest(); return; }

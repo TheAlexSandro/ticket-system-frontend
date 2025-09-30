@@ -28,22 +28,30 @@
             <table class="tickets-table">
                 <thead>
                     <tr>
-                        <th class="col">ID</th>
-                        <th class="col">Tipe</th>
-                        <th class="col">Nama</th>
-                        <th class="col">Kelas</th>
-                        <th class="col">Absen</th>
-                        <th class="col">Nomor HP</th>
+                        <th>ID</th>
+                        <th>Tipe</th>
+                        <th>Nama</th>
+                        <th>Kelas</th>
+                        <th>Absen</th>
+                        <th>Nomor HP</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in paginatedData" :key="item.id">
-                        <td class="col">{{ item.id }}</td>
-                        <td class="col">{{ item.tipe }}</td>
-                        <td class="col">{{ item.nama }}</td>
-                        <td class="col">{{ item.kelas ?? "-" }}</td>
-                        <td class="col">{{ item.absen ?? "-" }}</td>
-                        <td class="col">{{ item.nomor_hp ?? "-" }}</td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.tipe }}</td>
+                        <td>{{ item.nama }}</td>
+                        <td>{{ item.kelas ?? "-" }}</td>
+                        <td>{{ item.absen ?? "-" }}</td>
+                        <td>{{ item.nomor_hp ?? "-" }}</td>
+                        <td>
+                            <div class="action">
+                                <button @click="deleteTicket(item.id)" style="background: #FF0000; color: white;"><i
+                                        class="ri-delete-bin-line"></i>
+                                    Hapus</button>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -74,6 +82,7 @@ import { useApi } from "../../../composables/useApi";
 import { computed, onMounted, ref } from 'vue';
 import Errors from "../errors/Errors.vue";
 import LoadingScreen from "../global/LoadingScreen.vue";
+import Swal from "sweetalert2";
 
 type Ticket = {
     id: string;
@@ -107,14 +116,14 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
 
-        api.verify(String(token_result), (error, result) => {
+        api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
             if (error || !result!["ok"]) { stopRequest(); return; }
 
-            api.getTotal(String(token_result), (error, result) => {
+            api.request("/admin/getTotal", String(token_result), null, (error, result) => {
                 if (error || !result!["ok"]) { stopRequest(); return; }
                 panels.value = true;
                 if (result!["result"]["data_list"]["pengunjung_data"].length > 0) { ticketData.value = result!["result"]["data_list"]["pengunjung_data"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
@@ -168,6 +177,31 @@ const search = () => {
     }
     foundData.value = find;
     isFound.value = true;
+}
+
+const deleteTicket = (id: string) => {
+    Swal.fire({
+        title: "Warning!",
+        icon: "warning",
+        text: "Apa Anda yakin ingin melakukan ini?",
+        showCancelButton: true,
+        showConfirmButton: true
+    }).then((r) => {
+        if (r.isConfirmed) {
+            toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            api.accessToken((error, token_result) => {
+                if (error) { stopRequest(); return; }
+
+                api.request("/users/revokeScannedTicket", String(token_result), { id }, (err, result) => {
+                    if (err) { stopRequest(); return; }
+                    if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                    if (result!["result"].length > 0) { ticketData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
+                    toast.destroy();
+                    toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                })
+            })
+        }
+    })
 }
 
 const totalPages = computed(() =>

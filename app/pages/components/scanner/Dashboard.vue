@@ -159,17 +159,17 @@ const checkMobile = () => {
 };
 
 onMounted(() => {
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
         ok.value = "wait";
         if (error) { stopRequest(); return };
 
-        api.verify(String(token_result), (error, result) => {
+        api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return };
             if (error || !result!['ok']) return;
             permitted.value = true;
         })
 
-        api.getInfo(String(token_result), (error, result) => {
+        api.request("/admin/getInfo", String(token_result), null, (error, result) => {
             if (error || !result!['ok']) { stopRequest(); return };
             ok.value = "done";
             camStatus.value = result!["result"]["camera_status"] == "on";

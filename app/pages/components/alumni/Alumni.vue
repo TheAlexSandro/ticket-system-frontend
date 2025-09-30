@@ -28,31 +28,45 @@
             <table class="alumni-table">
                 <thead>
                     <tr>
-                        <th class="col">Nama</th>
-                        <th class="col">Umur</th>
-                        <th class="col">Phone</th>
-                        <th class="col">Alamat</th>
-                        <th class="col">Lulus Tahun</th>
-                        <th class="col">Bukti</th>
+                        <th>Nama</th>
+                        <th>Umur</th>
+                        <th>Phone</th>
+                        <th>Alamat</th>
+                        <th class="long">Lulus Tahun</th>
+                        <th>Bukti</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in paginatedData" :key="item.nama">
-                        <td class="col">{{ item.nama }}</td>
-                        <td class="col">{{ item.umur }}</td>
-                        <td class="col">{{ item.phone }}</td>
-                        <td class="col">{{ item.alamat }}</td>
-                        <td class="col">{{ item.lulus_tahun }}</td>
-                        <td class="col">
-                            <template v-if="!imgError[index]">
+                        <td>{{ item.nama }}</td>
+                        <td>{{ item.umur }}</td>
+                        <td>{{ item.phone }}</td>
+                        <td>{{ item.alamat }}</td>
+                        <td>{{ item.lulus_tahun }}</td>
+                        <td>
+                            <template v-if="!imgError[item.nama.toLowerCase().replace(/\s+/g, '')]">
                                 <a :href="item.bukti" target="_blank">
                                     <img :src="item.bukti" alt="bukti" class="bukti-img"
-                                        @error="imgError[index] = true" />
+                                        @error="imgError[item.nama.toLowerCase().replace(/\s+/g, '')] = true" />
                                 </a>
                             </template>
                             <template v-else>
                                 <span class="img-404"><i class="ri-alert-line"></i> 404 - Not Found</span>
                             </template>
+                        </td>
+                        <td class="act">
+                            <div class="action">
+                                <button @click="alumniAksi(item.nama, 'verifikasi')"
+                                    style="background: var(--green-strong); color: white;"
+                                    v-show="item.verified == 'no'"><i class="ri-check-line"></i> Verifikasi</button>
+                                <button @click="alumniAksi(item.nama, 'cabut')" style="background: #FFDB58;"
+                                    v-show="item.verified == 'yes'"><i class="ri-close-circle-line"></i> Cabut
+                                    Verifikasi</button>
+                                <button @click="alumniAksi(item.nama, 'hapus')"
+                                    style="background: #FF0000; color: white;"><i class="ri-delete-bin-line"></i>
+                                    Hapus</button>
+                            </div>
                         </td>
 
                     </tr>
@@ -85,6 +99,7 @@ import { useApi } from "../../../composables/useApi";
 import { computed, onMounted, ref } from 'vue';
 import Errors from "../errors/Errors.vue";
 import LoadingScreen from "../global/LoadingScreen.vue";
+import Swal from 'sweetalert2';
 
 type AlumniData = {
     nama: string;
@@ -93,7 +108,10 @@ type AlumniData = {
     alamat: string;
     lulus_tahun: string;
     bukti: string;
+    verified: string;
 };
+
+type AlumniAksi = "verifikasi" | "cabut" | "hapus";
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -110,7 +128,7 @@ const isFound = ref<boolean>(true);
 const message = ref("");
 const foundData = ref<AlumniData[]>([]);
 const displayClear = ref(false);
-const imgError = ref<{ [key: number]: boolean }>({});
+const imgError = ref<{ [key: string]: boolean }>({});
 
 const stopRequest = () => {
     isLoading.value = false;
@@ -119,14 +137,14 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-    api.refreshToken((error, token_result) => {
+    api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
 
-        api.verify(String(token_result), (error, result) => {
+        api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
             if (error || !result!["ok"]) { stopRequest(); return; }
 
-            api.getAlumni(String(token_result), (error, result) => {
+            api.request("/users/getAlumni", String(token_result), null, (error, result) => {
                 if (error || !result!["ok"]) { stopRequest(); return; }
                 panels.value = true;
                 if (result!["result"].length > 0) { alumniData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
@@ -175,6 +193,52 @@ const search = () => {
     }
     foundData.value = find;
     isFound.value = true;
+}
+
+const alumniAksi = (nama: string, aksi: AlumniAksi) => {
+    if (/(cabut|hapus)/i.exec(aksi)) {
+        Swal.fire({
+            title: "Warning!",
+            icon: "warning",
+            text: "Apa Anda yakin ingin melakukan tindakan ini?",
+            showCancelButton: true,
+            showConfirmButton: true
+        }).then((r) => {
+            if (r.isConfirmed) {
+                toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
+                api.accessToken((error, token_result) => {
+                    if (error) { stopRequest(); return; }
+
+                    api.request(`/users/${aksi == "cabut" ? "verifyAlumni" : "deleteAlumni"}`, String(token_result), { nama }, (error, result) => {
+                        if (error) { stopRequest(); return; }
+                        if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                        api.request("/users/getAlumni", String(token_result), null, (error, result) => {
+                            if (error || !result!["ok"]) { stopRequest(); return; }
+                            if (result!["result"].length > 0) { alumniData.value = result!["result"] as AlumniData[] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+                            toast.destroy();
+                            toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                        })
+                    })
+                })
+            }
+        })
+    } else {
+        toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
+        api.accessToken((error, token_result) => {
+            if (error) { stopRequest(); return; }
+
+            api.request(`/users/verifyAlumni`, String(token_result), { nama }, (error, result) => {
+                if (error) { stopRequest(); return; }
+                if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                api.request("/users/getAlumni", String(token_result), null, (error, result) => {
+                    if (error || !result!["ok"]) { stopRequest(); return; }
+                    if (result!["result"].length > 0) { alumniData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+                    toast.destroy();
+                    toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                })
+            })
+        })
+    }
 }
 
 const totalPages = computed(() =>

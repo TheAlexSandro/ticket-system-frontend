@@ -25,144 +25,26 @@ export function useApi() {
   const apis = $api as AxiosInstance;
 
   return {
-    refreshToken(callback: Callback<null | ApiResponse>) {
+    request(
+      path: string,
+      P_token: string,
+      options: {} | null = null,
+      callback?: Callback<null | ApiResponse>
+    ): void {
+      apis
+        .post(path, { P_token, ...options })
+        .then((result: AxiosResponse) => {
+          return callback?.(null, result.data);
+        })
+        .catch((err: AxiosError) => {
+          return callback?.(err.message, null);
+        });
+    },
+    accessToken(callback: Callback<null | ApiResponse>) {
       apis
         .post(`/auth/generateAuthentication`)
         .then((result: AxiosResponse) => {
           return callback(null, result.data["result"]["P_token"]);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    getAdminDashboardInfo(
-      P_token: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/admin/getInfo`, {
-          P_token,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    getUsername(
-      P_token: string,
-      username: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/auth/getUsername`, {
-          P_token,
-          username,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    signIn(
-      P_token: string,
-      username: string,
-      password: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/auth/signin`, {
-          P_token,
-          username,
-          password,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    signOut(P_token: string, callback?: Callback<null | ApiResponse>) {
-      apis
-        .post(`/auth/signOut`, {
-          P_token,
-        })
-        .then((result: AxiosResponse) => {
-          return callback?.(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback?.(err.message, null);
-        });
-    },
-    verify(P_token: string, callback: Callback<null | ApiResponse>) {
-      apis
-        .post(`/auth/verify`, {
-          P_token,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    clearCookie(P_token: string, callback?: Callback<null | ApiResponse>) {
-      apis
-        .post(`/auth/clearCookie`, {
-          P_token,
-        })
-        .then((result: AxiosResponse) => {
-          return callback?.(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback?.(err.message, null);
-        });
-    },
-    cameraStatus(
-      P_token: string,
-      status: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/admin/cameraStatus`, {
-          P_token,
-          status,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    cameraPermissions(
-      P_token: string,
-      role: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/admin/cameraPermissions`, {
-          P_token,
-          role,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    getInfo(P_token: string, callback: Callback<null | ApiResponse>) {
-      apis
-        .post(`/admin/getInfo`, {
-          P_token,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
         })
         .catch((err: AxiosError) => {
           return callback(err.message, null);
@@ -180,96 +62,19 @@ export function useApi() {
         })
         .then((result: AxiosResponse) => {
           if (!result["data"]["ok"]) return callback(null, false);
-          result["data"]["result"].map((item: Ticket) => {
-            var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
-            var absen = item.absen ? `Absen: ${item.absen}<br>` : "";
-            var nomor_hp = item.nomor_hp
-              ? `Nomor HP: ${item.nomor_hp}<br>`
-              : "";
-            var message = item.is_scanned
-              ? `<strong>Tiket sudah dipindai!</strong><br><br>`
-              : ``;
-            var icon = item.is_scanned ? "warning" : "success";
+          const item = result["data"]["result"];
+          var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
+          var absen = item.absen ? `Absen: ${item.absen}<br>` : "";
+          var nomor_hp = item.nomor_hp ? `Nomor HP: ${item.nomor_hp}<br>` : "";
+          var message = item.is_scanned
+            ? `<strong>Tiket sudah dipindai!</strong><br><br>`
+            : ``;
+          var icon = item.is_scanned ? "warning" : "success";
 
-            return callback(null, {
-              text: `${message}ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`,
-              icon,
-            });
+          return callback(null, {
+            text: `${message}ID: ${item.id}<br>Tipe: ${item.tipe}<br>Nama: ${item.nama}<br>${kelas}${absen}${nomor_hp}`,
+            icon,
           });
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    changePemindaianMethod(
-      P_token: string,
-      method: string,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post(`/admin/scanningMethod`, {
-          P_token,
-          method,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    forceRefresh(P_token: string, callback: Callback<null | ApiResponse>) {
-      apis
-        .post("/admin/forceRefresh", { P_token })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    getTotal(P_token: string, callback: Callback<null | ApiResponse>) {
-      apis
-        .post("/admin/getTotal", { P_token })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    register(
-      P_token: string,
-      nama: string | null,
-      umur: string | null,
-      phone: string | null,
-      lulus_tahun: string | null,
-      alamat: string | null,
-      bukti: string | null,
-      callback: Callback<null | ApiResponse>
-    ) {
-      apis
-        .post("/users/register", {
-          P_token,
-          nama,
-          umur,
-          phone,
-          lulus_tahun,
-          alamat,
-          bukti,
-        })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
-        })
-        .catch((err: AxiosError) => {
-          return callback(err.message, null);
-        });
-    },
-    getAlumni(P_token: string, callback: Callback<null | ApiResponse>) {
-      apis
-        .post("/users/getAlumni", { P_token })
-        .then((result: AxiosResponse) => {
-          return callback(null, result.data);
         })
         .catch((err: AxiosError) => {
           return callback(err.message, null);

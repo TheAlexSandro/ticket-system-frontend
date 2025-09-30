@@ -119,6 +119,11 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
     vertical-align: middle;
+    word-break: break-all;
+}
+
+.alumni .table-container .alumni-table .act {
+    width: 12%;
 }
 
 .alumni .table-container .alumni-table td .img-404 {
@@ -147,9 +152,39 @@
 }
 
 .alumni .table-container .alumni-table .bukti-img {
-    max-width: 180px;
+    max-width: 200px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.alumni .table-container .alumni-table .action {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    justify-content: center;
+    align-items: center;
+}
+
+.alumni .table-container .alumni-table .action button i {
+    font-size: 15px;
+    margin-right: 7px;
+}
+
+.alumni .table-container .alumni-table .action button {
+    display: flex;
+    padding: 7px;
+    border: 0;
+    outline: 0;
+    border-radius: 3px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.alumni .table-container .alumni-table .action button:hover {
+    transform: scale(1.1);
 }
 
 .alumni .pagination {
@@ -203,6 +238,18 @@
     .alumni {
         min-height: auto;
         margin-top: 20%;
+    }
+
+    .alumni .table-container .alumni-table {
+        min-width: 1000px;
+    }
+
+    .alumni .table-container .alumni-table .long {
+        width: 12%;
+    }
+
+    .alumni .table-container .alumni-table .act {
+        width: 15%;
     }
 
     .alumni .error {
