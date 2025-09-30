@@ -119,7 +119,7 @@ const api = useApi();
 const cameraAccess = ref(false);
 const isDisabled = ref(false);
 const cameraErrType = ref<"denied" | "no_camera" | "error" | "camera_gone" | "no_flash">();
-const facingMode = ref("environment");
+const facingMode = ref<"user" | "environment">("environment");
 const currentStream = ref<MediaStream | null>(null);
 const isCameraStopped = ref(false);
 const inChangeDirection = ref(false);
@@ -297,7 +297,7 @@ const startCamera = async (video_id: string) => {
             }
             const track = stream.getVideoTracks()[0];
 
-            if (isMobile.value) {
+            if (isMobile.value && facingMode.value == "environment") {
                 await (track as any).applyConstraints({
                     advanced: [
                         { focusMode: "continuous" as any },
