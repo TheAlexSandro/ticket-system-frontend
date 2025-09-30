@@ -35,8 +35,8 @@
                                 <div class="icon"><i class="ri-alert-line"></i></div>
                                 <h1>Camera Disabled!</h1>
                                 <p>{{ !isFromWebsocket ?
-                                'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' :
-                                'Camera is disabled by the administrator.' }}</p>
+                                    'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' :
+                                    'Camera is disabled by the administrator.' }}</p>
                             </div>
                         </div>
                     </div>
@@ -167,21 +167,21 @@ onMounted(() => {
             if (error) { stopRequest(); return };
             if (error || !result!['ok']) return;
             permitted.value = true;
-        })
 
-        api.request("/admin/getInfo", String(token_result), null, (error, result) => {
-            if (error || !result!['ok']) { stopRequest(); return };
-            ok.value = "done";
-            camStatus.value = result!["result"]["camera_status"] == "on";
-            camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
-            scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
+            api.request("/admin/getInfo", String(token_result), null, (error, result) => {
+                if (error || !result!['ok']) { stopRequest(); return };
+                ok.value = "done";
+                camStatus.value = result!["result"]["camera_status"] == "on";
+                camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+                scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
-            isLoading.value = false;
-            if (userStarts.value) {
-                userStarts.value = false;
-                toast.destroy();
-                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            }
+                isLoading.value = false;
+                if (userStarts.value) {
+                    userStarts.value = false;
+                    toast.destroy();
+                    toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                }
+            })
         })
     });
 
