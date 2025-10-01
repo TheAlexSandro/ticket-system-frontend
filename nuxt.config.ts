@@ -17,8 +17,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: "description",
-          content:
-            "Selamat datang di website PBL Smekensa yang ke 60th.",
+          content: "Selamat datang di website PBL Smekensa yang ke 60th.",
         },
       ],
       link: [
@@ -26,7 +25,11 @@ export default defineNuxtConfig({
           rel: "stylesheet",
           href: "https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css",
         },
-        { rel: "icon", type: "image/x-icon", href: "/images/favicon/favicon.ico" },
+        {
+          rel: "icon",
+          type: "image/x-icon",
+          href: "/images/favicon/favicon.ico",
+        },
         {
           rel: "icon",
           type: "image/png",
@@ -54,8 +57,8 @@ export default defineNuxtConfig({
           rel: "icon",
           type: "image/png",
           sizes: "48x48",
-          href: "/images/favicon/favicon-48x48.png"
-        }
+          href: "/images/favicon/favicon-48x48.png",
+        },
       ],
       script: [
         {
@@ -63,10 +66,15 @@ export default defineNuxtConfig({
           src: "https://cloud.umami.is/script.js",
           "data-website-id": "05936fd4-6f55-47c6-9f0d-eebeec11203e",
         },
+        {
+          src: "https://challenges.cloudflare.com/turnstile/v0/api.js",
+          async: true,
+          defer: true,
+        },
       ],
     },
   },
-  modules: ["@nuxt/ui", "nuxt-toast"],
+  modules: ["@nuxt/ui", "nuxt-toast", "@nuxtjs/turnstile"],
   nitro: {
     prerender: {
       autoSubfolderIndex: false,
@@ -77,11 +85,14 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      BACKEND_URL: process.env.BACKEND_URL,
-      EMAIL: process.env.EMAIL,
-      MARQUEE_CONTENT: process.env.MARQUEE_CONTENT,
-      PUNCAK: process.env.PUNCAK
+      BACKEND_URL: process.env["BACKEND_URL"],
+      EMAIL: process.env["EMAIL"],
+      MARQUEE_CONTENT: process.env["MARQUEE_CONTENT"],
+      PUNCAK: process.env["PUNCAK"],
     },
+  },
+  turnstile: {
+    siteKey: process.env["CF_SITE_KEY"],
   },
   plugins: ["./plugins/api.ts"],
 });

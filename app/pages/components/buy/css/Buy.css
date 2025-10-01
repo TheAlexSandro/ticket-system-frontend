@@ -84,6 +84,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 30px;
 }
 
 .buy .form .upload .information {
@@ -114,7 +115,6 @@
     flex-direction: row;
     gap: 15px;
     align-items: center;
-    margin-bottom: 50px;
 }
 
 .buy .form .upload .file-info #u-file {
@@ -202,6 +202,13 @@
     transition: background-color 5000s ease-in-out 0s;
 }
 
+.buy .form .captcha {
+    margin-bottom: 50px;
+    transform-origin: top left;
+    width: 100%;
+    max-width: 100%;
+}
+
 @media (max-width: 600px) {
     .buy {
         padding: 20% 0;
@@ -259,6 +266,10 @@
 
     .buy .form .upload .file-info span {
         font-size: 14px;
+    }
+
+    .buy .form .captcha {
+        transform: scale(0.85);
     }
 }
 

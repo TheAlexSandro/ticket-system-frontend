@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "types": [
+            "@nuxtjs/turnstile"
+        ],
+        "paths": {
+            "#app": [
+                "./.nuxt/types/app"
+            ],
+            "#build": [
+                "./.nuxt/types/build"
+            ]
+        }
+    },
+    "include": [
+        "types/**/*.d.ts",
+        "nuxt.config.ts",
+        "server/**/*.ts"
+    ]
+}

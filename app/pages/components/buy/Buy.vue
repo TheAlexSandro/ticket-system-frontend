@@ -45,6 +45,9 @@
                             <input accept="image/*" id="upload-file" style="display: none;" type="file"
                                 @change="handleFileUpload" :disabled="loading">
                         </div>
+                        <div class="captcha">
+                            <NuxtTurnstile v-model="cfToken" theme="light" size="compact" />
+                        </div>
                         <button v-if="!loading" type="submit">LANJUTKAN</button>
                         <div class="load" v-else>
                             <i class="ri-loader-4-line spin"></i>
@@ -77,6 +80,7 @@ import Swal from "sweetalert2";
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
 import LoadingScreen from "../global/LoadingScreen.vue";
+import { useRuntimeConfig } from "nuxt/app";
 
 const isLoading = ref(true);
 const api = useApi();
@@ -96,9 +100,14 @@ const displayError = ref(false);
 const loading = ref(false);
 const errorMessage = ref<null | string>(null);
 const displayReturn = ref(true);
+const cfToken = ref<string | null>("");
 
 const stopRequest = () => {
     panels.value = false;
+}
+
+const cfSiteKey = () => {
+    return String(useRuntimeConfig().public["SITE_KEY"])
 }
 
 onMounted(() => {
@@ -145,6 +154,11 @@ const handleSubmit = () => {
         icon: "warning",
         text: "Bukti tidak boleh kosong, unggah bukti ijazah atau kartu pelajar SMKN 1 Blitar."
     })
+    if (!cfToken.value) return Swal.fire({
+        title: "Warning!",
+        icon: "warning",
+        text: "Harap selesaikan captcha terlebih dahulu."
+    })
 
     loading.value = true;
     const reader = new FileReader()
@@ -155,7 +169,7 @@ const handleSubmit = () => {
         api.accessToken((error, token_result) => {
             if (error) { stopRequest(); return };
 
-            api.request("/users/register", String(token_result), { nama: form.nama, umur: form.umur, phone: form.phone, lulus_tahun: form.lulus_tahun, alamat: form.alamat, bukti: fileBase64 }, (err, result) => {
+            api.request("/users/register", String(token_result), { nama: form.nama, umur: form.umur, phone: form.phone, lulus_tahun: form.lulus_tahun, alamat: form.alamat, bukti: fileBase64, cf_token: cfToken.value }, (err, result) => {
                 if (err) { stopRequest(); return };
                 if (!result!["ok"]) {
                     loading.value = false;
