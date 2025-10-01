@@ -157,32 +157,35 @@ const stopRequest = () => {
 const checkMobile = () => {
     const mobile = window.innerWidth <= 768 || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.devicePixelRatio > 1)
     isMobile.value = mobile;
-};
+}
+
+const reqGetInfo = (access_token: string) => {
+    api.request("/admin/getInfo", access_token, null, (error, result) => {
+        if (error || !result!['ok']) { stopRequest(); return };
+        ok.value = "done";
+        camStatus.value = result!["result"]["camera_status"] == "on";
+        camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+        scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
+
+        isLoading.value = false;
+        if (userStarts.value) {
+            userStarts.value = false;
+            toast.destroy();
+            toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        }
+    })
+}
 
 onMounted(() => {
     api.accessToken((error, token_result) => {
         ok.value = "wait";
         if (error) { stopRequest(); return };
 
-        isLoading.value = false;
         api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return };
-            if (error || !result!['ok']) return;
+            if (error || !result!['ok']) { reqGetInfo(String(token_result)); return; }
             permitted.value = true;
-        })
-
-        api.request("/admin/getInfo", String(token_result), null, (error, result) => {
-            if (error || !result!['ok']) { stopRequest(); return };
-            ok.value = "done";
-            camStatus.value = result!["result"]["camera_status"] == "on";
-            camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
-            scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
-
-            if (userStarts.value) {
-                userStarts.value = false;
-                toast.destroy();
-                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-            }
+            reqGetInfo(String(token_result));
         })
     });
 
