@@ -36,7 +36,7 @@
                                 <h1>Camera Disabled!</h1>
                                 <p>{{ !isFromWebsocket ?
                                     'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' :
-                                    'Camera is disabled by the administrator.' }}</p>
+                                    'Scanner was disabled by the administrator.' }}</p>
                             </div>
                         </div>
                     </div>
@@ -82,6 +82,7 @@
                 <div v-else class="panel">
                     <i class="ri-alert-line"></i>
                     <p>Panel Disabled</p>
+                    <span>Panel was disabled by the administrator.</span>
                 </div>
             </template>
         </section>

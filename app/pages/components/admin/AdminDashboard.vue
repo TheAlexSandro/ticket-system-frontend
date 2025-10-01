@@ -241,23 +241,21 @@ const stopRequest = () => {
 }
 
 onMounted(() => {
-  isLoading.value = false;
-  adminPanel.value = true
-  // api.accessToken((error, token_result) => {
-  //   if (error) { stopRequest(); return; }
+  api.accessToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
 
-  //   api.request("/auth/verify", String(token_result), null, (error, result) => {
-  //     if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
-  //     if (error || !result!["ok"]) { stopRequest(); return; }
-  //     cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-  //     camPermissions.value = result!["result"]["camera_permissions"];
-  //     pemindaianMethod.value = result!["result"]["scanning_method"];
-  //     camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
+    api.request("/auth/verify", String(token_result), null, (error, result) => {
+      if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
+      if (error || !result!["ok"]) { stopRequest(); return; }
+      cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
+      camPermissions.value = result!["result"]["camera_permissions"];
+      pemindaianMethod.value = result!["result"]["scanning_method"];
+      camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
 
-  //     adminPanel.value = true;
-  //     isLoading.value = false;
-  //   })
-  // })
+      adminPanel.value = true;
+      isLoading.value = false;
+    })
+  })
 })
 
 const cameraStatusesIcon = computed(() =>
@@ -313,6 +311,7 @@ const restart = () => {
         if (error) { stopRequest(); return; }
         api.request("/admin/forceRefresh", String(token_result), null, (error, result) => {
           if (error || !result!["ok"]) { stopRequest(); return; }
+          window.location.reload();
           return;
         })
       })

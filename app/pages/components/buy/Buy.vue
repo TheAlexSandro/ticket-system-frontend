@@ -160,6 +160,7 @@ const handleSubmit = () => {
         text: "Harap selesaikan captcha terlebih dahulu."
     })
 
+    if (loading.value) return;
     loading.value = true;
     const reader = new FileReader()
     reader.readAsDataURL(file.value as File);
