@@ -181,7 +181,8 @@
                   <div class="item" @click="camStatus()"><i :class="cameraStatusesIcon"></i> {{ cameraStatusesM }}</div>
                 </div>
               </div>
-              <div v-if="camHint" class="hint" style="color: red;"><i class="ri-spam-2-line"></i> Tindakan ini akan
+              <div v-if="cameraStatuses" class="hint" style="color: red;"><i class="ri-spam-2-line"></i> Tindakan ini
+                akan
                 menghentikan semua
                 pemindaian, memblokir panel dan melarang pengguna dari mengakses kamera, ini tidak berlaku untuk
                 administrator.</div>
@@ -200,14 +201,13 @@
 
 <script setup lang="ts">
 import "./css/AdminDashboard.css";
-import { onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { computed } from "vue";
 import Swal from "sweetalert2";
 import LoadingScreen from "../global/LoadingScreen.vue";
 import { useApi } from "../../../composables/useApi";
 import Errors from "../errors/Errors.vue";
-
-type Callback<T> = (result: T) => void;
+import { verifyAuthorization } from "../../../lib/Auth";
 
 //@ts-ignore
 const toast = useToast();
@@ -223,7 +223,7 @@ const adminPanel = ref(false);
 const ticketTotal = ref(0);
 const pengunjungTotal = ref(0);
 const routeNow = ref("");
-const camHint = ref(true);
+const cameraStatuses = ref(true);
 const clicked = ref(false);
 const isLoading = ref(true);
 const iframeLoad = ref(true);
@@ -232,10 +232,10 @@ const pblLoad = ref(true);
 const pblError = ref(false);
 const pblDone = ref(false);
 const submenuPanel = ref(true);
+const isAuthorized = ref(false);
 
 const camPermissions = ref<"all" | "admin">();
 const pemindaianMethod = ref<"id" | "name">();
-const cameraStatuses = ref<boolean>();
 
 const stopRequest = () => {
   toast.destroy();
@@ -244,22 +244,28 @@ const stopRequest = () => {
   isFailed.value = true;
 }
 
+const { mount, unmount, verify } = verifyAuthorization({
+  api,
+  onError: () => { stopRequest() },
+  onAuthorized: () => { isAuthorized.value = true; },
+  onUnauthorized: () => { isAuthorized.value = false; adminPanel.value = false; window.location.href = "/signin" }
+})
+
 onMounted(() => {
-  api.accessToken((error, token_result) => {
-    if (error) { stopRequest(); return; }
+  mount();
+  verify((ok, token, result) => {
+    if (!ok) return;
+    cameraStatuses.value = result!["camera_status"] == "on" ? true : false;
+    camPermissions.value = result!["camera_permissions"];
+    pemindaianMethod.value = result!["scanning_method"];
 
-    api.request("/auth/verify", String(token_result), null, (error, result) => {
-      if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
-      if (error || !result!["ok"]) { stopRequest(); return; }
-      cameraStatuses.value = result!["result"]["camera_status"] == "on" ? true : false;
-      camPermissions.value = result!["result"]["camera_permissions"];
-      pemindaianMethod.value = result!["result"]["scanning_method"];
-      camHint.value = result!["result"]["camera_status"] == "on" ? true : false;
-
-      adminPanel.value = true;
-      isLoading.value = false;
-    })
+    adminPanel.value = true;
+    isLoading.value = false;
   })
+})
+
+onBeforeUnmount(() => {
+  unmount();
 })
 
 const cameraStatusesIcon = computed(() =>
@@ -270,24 +276,6 @@ const cameraStatusesM = computed(() =>
   cameraStatuses.value ? "Blokir Semua Kamera Aktif" : "Izinkan Kamera"
 );
 
-const verify = (callback: Callback<null | boolean>) => {
-  adminPanel.value = false;
-  submenuPanel.value = false;
-  isLoading.value = true;
-  api.accessToken((error, token_result) => {
-    if (error) { stopRequest(); return };
-
-    api.request("/auth/verify", String(token_result), null, (error, result) => {
-      if (error) { stopRequest(); return };
-      if (error || !result!['ok']) { window.location.href = "/signin" };
-      adminPanel.value = true;
-      submenuPanel.value = true;
-      isLoading.value = false;
-      return callback(true);
-    })
-  });
-}
-
 const maintenance = () => {
   //@ts-ignore
   isLoggedIn();
@@ -295,11 +283,8 @@ const maintenance = () => {
 }
 
 const redirect = (type: string) => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    if (type == "scanner") return window.location.href = "/scanner";
-    if (type == "alumni") return window.location.href = "/alumni";
-  })
+  if (type == "scanner") return window.location.href = "/scanner";
+  if (type == "alumni") return window.location.href = "/alumni";
 }
 
 const waits = () => {
@@ -316,144 +301,130 @@ const stayBack = () => {
 }
 
 const restart = () => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    Swal.fire({
-      title: "Are you sure?",
-      icon: "warning",
-      text: "Apa Anda yakin ingin melakukan ini? tindakan tidak dapat dibatalkan, ini mempengaruhi semua perangkat!!!",
-      showCancelButton: true,
-      showConfirmButton: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        waits();
-        api.accessToken((error, token_result) => {
-          if (error) { stopRequest(); return; }
-          api.request("/admin/forceRefresh", String(token_result), null, (error, result) => {
-            if (error || !result!["ok"]) { stopRequest(); return; }
-            window.location.reload();
-            return;
-          })
+  if (!isAuthorized.value) return;
+  Swal.fire({
+    title: "Are you sure?",
+    icon: "warning",
+    text: "Apa Anda yakin ingin melakukan ini? tindakan tidak dapat dibatalkan, ini mempengaruhi semua perangkat!!!",
+    showCancelButton: true,
+    showConfirmButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      waits();
+      api.accessToken((error, token_result) => {
+        if (error) { stopRequest(); return; }
+        api.request("/admin/forceRefresh", String(token_result), null, (error, result) => {
+          if (error || !result!["ok"]) { stopRequest(); return; }
+          window.location.reload();
+          return;
         })
-      }
-    })
+      })
+    }
   })
 }
 
 const changeCamPermissions = (role: string) => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    waits();
-    if (camPermissions.value == role) return;
-    api.accessToken((error, token_result) => {
-      if (error) { stopRequest(); return; }
+  if (!isAuthorized.value) return;
+  waits();
+  if (camPermissions.value == role) return;
+  api.accessToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
 
-      api.request("/admin/cameraPermissions", String(token_result), { role }, (error, result) => {
-        if (error || !result!["ok"]) { stopRequest(); return; }
-        camPermissions.value = role as "all" | "admin";
-        stayBack();
-      })
-    });
-  })
+    api.request("/admin/cameraPermissions", String(token_result), { role }, (error, result) => {
+      if (error || !result!["ok"]) { stopRequest(); return; }
+      camPermissions.value = role as "all" | "admin";
+      stayBack();
+    })
+  });
 }
 
 const changePemindaianMethod = (method: string) => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    waits();
-    if (pemindaianMethod.value == method) return;
-    api.accessToken((error, token_result) => {
-      if (error) { stopRequest(); return; }
+  if (!isAuthorized.value) return;
+  waits();
+  if (pemindaianMethod.value == method) return;
+  api.accessToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
 
-      api.request("/admin/scanningMethod", String(token_result), { method }, (error, result) => {
-        if (error || !result!["ok"]) { stopRequest(); return; }
-        pemindaianMethod.value = method as "id" | "name";
-        stayBack();
-      })
-    });
-  })
+    api.request("/admin/scanningMethod", String(token_result), { method }, (error, result) => {
+      if (error || !result!["ok"]) { stopRequest(); return; }
+      pemindaianMethod.value = method as "id" | "name";
+      stayBack();
+    })
+  });
 }
 
 const camStatus = () => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    waits();
-    api.accessToken((error, token_result) => {
-      if (error) { stopRequest(); return; }
+  if (!isAuthorized.value) return;
+  waits();
+  api.accessToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
 
-      api.request("/admin/cameraStatus", String(token_result), { status: cameraStatuses.value ? "off" : "on" }, (error, result) => {
-        if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        cameraStatuses.value = cameraStatuses.value ? false : true;
-        camHint.value = cameraStatuses.value ? true : false;
-        stayBack();
-      })
-    });
-  })
+    api.request("/admin/cameraStatus", String(token_result), { status: cameraStatuses.value ? "off" : "on" }, (error, result) => {
+      if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      cameraStatuses.value = cameraStatuses.value ? false : true;
+      cameraStatuses.value = cameraStatuses.value ? true : false;
+      stayBack();
+    })
+  });
 }
 
 const showMenu = (type: string) => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    if (type == 'daftar-tiket') {
-      window.location.href = "/scanned-ticket";
-      return;
-    }
-    const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : null;
-    optionsView.value = false;
-    routeNow.value = type;
-    refs!.value = true;
+  if (!isAuthorized.value) return;
+  if (type == 'daftar-tiket') {
+    window.location.href = "/scanned-ticket";
+    return;
+  }
+  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : null;
+  optionsView.value = false;
+  routeNow.value = type;
+  refs!.value = true;
 
-    if (type == "pengunjung") {
-      api.accessToken((error, token_result) => {
-        if (error) { stopRequest(); return };
-        api.request("/admin/getTotal", String(token_result), null, (error, total) => {
-          if (error || !total!["ok"]) { stopRequest(); return };
-          ticketTotal.value = Number(total!["result"]["total"]["total_ticket"]);
-          pengunjungTotal.value = Number(total!["result"]["total"]["total_pengunjung"]);
-          pblDone.value = true;
-          pblError.value = false;
-          pblLoad.value = false;
-        })
+  if (type == "pengunjung") {
+    api.accessToken((error, token_result) => {
+      if (error) { stopRequest(); return };
+      api.request("/admin/getTotal", String(token_result), null, (error, total) => {
+        if (error || !total!["ok"]) { stopRequest(); return };
+        ticketTotal.value = Number(total!["result"]["total"]["total_ticket"]);
+        pengunjungTotal.value = Number(total!["result"]["total"]["total_pengunjung"]);
+        pblDone.value = true;
+        pblError.value = false;
+        pblLoad.value = false;
       })
-    }
-  })
+    })
+  }
 }
 
 const back = () => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : routeNow.value == "restart" ? restartView : routeNow.value == "pengunjung" ? pengunjungView : null;
-    optionsView.value = true;
-    refs!.value = false;
-    iframeLoad.value = true;
-    pblDone.value = false;
-    pblLoad.value = true;
-  })
+  if (!isAuthorized.value) return;
+  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : routeNow.value == "restart" ? restartView : routeNow.value == "pengunjung" ? pengunjungView : null;
+  optionsView.value = true;
+  refs!.value = false;
+  iframeLoad.value = true;
+  pblDone.value = false;
+  pblLoad.value = true;
 }
 
 const signout = () => {
-  verify((isLoggedIn) => {
-    if (!isLoggedIn) return;
-    Swal.fire({
-      icon: "warning",
-      title: "Are you sure?",
-      text: "Anda akan log out dari halaman admin.",
-      showCancelButton: true,
-      showConfirmButton: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        isLoading.value = true;
-        adminPanel.value = false;
-        api.accessToken((error, token_result) => {
-          if (error) { stopRequest(); return; }
-          api.request("/auth/clearCookie", String(token_result), null);
-          api.request("/auth/signOut", String(token_result), null, (err, results) => {
-            if (err) { toast.info({ message: err, position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
-            window.location.href = "/";
-          });
+  if (!isAuthorized.value) return;
+  Swal.fire({
+    icon: "warning",
+    title: "Are you sure?",
+    text: "Anda akan log out dari halaman admin.",
+    showCancelButton: true,
+    showConfirmButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      isLoading.value = true;
+      adminPanel.value = false;
+      api.accessToken((error, token_result) => {
+        if (error) { stopRequest(); return; }
+        api.request("/auth/clearCookie", String(token_result), null);
+        api.request("/auth/signOut", String(token_result), null, (err, results) => {
+          if (err) { toast.info({ message: err, position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }) };
+          window.location.href = "/";
         });
-      }
-    })
+      });
+    }
   })
 }
 </script>

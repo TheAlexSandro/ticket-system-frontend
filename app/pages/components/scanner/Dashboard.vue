@@ -32,8 +32,8 @@
                             <video id="camera" autoplay playsinline></video>
 
                             <div class="overlay" v-if="showWarning">
-                                <div class="icon"><i class="ri-alert-line"></i></div>
-                                <h1>Camera Disabled!</h1>
+                                <i class="ri-alert-line"></i>
+                                <h1>Scanner Disabled</h1>
                                 <p>{{ !isFromWebsocket ?
                                     'Tekan pada "aktifkan" untuk menggunakan kamera lagi.' :
                                     'Scanner was disabled by the administrator.' }}</p>
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted } from "vue";
+import { ref, nextTick, computed, onMounted, onBeforeUnmount } from "vue";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { DecodeHintType, BarcodeFormat } from "@zxing/library";
 import "./css/Dashboard.css";
@@ -108,6 +108,7 @@ import Errors from "../errors/Errors.vue";
 import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
 import { useApi } from "../../../composables/useApi";
+import { verifyAuthorization } from "../../../lib/Auth";
 
 type OverflowState = "hidden" | "visible";
 type MirrorScale = "Y" | "X";
@@ -132,7 +133,6 @@ const showWarning = ref(false);
 const isFromWebsocket = ref(false);
 const socket = useSocket();
 const camStatus = ref(true);
-const permitted = ref(false);
 const camPermission = ref<"all" | "admin">();
 const scanMethod = ref<"id" | "name">();
 const popupShown = ref(false);
@@ -142,6 +142,7 @@ const streams = ref<MediaStreamTrack | null>(null);
 const userStarts = ref(false);
 const flashAvailable = ref(false);
 const isMobile = ref(false);
+const isAuthorized = ref(false);
 
 const othersIcon = computed(() =>
     others.value ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
@@ -159,42 +160,44 @@ const checkMobile = () => {
     isMobile.value = mobile;
 }
 
-const reqGetInfo = (access_token: string) => {
-    api.request("/admin/getInfo", access_token, null, (error, result) => {
-        if (error || !result!['ok']) { stopRequest(); return };
-        ok.value = "done";
-        camStatus.value = result!["result"]["camera_status"] == "on";
-        camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
-        scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
-
-        isLoading.value = false;
-        if (userStarts.value) {
-            userStarts.value = false;
-            toast.destroy();
-            toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+const { mount, unmount, verify } = verifyAuthorization({
+    api,
+    onError: () => { stopRequest() },
+    onAuthorized: () => { isAuthorized.value = true; },
+    onUnauthorized: () => {
+        if (isAuthorized.value) {
+            isDisabled.value = true;
+            window.location.reload();
         }
-    })
-}
+    }
+})
 
 onMounted(() => {
-    api.accessToken((error, token_result) => {
+    mount();
+    verify((oks, token) => {
         ok.value = "wait";
-        if (error) { stopRequest(); return };
+        api.request("/admin/getInfo", token, null, (error, result) => {
+            if (error || !result!['ok']) { stopRequest(); return };
+            ok.value = "done";
+            camStatus.value = result!["result"]["camera_status"] == "on";
+            camPermission.value = result!["result"]["camera_permissions"] as "all" | "admin";
+            scanMethod.value = result!["result"]["scanning_method"] as "id" | "name";
 
-        api.request("/auth/verify", String(token_result), null, (error, result) => {
-            if (error) { stopRequest(); return };
-            if (error || !result!['ok']) { reqGetInfo(String(token_result)); return; }
-            permitted.value = true;
-            reqGetInfo(String(token_result));
+            isLoading.value = false;
+            if (userStarts.value) {
+                userStarts.value = false;
+                toast.destroy();
+                toast.success({ message: "You can try now...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            }
         })
-    });
+    })
 
     checkMobile();
     window.addEventListener("resize", checkMobile);
 
     socket.on("camera_status", (data) => {
         if (data['status'] == null) return;
-        if (!permitted.value) {
+        if (!isAuthorized.value) {
             if (data['status'] == false) {
                 stopCamera("stops");
                 isCameraStopped.value = true;
@@ -215,6 +218,10 @@ onMounted(() => {
     })
 })
 
+onBeforeUnmount(() => {
+    unmount();
+})
+
 const isCameraSupported = () => {
     return (
         !!(navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function')
@@ -225,6 +232,7 @@ const isCameraSupported = () => {
 }
 
 const toggleOther = () => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     if (isCameraStopped.value) {
         //@ts-ignore
         toast.warning({ message: 'Tidak dapat menggunakan fitur ini ketika kamera tidak aktif', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
@@ -234,6 +242,7 @@ const toggleOther = () => {
 }
 
 const mirror = (video_id: string, type: MirrorScale) => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     const video = document.getElementById(video_id) as HTMLVideoElement;
     if (video) {
         const mirrorCase = (type == "X") ? mirrorX.value == 1 ? -1 : 1 : mirrorY.value == 1 ? -1 : 1;
@@ -253,6 +262,7 @@ const overflow = (state: OverflowState) => {
 }
 
 const stopCamera = (type: StopCamera) => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     if (currentStream.value) {
         currentStream.value.getTracks().forEach(track => track.stop());
         if (type == "stops") { showWarning.value = true };
@@ -268,7 +278,7 @@ const startCamera = async (video_id: string) => {
         return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     }
     if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    if (!permitted.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (!isAuthorized.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {
             isDisabled.value = true;
@@ -325,7 +335,7 @@ const startCamera = async (video_id: string) => {
                 video.srcObject = stream;
                 try {
                     await video.play();
-                    if (!camStatus.value && !permitted.value) {
+                    if (!camStatus.value && !isAuthorized.value) {
                         stopCamera('stops');
                         isCameraStopped.value = true;
                         showWarning.value = true;
@@ -352,6 +362,7 @@ const startCamera = async (video_id: string) => {
 }
 
 const startQRScanning = async (video: HTMLVideoElement) => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE]);
     hints.set(DecodeHintType.TRY_HARDER, true);
@@ -416,6 +427,7 @@ const startQRScanning = async (video: HTMLVideoElement) => {
 };
 
 const changeFlash = async () => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     //@ts-ignore
     if (streams && streams.value?.getCapabilities().torch) {
         try {
@@ -439,6 +451,7 @@ const changeFlash = async () => {
 }
 
 const switchCamera = async () => {
+    if (!isAuthorized.value && camPermission.value == "admin") return;
     if (!navigator?.mediaDevices?.enumerateDevices()) {
         isDisabled.value = true;
         cameraErrType.value = "no_camera";

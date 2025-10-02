@@ -79,10 +79,11 @@
 <script setup lang="ts">
 import "./css/ScannedTicket.css"
 import { useApi } from "../../../composables/useApi";
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Errors from "../errors/Errors.vue";
 import LoadingScreen from "../global/LoadingScreen.vue";
 import Swal from "sweetalert2";
+import { verifyAuthorization } from "../../../lib/Auth";
 
 type Ticket = {
     id: string;
@@ -92,7 +93,6 @@ type Ticket = {
     absen: string;
     nomor_hp: string;
 };
-type Callback<T> = (result: T) => void;
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -109,6 +109,7 @@ const isFound = ref<boolean>(true);
 const message = ref("");
 const foundData = ref<Ticket[]>([]);
 const displayClear = ref(false);
+const isAuthorized = ref(false);
 
 const stopRequest = () => {
     isLoading.value = false;
@@ -116,117 +117,101 @@ const stopRequest = () => {
     isFailed.value = true;
 }
 
+const { mount, unmount, verify } = verifyAuthorization({
+    api,
+    onError: () => { stopRequest() },
+    onAuthorized: () => { isAuthorized.value = true },
+    onUnauthorized: () => { isAuthorized.value = false; panels.value = false; window.location.href = "/signin" }
+})
+
 onMounted(() => {
-    api.accessToken((error, token_result) => {
-        if (error) { stopRequest(); return; }
-
-        api.request("/auth/verify", String(token_result), null, (error, result) => {
-            if (!result!["ok"] && result!["error_code"] == "UNAUTHORIZED_ACCESS") return window.location.href = "/signin";
+    mount();
+    verify((ok, token) => {
+        if (!ok) return;
+        api.request("/admin/getTotal", token, null, (error, result) => {
             if (error || !result!["ok"]) { stopRequest(); return; }
-
-            api.request("/admin/getTotal", String(token_result), null, (error, result) => {
-                if (error || !result!["ok"]) { stopRequest(); return; }
-                panels.value = true;
-                if (result!["result"]["data_list"]["pengunjung_data"].length > 0) { ticketData.value = result!["result"]["data_list"]["pengunjung_data"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
-                isLoading.value = false;
-            })
+            panels.value = true;
+            if (result!["result"]["data_list"]["pengunjung_data"].length > 0) { ticketData.value = result!["result"]["data_list"]["pengunjung_data"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
+            isLoading.value = false;
         })
     })
 })
 
-const verify = (callback: Callback<null | boolean>) => {
-    panels.value = false;
-    isLoading.value = true;
-    api.accessToken((error, token_result) => {
-        if (error) { stopRequest(); return };
-
-        api.request("/auth/verify", String(token_result), null, (error, result) => {
-            if (error) { stopRequest(); return };
-            if (error || !result!['ok']) { window.location.href = "/signin" };
-            panels.value = true;
-            isLoading.value = false;
-            return callback(true);
-        })
-    });
-}
+onBeforeUnmount(() => {
+    unmount();
+})
 
 const clear = () => {
-    verify((isLoggedIn) => {
-        if (!isLoggedIn) return;
-        query.value = null;
-        displayClear.value = false;
-        currentPage.value = lastPage.value;
-        foundData.value = [];
-        if (ticketData.value.length > 0) { isFound.value = true; } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
-    })
+    if (!isAuthorized.value) return;
+    query.value = null;
+    displayClear.value = false;
+    currentPage.value = lastPage.value;
+    foundData.value = [];
+    if (ticketData.value.length > 0) { isFound.value = true; } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
 }
 
 const search = () => {
-    verify((isLoggedIn) => {
-        if (!isLoggedIn) return;
-        if (!query.value) return toast.warning({ message: 'Kueri tidak boleh kosong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-        displayClear.value = true;
-        lastPage.value = currentPage.value;
-        currentPage.value = 1;
-        const queryLower = String(query.value || "")
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .trim();
+    if (!isAuthorized.value) return;
+    if (!query.value) return toast.warning({ message: 'Kueri tidak boleh kosong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    displayClear.value = true;
+    lastPage.value = currentPage.value;
+    currentPage.value = 1;
+    const queryLower = String(query.value || "")
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .trim();
 
-        const find = ticketData.value.filter((r: Ticket) => {
-            let target = "";
-            if (/(internal|eksternal)/i.test(queryLower)) {
-                target = r.tipe;
-            } else if (queryLower.startsWith("pbl-")) {
-                target = r.id;
-            } else if (queryLower.startsWith("x")) {
-                target = r.kelas;
-            } else if (/^[0-9]+$/i.test(queryLower) && queryLower.length == 2) {
-                target = r.absen;
-            } else if (queryLower.startsWith("08") || queryLower.startsWith("62")) {
-                target = r.nomor_hp;
-            } else {
-                target = r.nama;
-            }
-
-            return String(target).toLowerCase().replace(/\s+/g, "").includes(queryLower);
-        });
-
-        if (find.length == 0) {
-            message.value = "Data tiket tidak ditemukan."
-            isFound.value = false;
-            return;
+    const find = ticketData.value.filter((r: Ticket) => {
+        let target = "";
+        if (/(internal|eksternal)/i.test(queryLower)) {
+            target = r.tipe;
+        } else if (queryLower.startsWith("pbl-")) {
+            target = r.id;
+        } else if (queryLower.startsWith("x")) {
+            target = r.kelas;
+        } else if (/^[0-9]+$/i.test(queryLower) && queryLower.length == 2) {
+            target = r.absen;
+        } else if (queryLower.startsWith("08") || queryLower.startsWith("62")) {
+            target = r.nomor_hp;
+        } else {
+            target = r.nama;
         }
-        foundData.value = find;
-        isFound.value = true;
-    })
+
+        return String(target).toLowerCase().replace(/\s+/g, "").includes(queryLower);
+    });
+
+    if (find.length == 0) {
+        message.value = "Data tiket tidak ditemukan."
+        isFound.value = false;
+        return;
+    }
+    foundData.value = find;
+    isFound.value = true;
 }
 
 const deleteTicket = (id: string) => {
-    verify((isLoggedIn) => {
-        if (!isLoggedIn) return;
-        Swal.fire({
-            title: "Warning!",
-            icon: "warning",
-            text: "Apa Anda yakin ingin melakukan ini?",
-            showCancelButton: true,
-            showConfirmButton: true
-        }).then((r) => {
-            if (r.isConfirmed) {
-                toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                api.accessToken((error, token_result) => {
-                    if (error) { stopRequest(); return; }
+    if (!isAuthorized.value) return;
+    Swal.fire({
+        title: "Warning!",
+        icon: "warning",
+        text: "Apa Anda yakin ingin melakukan ini?",
+        showCancelButton: true,
+        showConfirmButton: true
+    }).then((r) => {
+        if (r.isConfirmed) {
+            toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+            api.accessToken((error, token_result) => {
+                if (error) { stopRequest(); return; }
 
-                    api.request("/users/revokeScannedTicket", String(token_result), { id }, (err, result) => {
-                        if (err) { stopRequest(); return; }
-                        if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
-                        if (result!["result"].length > 0) { ticketData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
-                        toast.destroy();
-                        toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
-                    })
+                api.request("/users/revokeScannedTicket", String(token_result), { id }, (err, result) => {
+                    if (err) { stopRequest(); return; }
+                    if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                    if (result!["result"].length > 0) { ticketData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada tiket yang dipindai di sini." };
+                    toast.destroy();
+                    toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
                 })
-            }
-        })
+            })
+        }
     })
 }
 
@@ -240,17 +225,13 @@ const paginatedData = computed(() => {
 });
 
 const prevPage = () => {
-    verify((isLoggedIn) => {
-        if (!isLoggedIn) return;
-        if (currentPage.value > 1) currentPage.value--;
-    })
+    if (!isAuthorized.value) return;
+    if (currentPage.value > 1) currentPage.value--;
 };
 
 const nextPage = () => {
-    verify((isLoggedIn) => {
-        if (!isLoggedIn) return;
-        if (currentPage.value < totalPages.value) currentPage.value++;
-    })
+    if (!isAuthorized.value) return;
+    if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 </script>

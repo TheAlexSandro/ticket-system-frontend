@@ -40,7 +40,7 @@ export function useApi() {
           return callback?.(err.message, null);
         });
     },
-    accessToken(callback: Callback<null | ApiResponse>) {
+    accessToken(callback: Callback<null | string>) {
       apis
         .post(`/auth/generateAuthentication`)
         .then((result: AxiosResponse) => {
