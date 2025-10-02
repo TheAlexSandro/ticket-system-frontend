@@ -50,7 +50,7 @@
       </template>
 
       <template v-else>
-        <section class="submenu">
+        <section class="submenu" v-if="submenuPanel">
           <div class="back" @click="back()">
             <i class="ri-arrow-left-s-line"></i>
           </div>
@@ -231,6 +231,7 @@ const isFailed = ref(false);
 const pblLoad = ref(true);
 const pblError = ref(false);
 const pblDone = ref(false);
+const submenuPanel = ref(true);
 
 const camPermissions = ref<"all" | "admin">();
 const pemindaianMethod = ref<"id" | "name">();
@@ -271,6 +272,7 @@ const cameraStatusesM = computed(() =>
 
 const verify = (callback: Callback<null | boolean>) => {
   adminPanel.value = false;
+  submenuPanel.value = false;
   isLoading.value = true;
   api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return };
@@ -279,6 +281,7 @@ const verify = (callback: Callback<null | boolean>) => {
       if (error) { stopRequest(); return };
       if (error || !result!['ok']) { window.location.href = "/signin" };
       adminPanel.value = true;
+      submenuPanel.value = true;
       isLoading.value = false;
       return callback(true);
     })
