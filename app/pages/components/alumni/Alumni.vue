@@ -112,6 +112,7 @@ type AlumniData = {
 };
 
 type AlumniAksi = "verifikasi" | "cabut" | "hapus";
+type Callback<T> = (result: T) => void;
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -154,91 +155,116 @@ onMounted(() => {
     })
 })
 
+const verify = (callback: Callback<null | boolean>) => {
+    panels.value = false;
+    isLoading.value = true;
+    api.accessToken((error, token_result) => {
+        if (error) { stopRequest(); return };
+
+        api.request("/auth/verify", String(token_result), null, (error, result) => {
+            if (error) { stopRequest(); return };
+            if (error || !result!['ok']) { window.location.href = "/signin" };
+            panels.value = true;
+            isLoading.value = false;
+            return callback(true);
+        })
+    });
+}
+
 const clear = () => {
-    query.value = null;
-    displayClear.value = false;
-    currentPage.value = lastPage.value;
-    foundData.value = [];
-    if (alumniData.value.length > 0) { isFound.value = true; } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+    verify((isLoggedIn) => {
+        if (!isLoggedIn) return;
+        query.value = null;
+        displayClear.value = false;
+        currentPage.value = lastPage.value;
+        foundData.value = [];
+        if (alumniData.value.length > 0) { isFound.value = true; } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+    })
 }
 
 const search = () => {
-    if (!query.value) return toast.warning({ message: 'Kueri tidak boleh kosong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    displayClear.value = true;
-    lastPage.value = currentPage.value;
-    currentPage.value = 1;
-    const queryLower = String(query.value || "")
-        .toLowerCase()
-        .replace(/\s+/g, "");
+    verify((isLoggedIn) => {
+        if (!isLoggedIn) return;
+        if (!query.value) return toast.warning({ message: 'Kueri tidak boleh kosong.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+        displayClear.value = true;
+        lastPage.value = currentPage.value;
+        currentPage.value = 1;
+        const queryLower = String(query.value || "")
+            .toLowerCase()
+            .replace(/\s+/g, "");
 
-    const find = alumniData.value.filter((r: AlumniData) => {
-        let target = "";
-        if (/^[0-9]+$/.test(queryLower) && queryLower.length === 2) {
-            target = r.umur;
-        } else if (queryLower.startsWith("62") || queryLower.startsWith("08")) {
-            target = r.phone;
-        } else if (/^[0-9]+$/.test(queryLower) && queryLower.length === 4) {
-            target = r.lulus_tahun;
-        } else {
-            target = r.nama;
+        const find = alumniData.value.filter((r: AlumniData) => {
+            let target = "";
+            if (/^[0-9]+$/.test(queryLower) && queryLower.length === 2) {
+                target = r.umur;
+            } else if (queryLower.startsWith("62") || queryLower.startsWith("08")) {
+                target = r.phone;
+            } else if (/^[0-9]+$/.test(queryLower) && queryLower.length === 4) {
+                target = r.lulus_tahun;
+            } else {
+                target = r.nama;
+            }
+
+            return String(target).toLowerCase().replace(/\s+/g, "").includes(queryLower);
+        });
+
+        if (find.length == 0) {
+            message.value = "Alumnus tidak ditemukan."
+            isFound.value = false;
+            return;
         }
-
-        return String(target).toLowerCase().replace(/\s+/g, "").includes(queryLower);
-    });
-
-    if (find.length == 0) {
-        message.value = "Alumnus tidak ditemukan."
-        isFound.value = false;
-        return;
-    }
-    foundData.value = find;
-    isFound.value = true;
+        foundData.value = find;
+        isFound.value = true;
+    })
 }
 
 const alumniAksi = (nama: string, aksi: AlumniAksi) => {
-    if (/(cabut|hapus)/i.exec(aksi)) {
-        Swal.fire({
-            title: "Warning!",
-            icon: "warning",
-            text: "Apa Anda yakin ingin melakukan tindakan ini?",
-            showCancelButton: true,
-            showConfirmButton: true
-        }).then((r) => {
-            if (r.isConfirmed) {
-                toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
-                api.accessToken((error, token_result) => {
-                    if (error) { stopRequest(); return; }
-
-                    api.request(`/users/${aksi == "cabut" ? "verifyAlumni" : "deleteAlumni"}`, String(token_result), { nama }, (error, result) => {
+    verify((isLoggedIn) => {
+        if (!isLoggedIn) return;
+        if (/(cabut|hapus)/i.exec(aksi)) {
+            Swal.fire({
+                title: "Warning!",
+                icon: "warning",
+                text: "Apa Anda yakin ingin melakukan tindakan ini?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((r) => {
+                if (r.isConfirmed) {
+                    toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
+                    api.accessToken((error, token_result) => {
                         if (error) { stopRequest(); return; }
-                        if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
-                        api.request("/users/getAlumni", String(token_result), null, (error, result) => {
-                            if (error || !result!["ok"]) { stopRequest(); return; }
-                            if (result!["result"].length > 0) { alumniData.value = result!["result"] as AlumniData[] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
-                            toast.destroy();
-                            toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+                        api.request(`/users/${aksi == "cabut" ? "verifyAlumni" : "deleteAlumni"}`, String(token_result), { nama }, (error, result) => {
+                            if (error) { stopRequest(); return; }
+                            if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                            api.request("/users/getAlumni", String(token_result), null, (error, result) => {
+                                if (error || !result!["ok"]) { stopRequest(); return; }
+                                if (result!["result"].length > 0) { alumniData.value = result!["result"] as AlumniData[] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+                                toast.destroy();
+                                toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                            })
                         })
                     })
-                })
-            }
-        })
-    } else {
-        toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
-        api.accessToken((error, token_result) => {
-            if (error) { stopRequest(); return; }
-
-            api.request(`/users/verifyAlumni`, String(token_result), { nama }, (error, result) => {
+                }
+            })
+        } else {
+            toast.info({ message: "Please wait...", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 7000 });
+            api.accessToken((error, token_result) => {
                 if (error) { stopRequest(); return; }
-                if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
-                api.request("/users/getAlumni", String(token_result), null, (error, result) => {
-                    if (error || !result!["ok"]) { stopRequest(); return; }
-                    if (result!["result"].length > 0) { alumniData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
-                    toast.destroy();
-                    toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+
+                api.request(`/users/verifyAlumni`, String(token_result), { nama }, (error, result) => {
+                    if (error) { stopRequest(); return; }
+                    if (!result!["ok"] && result!["error_code"] == "USER_NOT_FOUND") { toast.destroy(); toast.error({ message: "Pengguna tidak ditemukan.", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 }); return };
+                    api.request("/users/getAlumni", String(token_result), null, (error, result) => {
+                        if (error || !result!["ok"]) { stopRequest(); return; }
+                        if (result!["result"].length > 0) { alumniData.value = result!["result"] } else { isFound.value = false; message.value = "Tidak ada alumnus yang terdaftar." };
+                        toast.destroy();
+                        toast.success({ message: "Berhasil!", position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+                    })
                 })
             })
-        })
-    }
+        }
+    })
 }
 
 const totalPages = computed(() =>
@@ -251,11 +277,17 @@ const paginatedData = computed(() => {
 });
 
 const prevPage = () => {
-    if (currentPage.value > 1) currentPage.value--;
+    verify((isLoggedIn) => {
+        if (!isLoggedIn) return;
+        if (currentPage.value > 1) currentPage.value--;
+    })
 };
 
 const nextPage = () => {
-    if (currentPage.value < totalPages.value) currentPage.value++;
+    verify((isLoggedIn) => {
+        if (!isLoggedIn) return;
+        if (currentPage.value < totalPages.value) currentPage.value++;
+    })
 };
 
 </script>
