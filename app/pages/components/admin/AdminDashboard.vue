@@ -270,12 +270,14 @@ const cameraStatusesM = computed(() =>
 );
 
 const verify = (callback: Callback<null | boolean>) => {
+  isLoading.value = true;
   api.accessToken((error, token_result) => {
     if (error) { stopRequest(); return };
 
     api.request("/auth/verify", String(token_result), null, (error, result) => {
       if (error) { stopRequest(); return };
       if (error || !result!['ok']) { window.location.href = "/signin" };
+      isLoading.value = false;
       return callback(true);
     })
   });
