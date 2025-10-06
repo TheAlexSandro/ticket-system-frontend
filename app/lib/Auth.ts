@@ -58,7 +58,7 @@ export const verifyAuthorization = (opts: VerifyOptions) => {
 
   const handleVisibility = () => {
     if (document.visibilityState == "visible") {
-      //verify();
+      verify();
     }
   };
 
