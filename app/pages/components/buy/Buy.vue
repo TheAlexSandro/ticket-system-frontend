@@ -106,23 +106,31 @@ const stopRequest = () => {
     panels.value = false;
 }
 
-const cfSiteKey = () => {
-    return String(useRuntimeConfig().public["SITE_KEY"])
-}
-
 onMounted(() => {
     api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return };
 
-        api.request("/users/getAlumniTotal", String(token_result), null, (err, result) => {
+        api.request("/admin/getAlumniInfo", String(token_result), null, (err, form_status) => {
             if (err) { stopRequest(); return };
-            if (Number(result!["result"]) >= 200) { displayError.value = true; errorMessage.value = "Pembelian tiket telah ditutup, kuota mencapai batas 200 kuota."; displayReturn.value = false; } else { displayForm.value = true };
-            isLoading.value = false;
+            if (!form_status!["result"]["formulir_status"]) {
+                displayError.value = true;
+                errorMessage.value = String(form_status!["result"]["message"]);
+                displayReturn.value = false;
+                isLoading.value = false;
+                return;
+            }
+
+            api.request("/users/getAlumniTotal", String(token_result), null, (err, result) => {
+                if (err) { stopRequest(); return };
+                if (Number(result!["result"]) >= 200) { displayError.value = true; errorMessage.value = "Pembelian tiket telah ditutup, kuota mencapai batas 200 kuota."; displayReturn.value = false; } else { displayForm.value = true };
+                isLoading.value = false;
+            })
         })
     })
 })
 
 const returns = () => {
+    cfToken.value = "";
     displayForm.value = true;
     displayError.value = false;
 }
@@ -177,6 +185,7 @@ const handleSubmit = () => {
                     displayForm.value = false;
                     displayError.value = true;
                     errorMessage.value = String(result!["message"]);
+                    if (result!["error_code"] == "FORM_CLOSED") { displayReturn.value = false };
                     return;
                 }
                 window.location.href = result!["result"]["url"];

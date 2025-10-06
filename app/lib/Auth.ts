@@ -9,6 +9,7 @@ type VerifyResult = {
   camera_status: "on" | "off";
   camera_permissions: "all" | "admin";
   scanning_method: "id" | "name";
+  formulir_status: "yes" | "no";
 };
 
 export const verifyAuthorization = (opts: VerifyOptions) => {
@@ -57,7 +58,7 @@ export const verifyAuthorization = (opts: VerifyOptions) => {
 
   const handleVisibility = () => {
     if (document.visibilityState == "visible") {
-      verify();
+      //verify();
     }
   };
 

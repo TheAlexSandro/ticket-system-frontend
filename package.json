@@ -30,7 +30,7 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6"
   },
-  "version": "30.09.25",
+  "version": "06.10.25",
   "description": "Ticket Scanner Frontend",
   "repository": {
     "type": "git",

@@ -31,18 +31,25 @@
             </div>
           </div>
 
-          <span class="title">Sistem</span>
+          <span class="title">Pembelian Tiket</span>
           <div class="card bg-w">
             <div class="container">
-              <div class="item" @click="showMenu('kamera')"><i class="ri-camera-line"></i> Kamera</div>
-              <div class="item" @click="showMenu('pemindaian')"><i class="ri-coupon-2-line"></i> Metode Pemindaian</div>
-              <div class="item" @click="showMenu('restart')"><i class="ri-restart-line"></i> Restart</div>
+              <div class="item" @click="showMenu('formulir')"><i class="ri-survey-line"></i> Formulir</div>
             </div>
           </div>
 
-          <span class="title">Sudo</span>
+          <span class="title">Pemindaian</span>
           <div class="card bg-w">
             <div class="container">
+              <div class="item" @click="showMenu('kamera')"><i class="ri-camera-line"></i> Kamera</div>
+              <div class="item" @click="showMenu('pemindaian')"><i class="ri-coupon-2-line"></i> Metode</div>
+            </div>
+          </div>
+
+          <span class="title">Sistem</span>
+          <div class="card bg-w">
+            <div class="container">
+              <div class="item" @click="showMenu('restart')"><i class="ri-restart-line"></i> Restart</div>
               <div class="item" @click="signout()"><i class="ri-logout-circle-line"></i> Keluar</div>
             </div>
           </div>
@@ -90,6 +97,31 @@
             </div>
           </div>
           <!-- END OF SUBMENU PENGUNJUNG PBL -->
+
+          <!-- SUBMENU PEMBELIAN TIKET -->
+          <div class="formulir" v-if="formulirView">
+            <div class="title"><i class="ri-survey-line"></i> <span>Formulir</span></div>
+            <p>Dari menu ini, Anda dapat membuka atau menutup formulir pembelian tiket.</p>
+            <hr>
+
+            <div class="menu-section">
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="changeFormulirStatus()"><i class="ri-checkbox-circle-line"></i> Buka
+                    <span><i :class="formulirStatus == 'yes' ? 'ri-check-line' : ''"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="container">
+                  <div class="item" @click="changeFormulirStatus()"><i class="ri-close-circle-line"></i> Tutup
+                    <span><i :class="formulirStatus == 'no' ? 'ri-check-line' : ''"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END OF SUBMENU PEMBELIAN TIKET -->
 
           <!-- SUBMENU RESTART -->
           <div class="restart" v-if="restartView">
@@ -218,6 +250,7 @@ const websiteView = ref(false);
 const pengunjungView = ref(false);
 const pemindaianView = ref(false);
 const restartView = ref(false);
+const formulirView = ref(false);
 
 const adminPanel = ref(false);
 const ticketTotal = ref(0);
@@ -236,6 +269,7 @@ const isAuthorized = ref(false);
 
 const camPermissions = ref<"all" | "admin">();
 const pemindaianMethod = ref<"id" | "name">();
+const formulirStatus = ref<"yes" | "no">();
 
 const stopRequest = () => {
   toast.destroy();
@@ -253,15 +287,16 @@ const { mount, unmount, verify } = verifyAuthorization({
 
 onMounted(() => {
   mount();
-  verify((ok, token, result) => {
-    if (!ok) return;
-    cameraStatuses.value = result!["camera_status"] == "on" ? true : false;
-    camPermissions.value = result!["camera_permissions"];
-    pemindaianMethod.value = result!["scanning_method"];
+  // verify((ok, token, result) => {
+  //   if (!ok) return;
+  //   cameraStatuses.value = result!["camera_status"] == "on" ? true : false;
+  //   camPermissions.value = result!["camera_permissions"];
+  //   pemindaianMethod.value = result!["scanning_method"];
+  //   formulirStatus.value = result!["formulir_status"]
 
-    adminPanel.value = true;
-    isLoading.value = false;
-  })
+  //   adminPanel.value = true;
+  //   isLoading.value = false;
+  // })
 })
 
 onBeforeUnmount(() => {
@@ -368,13 +403,26 @@ const camStatus = () => {
   });
 }
 
+const changeFormulirStatus = () => {
+  if (!isAuthorized.value) return;
+  waits();
+  api.accessToken((error, token_result) => {
+    if (error) { stopRequest(); return; }
+    api.request("/admin/changeFormStatus", String(token_result), null, (error, result) => {
+      if (error || !result!["ok"]) return toast.error({ message: result!["message"], position: "topRight", pauseOnHover: false, displayMode: 2, timeout: 5000 });
+      formulirStatus.value = formulirStatus.value == "yes" ? "no" : "yes";
+      stayBack();
+    })
+  })
+}
+
 const showMenu = (type: string) => {
   if (!isAuthorized.value) return;
   if (type == 'daftar-tiket') {
     window.location.href = "/scanned-ticket";
     return;
   }
-  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : null;
+  const refs = type == "kamera" ? kameraView : type == "website" ? websiteView : type == "pemindaian" ? pemindaianView : type == "restart" ? restartView : type == "pengunjung" ? pengunjungView : type == "formulir" ? formulirView : null;
   optionsView.value = false;
   routeNow.value = type;
   refs!.value = true;
