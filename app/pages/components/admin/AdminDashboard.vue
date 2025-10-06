@@ -287,16 +287,16 @@ const { mount, unmount, verify } = verifyAuthorization({
 
 onMounted(() => {
   mount();
-  // verify((ok, token, result) => {
-  //   if (!ok) return;
-  //   cameraStatuses.value = result!["camera_status"] == "on" ? true : false;
-  //   camPermissions.value = result!["camera_permissions"];
-  //   pemindaianMethod.value = result!["scanning_method"];
-  //   formulirStatus.value = result!["formulir_status"]
+  verify((ok, token, result) => {
+    if (!ok) return;
+    cameraStatuses.value = result!["camera_status"] == "on" ? true : false;
+    camPermissions.value = result!["camera_permissions"];
+    pemindaianMethod.value = result!["scanning_method"];
+    formulirStatus.value = result!["formulir_status"]
 
-  //   adminPanel.value = true;
-  //   isLoading.value = false;
-  // })
+    adminPanel.value = true;
+    isLoading.value = false;
+  })
 })
 
 onBeforeUnmount(() => {
