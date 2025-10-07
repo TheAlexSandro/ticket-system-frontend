@@ -116,7 +116,7 @@ onMounted(() => {
 
         api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return; }
-            if (result!["ok"]) return window.location.href = "/admin";
+            if (result!["ok"]) return window.location.href = "/dashboard";
             panels.value = true;
             isLoading.value = false;
         })

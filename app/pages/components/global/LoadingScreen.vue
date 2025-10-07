@@ -1,33 +1,8 @@
 <template>
-    <section class="loading">
-        <div class="loader">
-            <div class="box box0">
-                <div></div>
-            </div>
-            <div class="box box1">
-                <div></div>
-            </div>
-            <div class="box box2">
-                <div></div>
-            </div>
-            <div class="box box3">
-                <div></div>
-            </div>
-            <div class="box box4">
-                <div></div>
-            </div>
-            <div class="box box5">
-                <div></div>
-            </div>
-            <div class="box box6">
-                <div></div>
-            </div>
-            <div class="box box7">
-                <div></div>
-            </div>
-            <div class="ground">
-                <div></div>
-            </div>
+    <section class="loader">
+        <div class="container">
+            <img src="/images/head.png" alt="Loading...">
+            <div class="line" role="progressbar" aria-label="Loading"></div>
         </div>
     </section>
 </template>

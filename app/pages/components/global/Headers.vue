@@ -16,7 +16,7 @@
 import './css/Header.css'
 
 const redirect = () => {
-    window.location.href = "/admin";
+    window.location.href = "/dashboard";
 }
 
 const home = () => {

@@ -444,7 +444,7 @@ const showMenu = (type: string) => {
 
 const back = () => {
   if (!isAuthorized.value) return;
-  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : routeNow.value == "restart" ? restartView : routeNow.value == "pengunjung" ? pengunjungView : null;
+  const refs = routeNow.value == "kamera" ? kameraView : routeNow.value == "website" ? websiteView : routeNow.value == "pemindaian" ? pemindaianView : routeNow.value == "restart" ? restartView : routeNow.value == "pengunjung" ? pengunjungView : routeNow.value == "formulir" ? formulirView : null;
   optionsView.value = true;
   refs!.value = false;
   iframeLoad.value = true;
