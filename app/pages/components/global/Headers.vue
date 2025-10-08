@@ -13,10 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import './css/Header.css'
+import './css/Header.css';
+import { useRuntimeConfig } from 'nuxt/app';
 
 const redirect = () => {
-    window.location.href = "/dashboard";
+    const dash = useRuntimeConfig().public["ADMIN_DASH"]
+    window.location.href = dash as string;
 }
 
 const home = () => {

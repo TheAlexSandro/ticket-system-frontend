@@ -110,13 +110,17 @@ const stopRequest = () => {
     isFailed.value = true;
 }
 
+const adminDash = () => {
+    return String(useRuntimeConfig().public["ADMIN_DASH"]);
+}
+
 onMounted(() => {
     api.accessToken((error, token_result) => {
         if (error) { stopRequest(); return; }
 
         api.request("/auth/verify", String(token_result), null, (error, result) => {
             if (error) { stopRequest(); return; }
-            if (result!["ok"]) return window.location.href = "/dashboard";
+            if (result!["ok"]) return window.location.href = adminDash();
             panels.value = true;
             isLoading.value = false;
         })
@@ -223,7 +227,7 @@ const verify = () => {
             if (!result!['ok'] && result!['error_code'] == 'UNAUTHORIZED_ACCESS') return inputError("password", "invalid");
             if (!result!['ok']) { stopRequest(); return; }
 
-            window.location.href = "/admin";
+            window.location.href = adminDash();
         })
     });
 }

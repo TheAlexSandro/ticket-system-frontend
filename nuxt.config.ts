@@ -89,6 +89,7 @@ export default defineNuxtConfig({
       EMAIL: process.env["EMAIL"],
       MARQUEE_CONTENT: process.env["MARQUEE_CONTENT"],
       PUNCAK: process.env["PUNCAK"],
+      ADMIN_DASH: process.env["ADMIN_DASH"]
     },
   },
   turnstile: {
