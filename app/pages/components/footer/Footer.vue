@@ -4,9 +4,9 @@
             <div class="logo-container">
                 <span>Dipersembahkan Oleh</span>
                 <div class="logos">
-                    <img src="/images/oskensa-logo.png" alt="Logo Osis SMKN 1 Blitar">
-                    <img src="/images/smkn-logo.png" alt="Logo SMKN 1 Blitar">
-                    <img src="/images/head.png" alt="Logo PBL Smekensa">
+                    <img :src="`${configs.public['IMAGE_CDN']}/oskensa-logo.png`" alt="Logo Osis SMKN 1 Blitar">
+                    <img :src="`${configs.public['IMAGE_CDN']}/smkn-logo.png`" alt="Logo SMKN 1 Blitar">
+                    <img :src="`${configs.public['IMAGE_CDN']}/head.png`" alt="Logo PBL Smekensa">
                 </div>
             </div>
             <div class="desc">
@@ -25,6 +25,9 @@
 
 <script setup lang="ts">
 import "./css/Footer.css";
+import { useRuntimeConfig } from "nuxt/app";
+
+const configs = useRuntimeConfig();
 
 const cpYear = () => {
     const year = new Date().getFullYear();

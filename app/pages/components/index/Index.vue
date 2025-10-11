@@ -4,7 +4,7 @@
             <div class="beginning">
                 <div class="title">
                     <h1>Smekensa</h1>
-                    <img src="/images/head.png" alt="Logo">
+                   <img :src="`${configs.public['IMAGE_CDN']}/head.png`" alt="Logo">
                 </div>
                 <p>Selamat datang di website Project Based Learning Smekensa yang ke-60 tahun.</p>
             </div>
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="card">
-                <img src="/images/hero1.jpg" alt="Hero Image 1">
+                <img :src="`${configs.public['IMAGE_CDN']}/hero1.jpg`" alt="Hero Image">
                 <div class="desc">
                     <div class="cont">
                         <h1>Berkarya, Berprestasi, Menginspirasi</h1>
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="card">
-                <img src="/images/hero2.jpg" alt="Hero Image 2">
+                <img :src="`${configs.public['IMAGE_CDN']}/hero2.jpg`" alt="Hero Image">
                 <div class="desc">
                     <div class="cont">
                         <h1>Merayakan Kebanggaan, Menyongsong Harapan</h1>
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="card">
-                <img src="/images/hero5.jpg" alt="Hero Image 3">
+                <img :src="`${configs.public['IMAGE_CDN']}/hero5.jpg`" alt="Hero Image">
                 <div class="desc">
                     <div class="cont">
                         <h1>Semangat Baru di Usia 60 Tahun</h1>
@@ -160,9 +160,9 @@
 
                 <div class="content">
                     <div v-if="!showSlider" class="image">
-                        <img class="t-1" src="/images/hero7.jpg" alt="Image"></img>
-                        <img class="t-0" style="z-index: 2;" src="/images/hero4.jpg" alt="Image"></img>
-                        <img class="t-2" src="/images/hero8.jpg" alt="Image"></img>
+                        <img class="t-1" :src="`${configs.public['IMAGE_CDN']}/hero7.jpg`" alt="Image"></img>
+                        <img class="t-0" style="z-index: 2;" :src="`${configs.public['IMAGE_CDN']}/hero4.jpg`" alt="Image"></img>
+                        <img class="t-2" :src="`${configs.public['IMAGE_CDN']}/hero8.jpg`" alt="Image"></img>
                     </div>
                     <div v-else class="mobile">
                         <div class="slider">
@@ -228,17 +228,42 @@ import { useRuntimeConfig } from "nuxt/app";
 import Footer from "../footer/Footer.vue";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
+const configs = useRuntimeConfig();
+
+onMounted(() => {
+    if (!deviceType.value) { updateDeviceType() };
+    window.addEventListener("resize", updateDeviceType);
+    if (deviceType.value == "mobile") {
+        showSlider.value = true;
+        resetTimer();
+    }
+});
+
+onBeforeUnmount(() => {
+    if (!deviceType.value) { updateDeviceType() };
+    window.addEventListener("resize", updateDeviceType);
+    if (deviceType.value == "mobile") {
+        showSlider.value = true;
+        resetTimer();
+    }
+    clearInterval(timer);
+});
+
+const imageCDN = () => {
+    return String(configs.public["IMAGE_CDN"]);
+}
+
 const images = [
-    "/images/hero1.jpg",
-    "/images/hero2.jpg",
-    "/images/hero3.jpg",
-    "/images/hero4.jpg",
-    "/images/hero5.jpg",
-    "/images/hero6.jpg",
-    "/images/hero7.jpg",
-    "/images/hero8.jpg",
-    "/images/hero9.jpg",
-    "/images/hero10.jpg"
+    `${imageCDN()}/hero1.jpg`,
+    `${imageCDN()}/hero2.jpg`,
+    `${imageCDN()}/hero3.jpg`,
+    `${imageCDN()}/hero4.jpg`,
+    `${imageCDN()}/hero5.jpg`,
+    `${imageCDN()}/hero6.jpg`,
+    `${imageCDN()}/hero7.jpg`,
+    `${imageCDN()}/hero8.jpg`,
+    `${imageCDN()}/hero9.jpg`,
+    `${imageCDN()}/hero10.jpg`
 ];
 
 const showSlider = ref<boolean>(false);
@@ -285,25 +310,6 @@ const resetTimer = () => {
         changeSlide(currentImg.value + 1);
     }, interval);
 }
-
-onMounted(() => {
-    if (!deviceType.value) { updateDeviceType() };
-    window.addEventListener("resize", updateDeviceType);
-    if (deviceType.value == "mobile") {
-        showSlider.value = true;
-        resetTimer();
-    }
-});
-
-onBeforeUnmount(() => {
-    if (!deviceType.value) { updateDeviceType() };
-    window.addEventListener("resize", updateDeviceType);
-    if (deviceType.value == "mobile") {
-        showSlider.value = true;
-        resetTimer();
-    }
-    clearInterval(timer);
-});
 
 const marqueeText = () => {
     const env = useRuntimeConfig();

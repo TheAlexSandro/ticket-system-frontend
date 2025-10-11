@@ -2,7 +2,7 @@
     <div class="header">
         <div class="logo" @click="home()">
             <div class="bounce-wrap">
-                <img src="/images/head.png" alt="Logo">
+                <img :src="`${configs.public['IMAGE_CDN']}/head.png`" alt="Logo">
             </div>
             <p>PBL Smekensa</p>
         </div>
@@ -15,6 +15,8 @@
 <script setup lang="ts">
 import './css/Header.css';
 import { useRuntimeConfig } from 'nuxt/app';
+
+const configs = useRuntimeConfig();
 
 const redirect = () => {
     const dash = useRuntimeConfig().public["ADMIN_DASH"]

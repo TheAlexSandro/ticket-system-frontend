@@ -28,36 +28,36 @@ export default defineNuxtConfig({
         {
           rel: "icon",
           type: "image/x-icon",
-          href: "/images/favicon/favicon.ico",
+          href: "/favicon/favicon.ico",
         },
         {
           rel: "icon",
           type: "image/png",
           sizes: "16x16",
-          href: "/images/favicon/favicon-16x16.png",
+          href: "/favicon/favicon-16x16.png",
         },
         {
           rel: "icon",
           type: "image/png",
           sizes: "32x32",
-          href: "/images/favicon/favicon-32x32.png",
+          href: "/favicon/favicon-32x32.png",
         },
         {
           rel: "apple-touch-icon",
           sizes: "180x180",
-          href: "/images/favicon/apple-touch-icon.png",
+          href: "/favicon/apple-touch-icon.png",
         },
         {
           rel: "apple-touch-icon",
           sizes: "152x152",
-          href: "/images/favicon/apple-touch-icon.png",
+          href: "/favicon/apple-touch-icon.png",
         },
-        { rel: "manifest", href: "/images/favicon/site.webmanifest" },
+        { rel: "manifest", href: "/favicon/site.webmanifest" },
         {
           rel: "icon",
           type: "image/png",
           sizes: "48x48",
-          href: "/images/favicon/favicon-48x48.png",
+          href: "/favicon/favicon-48x48.png",
         },
       ],
       script: [
@@ -89,7 +89,8 @@ export default defineNuxtConfig({
       EMAIL: process.env["EMAIL"],
       MARQUEE_CONTENT: process.env["MARQUEE_CONTENT"],
       PUNCAK: process.env["PUNCAK"],
-      ADMIN_DASH: process.env["ADMIN_DASH"]
+      ADMIN_DASH: process.env["ADMIN_DASH"],
+      IMAGE_CDN: process.env["IMAGE_CDN"]
     },
   },
   turnstile: {

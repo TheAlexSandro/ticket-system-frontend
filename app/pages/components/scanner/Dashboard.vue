@@ -7,7 +7,7 @@
         <section v-if="!isDisabled" class="dashboard">
             <template v-if="!cameraAccess">
                 <div class="banner">
-                    <img src="/images/banner.png" alt="Banner"></img>
+                    <img :src="`${configs.public['IMAGE_CDN']}/banner.png`" alt="Banner"></img>
                 </div>
                 <h1>Welcome to Ticket Scanner!</h1>
                 <p>Ticket Scanner adalah sistem yang digunakan untuk memverifikasi keaslian tiket dengan memindai Kode
@@ -109,10 +109,13 @@ import { useSocket } from '../../../composables/useSocket';
 import Swal from "sweetalert2";
 import { useApi } from "../../../composables/useApi";
 import { verifyAuthorization } from "../../../lib/Auth";
+import { useRuntimeConfig } from "nuxt/app";
 
 type OverflowState = "hidden" | "visible";
 type MirrorScale = "Y" | "X";
 type StopCamera = "stops" | "change";
+
+const configs = useRuntimeConfig();
 
 //@ts-ignore
 const toast = useToast() as any;
@@ -273,12 +276,12 @@ const stopCamera = (type: StopCamera) => {
 
 const startCamera = async (video_id: string) => {
     //@ts-ignore
-    if (ok.value == "wait") {
-        userStarts.value = true;
-        return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    }
-    if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    if (!isAuthorized.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    // if (ok.value == "wait") {
+    //     userStarts.value = true;
+    //     return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    // }
+    // if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    // if (!isAuthorized.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {
             isDisabled.value = true;

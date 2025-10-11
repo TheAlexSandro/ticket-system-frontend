@@ -21,15 +21,20 @@ import { useRuntimeConfig } from "nuxt/app";
 const props = defineProps({
     type: String
 })
+const configs = useRuntimeConfig();
 
 const getEmail = () => {
-    const configs = useRuntimeConfig();
-    return String(configs.public.EMAIL);
+    return String(configs.public["EMAIL"]);
+}
+
+const cdns = () => {
+    return String(configs.public["IMAGE_CDN"])
 }
 
 const icon = computed(() =>
-    props.type == "error" ? "/icons/error.svg" : "/icons/warning.svg"
+    props.type == "error" ? `${cdns()}/error.svg` : `${cdns()}/warning.svg`
 )
+
 const title = computed(() => 
     props.type == "error" ? "Something Wrong!" : props.type == "denied" ? "Camera Access Denied!" : props.type == "no_camera" ? "Unsupported Device!" : props.type == "camera_gone" ? "Cannot Detect Camera!" : props.type == "no_flash" ? "No Flash Detected!" : null
 )
