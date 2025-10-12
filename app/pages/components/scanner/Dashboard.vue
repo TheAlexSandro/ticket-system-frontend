@@ -276,12 +276,12 @@ const stopCamera = (type: StopCamera) => {
 
 const startCamera = async (video_id: string) => {
     //@ts-ignore
-    // if (ok.value == "wait") {
-    //     userStarts.value = true;
-    //     return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    // }
-    // if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
-    // if (!isAuthorized.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (ok.value == "wait") {
+        userStarts.value = true;
+        return toast.info({ message: "Please wait...", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    }
+    if (ok.value == "error") return toast.error({ message: "Failed to fetch backend.", position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
+    if (!isAuthorized.value && camPermission.value == "admin") return toast.warning({ message: 'Masuk sebagai administrator untuk memindai tiket.', position: 'topRight', pauseOnHover: false, displayMode: 2, timeout: 5000 });
     setTimeout(async () => {
         if (!isCameraSupported()) {
             isDisabled.value = true;
