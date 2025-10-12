@@ -369,7 +369,7 @@ const startQRScanning = async (video: HTMLVideoElement) => {
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE]);
     hints.set(DecodeHintType.TRY_HARDER, true);
-    codeReader = new BrowserMultiFormatReader();
+    codeReader = new BrowserMultiFormatReader(hints);
 
     try {
         await codeReader.decodeFromVideoElement(
