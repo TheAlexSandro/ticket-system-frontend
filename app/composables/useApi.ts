@@ -63,11 +63,11 @@ export function useApi() {
         .then((result: AxiosResponse) => {
           const item = result["data"]["result"];
           var nis = item.nis ? `NIS: ${item.nis}<br>` : "";
-          var kelas = item.kelas ? `Kelas: ${item.kelas}<br>` : "";
+          var kelas = item.kelas ? `${item.kelas}<br>` : "";
           var jantina = item.jantina
-            ? `Jenis Kelamin: ${
+            ? `${
                 item.jantina == "L" ? "Laki-laki" : "Perempuan"
-              }<br>`
+              } - `
             : "";
           var nomor_hp = item.nomor_hp ? `Nomor HP: ${item.nomor_hp}<br>` : "";
           var message = item.is_scanned
