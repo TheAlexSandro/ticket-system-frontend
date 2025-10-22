@@ -20,8 +20,7 @@
                 </div>
             </div>
             <div class="hint">
-                <span><i class="ri-information-line"></i> Pencarian bekerja untuk ID, tipe, nama, kelas, absen, nomor
-                    hp.</span>
+                <span><i class="ri-information-line"></i> Pencarian bekerja untuk ID, tipe, nama, nis, jenis kelamin, kelas, nomor hp.</span>
             </div>
         </div>
         <div v-if="isFound" class="table-container">
@@ -31,8 +30,9 @@
                         <th>ID</th>
                         <th>Tipe</th>
                         <th>Nama</th>
+                        <th>NIS</th>
+                        <th>Jenis Kelamin</th>
                         <th>Kelas</th>
-                        <th>Absen</th>
                         <th>Nomor HP</th>
                         <th>Aksi</th>
                     </tr>
@@ -42,8 +42,9 @@
                         <td>{{ item.id }}</td>
                         <td>{{ item.tipe }}</td>
                         <td>{{ item.nama }}</td>
+                        <td>{{ item.nis ?? "-" }}</td>
+                        <td>{{ item.jantina ?? "-" }}</td>
                         <td>{{ item.kelas ?? "-" }}</td>
-                        <td>{{ item.absen ?? "-" }}</td>
                         <td>{{ item.nomor_hp ?? "-" }}</td>
                         <td>
                             <div class="action">
@@ -89,9 +90,10 @@ type Ticket = {
     id: string;
     tipe: "internal" | "eksternal";
     nama: string;
-    kelas: string;
-    absen: string;
-    nomor_hp: string;
+    nis?: string;
+    jantina?: string;
+    kelas?: string | null;
+    nomor_hp?: string | null;
 };
 
 //@ts-ignore
@@ -168,11 +170,13 @@ const search = () => {
         } else if (queryLower.startsWith("pbl-")) {
             target = r.id;
         } else if (queryLower.startsWith("x")) {
-            target = r.kelas;
-        } else if (/^[0-9]+$/i.test(queryLower) && queryLower.length == 2) {
-            target = r.absen;
+            target = r.kelas as string;
+        } else if (/^[0-9]+$/i.test(queryLower) && queryLower.length == 5) {
+            target = r.nis as string;
+        } else if (queryLower == "l" || queryLower == "p") {
+            target = r.jantina as string;
         } else if (queryLower.startsWith("08") || queryLower.startsWith("62")) {
-            target = r.nomor_hp;
+            target = r.nomor_hp as string;
         } else {
             target = r.nama;
         }
