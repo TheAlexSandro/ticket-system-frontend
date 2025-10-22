@@ -43,7 +43,7 @@
                         <td>{{ item.tipe }}</td>
                         <td>{{ item.nama }}</td>
                         <td>{{ item.nis ?? "-" }}</td>
-                        <td>{{ item.jantina ?? "-" }}</td>
+                        <td>{{ item.jantina ? item.jantina == "L" ? "Cowo" : "Cewe" : "-" }}</td>
                         <td>{{ item.kelas ?? "-" }}</td>
                         <td>{{ item.nomor_hp ?? "-" }}</td>
                         <td>
