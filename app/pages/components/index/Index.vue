@@ -4,7 +4,7 @@
             <div class="beginning">
                 <div class="title">
                     <h1>Smekensa</h1>
-                   <img :src="`${configs.public['IMAGE_CDN']}/head.png`" alt="Logo">
+                    <img :src="`${configs.public['IMAGE_CDN']}/head.png`" alt="Logo">
                 </div>
                 <p>Selamat datang di website Project Based Learning Smekensa yang ke-60 tahun.</p>
             </div>
@@ -161,7 +161,8 @@
                 <div class="content">
                     <div v-if="!showSlider" class="image">
                         <img class="t-1" :src="`${configs.public['IMAGE_CDN']}/hero7.jpg`" alt="Image"></img>
-                        <img class="t-0" style="z-index: 2;" :src="`${configs.public['IMAGE_CDN']}/hero4.jpg`" alt="Image"></img>
+                        <img class="t-0" style="z-index: 2;" :src="`${configs.public['IMAGE_CDN']}/hero4.jpg`"
+                            alt="Image"></img>
                         <img class="t-2" :src="`${configs.public['IMAGE_CDN']}/hero8.jpg`" alt="Image"></img>
                     </div>
                     <div v-else class="mobile">
@@ -183,14 +184,20 @@
                     <div class="desc">
                         <span>PBL Smekensa</span>
                         <p>
-                            Jangan lewatkan momen istimewa <strong>Project Based Learning di SMKN 1 Blitar</strong>!
-                            Puncak acara PBL Smekensa akan berlangsung pada <strong>{{ marqueeText().b }}</strong>,
-                            terbuka untuk umum dan menjadi kesempatan bagi seluruh masyarakat untuk ikut merasakan
-                            kemeriahan, kebersamaan, serta semangat keluarga besar SMKN 1 Blitar.
-                            Segera pastikan kehadiranmu agar tidak ketinggalan berbagai rangkaian acara seru
-                            yang telah dipersiapkan khusus untukmu!
-
+                            Pelaksanaan <strong>Project Based Learning SMKN 1 Blitar</strong> akan mencapai tahap
+                            puncaknya pada
+                            <strong>{{ marqueeText().b }}</strong>.
+                            Seluruh warga SMKN 1 Blitar diharapkan terlibat secara aktif sebagai bagian dari proses
+                            pembelajaran berbasis proyek,
+                            dengan menunjukkan hasil karya, inovasi, dan kolaborasi terbaik.
+                            Momen ini menjadi wadah untuk membuktikan kompetensi, kreativitas, serta kerja sama tim yang
+                            telah dibangun selama
+                            proses PBL berlangsung.
+                            Mari tunjukkan profesionalisme, semangat belajar, dan kekompakan kita sebagai keluarga besar
+                            SMKN 1 Blitar dalam
+                            menyukseskan puncak kegiatan ini.
                         </p>
+
                     </div>
                 </div>
 
